@@ -114,3 +114,9 @@ $file = $em->find(File::class, 1);
 
 $fileHandle = $fileManager->readStream($file);
 ```
+
+This bundle also contains form and constraint for uploading and validating files.
+You can write your own naming strategy how files are created on Filesystem.
+You can even write your own FileSystem backend for Flysystem and use it here.
+
+Currently only Doctrine ORM is supported as persistence layer. Feel free to submit PRs for others.
