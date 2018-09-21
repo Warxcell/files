@@ -1,0 +1,13 @@
+{% block arxy_file_widget %}
+
+    {% if file and file.id %}
+        <div>
+            <span>Original filename: {{ file.originalFilename }}</span>
+            <span>Size: {{ file.fileSize|format_bytes }}</span>
+            <span>Mime Type: {{ file.mimeType }}</span>
+            <span>Created: {{ file.createdAt|localizeddate }}</span>
+        </div>
+    {% endif %}
+
+    {{ form_widget(form) }}
+{% endblock %}

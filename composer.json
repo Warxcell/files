@@ -1,0 +1,18 @@
+{
+    "name": "arxy/files",
+    "type": "symfony-bundle",
+    "authors": [
+        {
+            "name": "Bozhidar Hristov",
+            "email": "warxcell@gmail.com"
+        }
+    ],
+    "require": {
+        "league/flysystem": "^1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Arxy\\FilesBundle\\": ""
+        }
+    }
+}
