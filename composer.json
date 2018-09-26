@@ -8,7 +8,14 @@
         }
     ],
     "require": {
-        "league/flysystem": "^1.0"
+        "league/flysystem": "^1.0",
+        "ext-mbstring": "*"
+    },
+    "suggest": {
+        "symfony/validator": "Validate files against constraints",
+        "symfony/form": "Integrate file upload with forms",
+        "doctrine/orm": "Use Doctrine ORM as persistence layer",
+        "twig/twig": "Use Arxy\\Files\\Twig\\FilesExtension::formatBytes to get formatted KiB/MiB/GB instead. Also for form template"
     },
     "autoload": {
         "psr-4": {
