@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Arxy\FilesBundle\NamingStrategy;
@@ -22,6 +23,6 @@ class IdToPathStrategy implements NamingStrategy
 
     public function getFileName(File $file): string
     {
-        return (string)$file->getId();
+        return (string) $file->getId();
     }
 }

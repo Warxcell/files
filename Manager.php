@@ -93,7 +93,7 @@ class Manager
         );
 
         if ($fileEntity === null) {
-            $fileEntity = new $this->class;
+            $fileEntity = new $this->class();
             $fileEntity->setFileSize($fileSize);
             $fileEntity->setOriginalFilename($originalFilename);
             $fileEntity->setMd5Hash($md5);
@@ -138,6 +138,5 @@ class Manager
         } else {
             return $this->filesystem->readStream($pathname);
         }
-
     }
 }

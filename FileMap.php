@@ -7,7 +7,7 @@ namespace Arxy\FilesBundle;
 use Arxy\FilesBundle\Model\File;
 
 /**
- * Holds map of files to be uploaded
+ * Holds map of files to be uploaded.
  */
 class FileMap
 {
