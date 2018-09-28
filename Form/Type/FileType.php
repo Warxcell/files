@@ -18,6 +18,7 @@ class FileType extends AbstractType
 
     /**
      * FileType constructor.
+     *
      * @param Manager $fileManager
      */
     public function __construct(Manager $fileManager)
@@ -32,7 +33,7 @@ class FileType extends AbstractType
             \Symfony\Component\Form\Extension\Core\Type\FileType::class,
             [
                 'mapped' => false,
-                'label' => false,
+                'label'  => false,
             ]
         );
 

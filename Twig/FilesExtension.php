@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Arxy\FilesBundle\Twig;
@@ -18,7 +19,7 @@ class FilesExtension extends AbstractExtension
 
     public function formatBytes($bytes, $precision = 2)
     {
-        $units = array('B', 'KiB', 'MiB', 'GB', 'TB');
+        $units = ['B', 'KiB', 'MiB', 'GB', 'TB'];
         $bytes = max($bytes, 0);
         $pow = floor(($bytes ? log($bytes) : 0) / log(1024));
         $pow = min($pow, count($units) - 1);

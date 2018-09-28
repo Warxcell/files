@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Arxy\FilesBundle\Form\EventListener;
@@ -16,6 +17,7 @@ class FileUploadListener implements EventSubscriberInterface
 
     /**
      * FileUploadListener constructor.
+     *
      * @param Manager $fileManager
      */
     public function __construct(Manager $fileManager)
@@ -25,9 +27,9 @@ class FileUploadListener implements EventSubscriberInterface
 
     public static function getSubscribedEvents()
     {
-        return array(
+        return [
             FormEvents::SUBMIT => 'submit',
-        );
+        ];
     }
 
     public function submit(FormEvent $event)
