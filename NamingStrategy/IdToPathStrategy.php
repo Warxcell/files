@@ -11,7 +11,7 @@ class IdToPathStrategy implements NamingStrategy
 {
     public function getDirectoryName(File $file): string
     {
-        $id = $file->getId();
+        $id = (string)$file->getId();
 
         $path = [];
         for ($i = 0; $i < mb_strlen($id); $i++) {
@@ -23,6 +23,6 @@ class IdToPathStrategy implements NamingStrategy
 
     public function getFileName(File $file): string
     {
-        return (string) $file->getId();
+        return (string)$file->getId();
     }
 }
