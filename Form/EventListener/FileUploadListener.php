@@ -39,6 +39,8 @@ class FileUploadListener implements EventSubscriberInterface
 
         if ($uploadedFile && $uploadedFile->isValid()) {
             $event->setData($this->fileManager->upload($uploadedFile));
+        } else {
+            $event->setData(null);
         }
     }
 }
