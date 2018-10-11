@@ -37,7 +37,7 @@ class FileUploadListener implements EventSubscriberInterface
         /** @var UploadedFile $uploadedFile */
         $uploadedFile = $event->getForm()->get('file')->getData();
 
-        if ($uploadedFile->isValid()) {
+        if ($uploadedFile && $uploadedFile->isValid()) {
             $event->setData($this->fileManager->upload($uploadedFile));
         }
     }
