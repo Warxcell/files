@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Arxy\FilesBundle\Form\EventListener;
 
 use Arxy\FilesBundle\Manager;
+use Arxy\FilesBundle\Model\File;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -40,7 +41,11 @@ class FileUploadListener implements EventSubscriberInterface
         if ($uploadedFile && $uploadedFile->isValid()) {
             $event->setData($this->fileManager->upload($uploadedFile));
         } else {
-            $event->setData(null);
+            if ($event->getData() instanceof File) {
+                $event->setData($event->getData());
+            } else {
+                $event->setData(null);
+            }
         }
     }
 }
