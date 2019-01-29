@@ -89,17 +89,20 @@ class Manager
                 $file->fwrite($content);
             }
             $file->rewind();
+
+            $originalFilename = $remoteFile->getFilename();
+        } else {
+            if ($file instanceof UploadedFile) {
+                $originalFilename = $file->getClientOriginalName();
+            } else {
+                $originalFilename = $file->getFilename();
+            }
         }
 
 
         $fileSize = $file->getSize();
         $md5 = md5_file($file->getPathname());
 
-        if ($file instanceof UploadedFile) {
-            $originalFilename = $file->getClientOriginalName();
-        } else {
-            $originalFilename = $file->getFilename();
-        }
 
         /** @var File $fileEntity */
         $fileEntity = $this->doctrine->getRepository($this->class)->findOneBy(
