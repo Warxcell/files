@@ -59,7 +59,7 @@ class Manager
 
         $this->filesystem->createDir($this->namingStrategy->getDirectoryName($entity));
 
-        $stream = fopen($file->getRealPath(), 'r+');
+        $stream = fopen($file->getPathname(), 'r+');
         $this->filesystem->writeStream($path, $stream);
         fclose($stream);
     }
@@ -73,13 +73,13 @@ class Manager
     {
         $finfo = new \finfo();
 
-        return $finfo->file($file->getRealPath(), FILEINFO_MIME_TYPE);
+        return $finfo->file($file->getPathname(), FILEINFO_MIME_TYPE);
     }
 
     public function upload(\SplFileInfo $file): File
     {
-        $fileSize = filesize($file->getRealPath());
-        $md5 = md5_file($file->getRealPath());
+        $fileSize = $file->getSize();
+        $md5 = md5_file($file->getPathname());
 
         if ($file instanceof UploadedFile) {
             $originalFilename = $file->getClientOriginalName();
@@ -114,7 +114,7 @@ class Manager
     public function getPathname(File $file): string
     {
         if ($this->fileMap->has($file)) {
-            return $this->fileMap->get($file)->getRealPath();
+            return $this->fileMap->get($file)->getPathname();
         } else {
             return $this->getPathnameFromNamingStrategy($file);
         }
