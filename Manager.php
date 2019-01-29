@@ -78,6 +78,20 @@ class Manager
 
     public function upload(\SplFileInfo $file): File
     {
+        if (!$file->getRealPath()) {
+            $remoteFile = $file->openFile('r');
+
+            $tempFilename = tempnam(sys_get_temp_dir(), 'file_manager');
+            $file = new \SplFileObject($tempFilename, 'r+');
+
+            $chunkSize = 1024 * 1024;
+            while ($content = $remoteFile->fread($chunkSize)) {
+                $file->fwrite($content);
+            }
+            $file->rewind();
+        }
+
+
         $fileSize = $file->getSize();
         $md5 = md5_file($file->getPathname());
 
