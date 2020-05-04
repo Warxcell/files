@@ -91,6 +91,8 @@ class Manager
             $file->rewind();
 
             $originalFilename = $remoteFile->getFilename();
+
+            clearstatcache(true, $tempFilename);
         } else {
             if ($file instanceof UploadedFile) {
                 $originalFilename = $file->getClientOriginalName();
