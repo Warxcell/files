@@ -12,7 +12,7 @@
 ```php
 <?php
 
-namespace Your\NS;
+namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -68,7 +68,7 @@ services:
     Arxy\FilesBundle\NamingStrategy\IdToPathStrategy: ~
 
     Arxy\FilesBundle\Manager:
-        arguments: ["Your\\NS\\File","@doctrine", "@files_filesystem", "@Arxy\\FilesBundle\\NamingStrategy\\IdToPathStrategy"]
+        arguments: ["App\\Entity\\File","@doctrine", "@files_filesystem", "@Arxy\\FilesBundle\\NamingStrategy\\IdToPathStrategy"]
 
     Arxy\FilesBundle\EventListener\DoctrineORMListener:
         arguments: ["@Arxy\\FilesBundle\\Manager"]
@@ -89,7 +89,7 @@ $filesystem = new \League\Flysystem\Filesystem($adapter);
 
 $namingStrategy = new \Arxy\FilesBundle\NamingStrategy\IdToPathStrategy();
 
-$fileManager = new \Arxy\FilesBundle\Manager(\Your\NS\File::class, DoctrineManagerRegistry, $filesystem, $namingStrategy);
+$fileManager = new \Arxy\FilesBundle\Manager(\App\Entity\File::class, DoctrineManagerRegistry, $filesystem, $namingStrategy);
 ```
 
 
@@ -120,3 +120,64 @@ You can write your own naming strategy how files are created on Filesystem.
 You can even write your own FileSystem backend for Flysystem and use it here.
 
 Currently only Doctrine ORM is supported as persistence layer. Feel free to submit PRs for others.
+
+
+## usage with <a href="https://github.com/liip/LiipImagineBundle">LiipImagineBundle</a> for image processing.
+
+
+```yaml
+liip_imagine:
+    loaders:
+        arxy_file_loader:
+            flysystem:
+                filesystem_service: files_filesystem
+    data_loader: arxy_file_loader
+    filter_sets:
+            # an example thumbnail transformation definition
+            # https://symfony.com/doc/current/bundles/LiipImagineBundle/basic-usage.html#create-thumbnails
+            squared_thumbnail:
+                jpeg_quality:          85
+                png_compression_level: 8
+                filters:
+                    auto_rotate: ~
+                    strip: ~
+                    thumbnail:
+                        size:          [253, 253]
+                        mode:          outbound
+                        allow_upscale: false
+```
+
+```php
+<?php
+
+namespace App\Service;
+
+use App\Entity\File;
+use Arxy\FilesBundle\Manager;
+use Liip\ImagineBundle\Imagine\Cache\CacheManager;
+
+class ImageHelper
+{
+    /** @var CacheManager */
+    private $cacheManager;
+
+    /** @var Manager */
+    private $fileManager;
+
+    public function __construct(CacheManager $cacheManager, Manager $fileManager)
+    {
+        $this->cacheManager = $cacheManager;
+        $this->fileManager = $fileManager;
+    }
+
+    public function getUrl(File $file, string $mode)
+    {
+        return $this->cacheManager->getBrowserPath($this->fileManager->getPathname($file), $mode);
+    }
+}
+```
+
+```php
+
+ $this->imageHelper->getUrl($file, 'squared_thumbnail');
+```
