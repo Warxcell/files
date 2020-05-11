@@ -369,3 +369,14 @@ class FileNormalizer implements NormalizerInterface
     }
 }
 ```
+
+You will receive following json as response:
+
+```json
+{
+   "id":145,
+   "formats":{
+      "squared_thumbnail":"https:\/\/host.com\/media\/cache\/resolve\/squared_thumbnail\/1\/4\/5\/145"
+   }
+}
+```
