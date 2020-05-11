@@ -10,9 +10,9 @@ use Symfony\Component\Validator\Constraint;
 class FileValidator extends \Symfony\Component\Validator\Constraints\FileValidator
 {
     private static $suffices = [
-        1               => 'bytes',
-        self::KB_BYTES  => 'kB',
-        self::MB_BYTES  => 'MB',
+        1 => 'bytes',
+        self::KB_BYTES => 'kB',
+        self::MB_BYTES => 'MB',
         self::KIB_BYTES => 'KiB',
         self::MIB_BYTES => 'MiB',
     ];
@@ -21,6 +21,9 @@ class FileValidator extends \Symfony\Component\Validator\Constraints\FileValidat
     {
         if (!$constraint instanceof File) {
             throw new UnexpectedTypeException($constraint, __NAMESPACE__.'\File');
+        }
+        if ($value === null) {
+            return;
         }
         if (!$value instanceof \Arxy\FilesBundle\Model\File) {
             throw new UnexpectedTypeException($value, \Arxy\FilesBundle\Model\File::class);
@@ -49,7 +52,7 @@ class FileValidator extends \Symfony\Component\Validator\Constraints\FileValidat
         }
 
         if ($constraint->mimeTypes) {
-            $mimeTypes = (array) $constraint->mimeTypes;
+            $mimeTypes = (array)$constraint->mimeTypes;
             $mime = $value->getMimeType();
 
             foreach ($mimeTypes as $mimeType) {
@@ -74,7 +77,7 @@ class FileValidator extends \Symfony\Component\Validator\Constraints\FileValidat
 
     private static function moreDecimalsThan($double, $numberOfDecimals)
     {
-        return \strlen((string) $double) > \strlen((string) round($double, $numberOfDecimals));
+        return \strlen((string)$double) > \strlen((string)round($double, $numberOfDecimals));
     }
 
     private function factorizeSizes($size, $limit, $binaryFormat)
@@ -87,24 +90,24 @@ class FileValidator extends \Symfony\Component\Validator\Constraints\FileValidat
             $coefFactor = self::KB_BYTES;
         }
 
-        $limitAsString = (string) ($limit / $coef);
+        $limitAsString = (string)($limit / $coef);
 
         // Restrict the limit to 2 decimals (without rounding! we
         // need the precise value)
         while (self::moreDecimalsThan($limitAsString, 2)) {
             $coef /= $coefFactor;
-            $limitAsString = (string) ($limit / $coef);
+            $limitAsString = (string)($limit / $coef);
         }
 
         // Convert size to the same measure, but round to 2 decimals
-        $sizeAsString = (string) round($size / $coef, 2);
+        $sizeAsString = (string)round($size / $coef, 2);
 
         // If the size and limit produce the same string output
         // (due to rounding), reduce the coefficient
         while ($sizeAsString === $limitAsString) {
             $coef /= $coefFactor;
-            $limitAsString = (string) ($limit / $coef);
-            $sizeAsString = (string) round($size / $coef, 2);
+            $limitAsString = (string)($limit / $coef);
+            $sizeAsString = (string)round($size / $coef, 2);
         }
 
         return [$sizeAsString, $limitAsString, self::$suffices[$coef]];
