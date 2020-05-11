@@ -181,3 +181,191 @@ class ImageHelper
 
  $this->imageHelper->getUrl($file, 'squared_thumbnail');
 ```
+
+## Usage with <a href="https://api-platform.com/">API Platform</a>:
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Controller\ApiPlatform;
+
+use Arxy\FilesBundle\Manager;
+use Arxy\FilesBundle\Model\File;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+
+final class Upload
+{
+    private Manager $fileManager;
+
+    public function __construct(Manager $fileManager)
+    {
+        $this->fileManager = $fileManager;
+    }
+
+    public function __invoke(Request $request): File
+    {
+        $uploadedFile = $request->files->get('file');
+        if (!$uploadedFile) {
+            throw new BadRequestHttpException('"file" is required');
+        }
+
+        return $this->fileManager->upload($uploadedFile);
+    }
+}
+```
+
+
+```php
+<?php
+declare(strict_types=1);
+
+namespace App\Entity;
+
+use ApiPlatform\Core\Annotation\ApiResource;
+use App\Controller\ApiPlatform\Upload;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+
+/**
+ * @ORM\Entity
+ * @ORM\Table(name="files")
+ * @ApiResource(
+ *     iri="http://schema.org/MediaObject",
+ *     normalizationContext={
+ *         "groups"={"file_read"}
+ *     },
+ *     collectionOperations={
+ *         "post"={
+ *             "controller"=Upload::class,
+ *             "deserialize"=false,
+ *             "validation_groups"={"Default"},
+ *             "openapi_context"={
+ *                 "requestBody"={
+ *                     "content"={
+ *                         "multipart/form-data"={
+ *                             "schema"={
+ *                                 "type"="object",
+ *                                 "properties"={
+ *                                     "file"={
+ *                                         "type"="string",
+ *                                         "format"="binary"
+ *                                     }
+ *                                 }
+ *                             }
+ *                         }
+ *                     }
+ *                 }
+ *             }
+ *         }
+ *     },
+ *     itemOperations={
+ *         "get"
+ *     }
+ * )
+ */
+class File extends \Arxy\FilesBundle\Entity\File
+{
+    /**
+     * @var int|null
+     *
+     * @ORM\Id
+     * @ORM\Column(type="integer", nullable=false)
+     * @ORM\GeneratedValue
+     * @Groups({"file_read"})
+     */
+    protected $id;
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+}
+
+```
+
+Serving depends from how you want to serve it. You might want to use LiipImagineBundle as mention above, or CDN solution.
+
+If you want to use it with own image hosting and LiipImagineBundle, you probably could add something like that:
+
+```php
+    /**
+     * @var array
+     * @Groups({"file_read"})
+     */
+    private $formats = [];
+
+    public function getFormats(): array
+    {
+        return $this->formats;
+    }
+
+    public function setFormats(array $formats): void
+    {
+        $this->formats = $formats;
+    }
+```
+
+and fill these from Event Listener or ORM Listener or Serializer Normalizer.
+
+here is example with Serializer Normalizer:
+
+```php
+<?php
+declare(strict_types=1);
+
+namespace App\Serializer;
+
+use App\Entity\File;
+use App\Service\ImageHelper;
+use Liip\ImagineBundle\Imagine\Filter\FilterConfiguration;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+
+class FileNormalizer implements NormalizerInterface
+{
+    /** @var ObjectNormalizer */
+    private $objectNormalizer;
+
+    /** @var ImageHelper */
+    private $imageHelper;
+
+    /** @var FilterConfiguration */
+    private $filterConfiguration;
+
+    public function __construct(
+        ObjectNormalizer $objectNormalizer,
+        ImageHelper $imageHelper,
+        FilterConfiguration $filterConfiguration
+    ) {
+        $this->objectNormalizer = $objectNormalizer;
+        $this->imageHelper = $imageHelper;
+        $this->filterConfiguration = $filterConfiguration;
+    }
+
+    public function normalize($object, $format = null, array $context = array())
+    {
+        /** @var File $object */
+        $data = $this->objectNormalizer->normalize($object, $format, $context);
+
+        $data['formats'] = array_reduce(
+            array_keys($this->filterConfiguration->all()),
+            function ($array, $filter) use ($object) {
+                $array[$filter] = $this->imageHelper->getUrl($object, $filter);
+
+                return $array;
+            },
+            []
+        );
+
+        return $data;
+    }
+
+    public function supportsNormalization($data, $format = null)
+    {
+        return $format === 'json' && $data instanceof File;
+    }
+}
+```
