@@ -158,4 +158,16 @@ class Manager
             return $this->filesystem->readStream($pathname);
         }
     }
+
+    public function refresh(File $file)
+    {
+        $file->setFileSize($this->filesystem->getSize($this->getPathname($file)));
+        $file->setMd5Hash(md5($this->filesystem->read($this->getPathname($file))));
+        $file->setMimeType($this->filesystem->getMimetype($this->getPathname($file)));
+    }
+
+    public function getClass()
+    {
+        return $this->class;
+    }
 }
