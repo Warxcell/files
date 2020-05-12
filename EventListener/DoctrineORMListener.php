@@ -25,7 +25,7 @@ class DoctrineORMListener implements EventSubscriber
     {
         return [
             'postPersist',
-            'postRemove',
+            'preRemove',
         ];
     }
 
@@ -38,7 +38,7 @@ class DoctrineORMListener implements EventSubscriber
         }
     }
 
-    public function postRemove(LifecycleEventArgs $args)
+    public function preRemove(LifecycleEventArgs $args)
     {
         $entity = $args->getObject();
 
