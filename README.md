@@ -122,6 +122,69 @@ You can even write your own FileSystem backend for Flysystem and use it here.
 Currently only Doctrine ORM is supported as persistence layer. Feel free to submit PRs for others.
 
 
+## Serving local files
+
+There are 2 possibilities to serve files: Either app will serve files with controller, which allow fine-control of ACL for example.
+Either configure symlink of upload path to web directory.
+
+1. Serving with Controller
+
+Create controller which will serve files.
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Controller;
+
+use App\Entity\File;
+use Arxy\FilesBundle\Manager;
+use Doctrine\ORM\EntityManagerInterface;
+use League\Flysystem\Adapter\Local;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+
+class FileController extends AbstractController
+{
+    public function download($id, Manager $fileManager, Local $localAdapter, EntityManagerInterface $em)
+    {
+        /** @var FileEntity $file */
+        $file = $em->getRepository(File::class)->findOneBy(
+            [
+                'md5Hash' => $id,
+            ]
+        );
+
+        if ($file === null) {
+            throw $this->createNotFoundException('File not found');
+        }
+
+        $response = $this->file(
+            $localAdapter->applyPathPrefix($fileManager->getPathname($file)),
+            $file->getOriginalFilename(),
+            ResponseHeaderBag::DISPOSITION_INLINE
+        );
+        $response->headers->set('Content-Type', $file->getMimeType());
+        $response->setLastModified($file->getCreatedAt());
+        $response->setPublic();
+
+        $now = new \DateTimeImmutable();
+        $expireAt = $now->modify("+30 days");
+        $response->setExpires($expireAt);
+
+        return $response;
+    }
+}
+```
+Register route
+
+```yaml
+file_download:
+    path: /file/{id}
+    controller: App\Controller\FileController::download
+```
+
 ## usage with <a href="https://github.com/liip/LiipImagineBundle">LiipImagineBundle</a> for image processing.
 
 
