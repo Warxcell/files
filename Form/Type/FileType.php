@@ -8,6 +8,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class FileType extends AbstractType
 {
@@ -28,16 +29,17 @@ class FileType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add(
-            'file',
-            \Symfony\Component\Form\Extension\Core\Type\FileType::class,
-            [
-                'mapped' => false,
-                'label'  => false,
-            ]
-        );
-
         $builder->addEventSubscriber(new FileUploadListener($this->fileManager));
+    }
+
+    public function getParent()
+    {
+        return \Symfony\Component\Form\Extension\Core\Type\FileType::class;
+    }
+
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefault('data_class', null);
     }
 
     public function buildView(FormView $view, FormInterface $form, array $options)

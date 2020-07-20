@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Arxy\FilesBundle\Form\EventListener;
 
 use Arxy\FilesBundle\Manager;
-use Arxy\FilesBundle\Model\File;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -15,6 +14,7 @@ class FileUploadListener implements EventSubscriberInterface
 {
     /** @var Manager */
     private $fileManager;
+    private $data;
 
     /**
      * FileUploadListener constructor.
@@ -29,23 +29,25 @@ class FileUploadListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
+            FormEvents::POST_SET_DATA => 'postSetData',
             FormEvents::SUBMIT => 'submit',
         ];
+    }
+
+    public function postSetData(FormEvent $event)
+    {
+        $this->data = $event->getData();
     }
 
     public function submit(FormEvent $event)
     {
         /** @var UploadedFile $uploadedFile */
-        $uploadedFile = $event->getForm()->get('file')->getData();
+        $uploadedFile = $event->getData();
 
-        if ($uploadedFile && $uploadedFile->isValid()) {
+        if ($uploadedFile instanceof UploadedFile && $uploadedFile->isValid()) {
             $event->setData($this->fileManager->upload($uploadedFile));
         } else {
-            if ($event->getData() instanceof File) {
-                $event->setData($event->getData());
-            } else {
-                $event->setData(null);
-            }
+            $event->setData($this->data);
         }
     }
 }
