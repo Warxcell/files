@@ -5,15 +5,14 @@ declare(strict_types=1);
 namespace Arxy\FilesBundle\Twig;
 
 use Twig\Extension\AbstractExtension;
+use Twig\TwigFilter;
 
 class FilesExtension extends AbstractExtension
 {
     public function getFilters()
     {
         return [
-            new \Twig\TwigFilter(
-                'format_bytes', [$this, 'formatBytes']
-            ),
+            new TwigFilter('format_bytes', [$this, 'formatBytes']),
         ];
     }
 

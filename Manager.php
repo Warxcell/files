@@ -101,11 +101,9 @@ class Manager
             }
         }
 
-
         $fileSize = $file->getSize();
         $md5 = md5_file($file->getPathname());
-
-
+        
         /** @var File $fileEntity */
         $fileEntity = $this->doctrine->getRepository($this->class)->findOneBy(
             ['md5Hash' => $md5, 'fileSize' => $fileSize]
