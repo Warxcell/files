@@ -54,7 +54,6 @@ services:
         class: League\Flysystem\Adapter\Local
         arguments:
             - "/directory/for/files/"
-
     League\Flysystem\Filesystem:
         arguments:
             - "@files_local_adapter"
