@@ -51,13 +51,11 @@ class File extends \Arxy\FilesBundle\Entity\File
 ```yaml
 services:
     files_local_adapter:
-        public: true
         class: League\Flysystem\Adapter\Local
         arguments:
             - "/directory/for/files/"
 
-    files_filesystem:
-        class: League\Flysystem\Filesystem
+    League\Flysystem\Filesystem:
         arguments:
             - "@files_local_adapter"
 
@@ -66,9 +64,16 @@ services:
             - { name: twig.extension }
 
     Arxy\FilesBundle\NamingStrategy\IdToPathStrategy: ~
+    Arxy\FilesBundle\NamingStrategy\AppendExtensionStrategy:
+        arguments:
+            - '@Arxy\FilesBundle\NamingStrategy\IdToPathStrategy'
+
+    Arxy\FilesBundle\NamingStrategy:
+        alias: Arxy\FilesBundle\NamingStrategy\AppendExtensionStrategy
 
     Arxy\FilesBundle\Manager:
-        arguments: ["App\\Entity\\File","@doctrine", "@files_filesystem", "@Arxy\\FilesBundle\\NamingStrategy\\IdToPathStrategy"]
+        arguments: 
+            $class: "App\\Entity\\File"
 
     Arxy\FilesBundle\EventListener\DoctrineORMListener:
         arguments: ["@Arxy\\FilesBundle\\Manager"]
