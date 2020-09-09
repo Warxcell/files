@@ -11,30 +11,11 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class Manager
 {
-    /**
-     * @var string
-     */
-    private $class;
-
-    /**
-     * @var ManagerRegistry
-     */
-    private $doctrine;
-
-    /**
-     * @var Filesystem
-     */
-    private $filesystem;
-
-    /**
-     * @var NamingStrategy
-     */
-    private $namingStrategy;
-
-    /**
-     * @var FileMap
-     */
-    private $fileMap;
+    private string $class;
+    private ManagerRegistry $doctrine;
+    private Filesystem $filesystem;
+    private NamingStrategy $namingStrategy;
+    private FileMap $fileMap;
 
     public function __construct(
         string $class,
@@ -103,7 +84,7 @@ class Manager
 
         $fileSize = $file->getSize();
         $md5 = md5_file($file->getPathname());
-        
+
         /** @var File $fileEntity */
         $fileEntity = $this->doctrine->getRepository($this->class)->findOneBy(
             ['md5Hash' => $md5, 'fileSize' => $fileSize]
@@ -137,7 +118,7 @@ class Manager
         }
     }
 
-    public function read(File $file)
+    public function read(File $file): string
     {
         $pathname = $this->getPathname($file);
         if ($this->fileMap->has($file)) {
@@ -157,14 +138,14 @@ class Manager
         }
     }
 
-    public function refresh(File $file)
+    public function refresh(File $file): void
     {
         $file->setFileSize($this->filesystem->getSize($this->getPathname($file)));
         $file->setMd5Hash(md5($this->filesystem->read($this->getPathname($file))));
         $file->setMimeType($this->filesystem->getMimetype($this->getPathname($file)));
     }
 
-    public function getClass()
+    public function getClass(): string
     {
         return $this->class;
     }

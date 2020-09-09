@@ -16,7 +16,7 @@ class FilesExtension extends AbstractExtension
         ];
     }
 
-    public function formatBytes($bytes, $precision = 2)
+    public function formatBytes($bytes, $precision = 2): string
     {
         $units = ['B', 'KiB', 'MiB', 'GB', 'TB'];
         $bytes = max($bytes, 0);

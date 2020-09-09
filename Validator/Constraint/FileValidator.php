@@ -35,7 +35,7 @@ class FileValidator extends \Symfony\Component\Validator\Constraints\FileValidat
             $sizeInBytes = $value->getFileSize();
 
             if ($sizeInBytes > $limitInBytes) {
-                list($sizeAsString, $limitAsString, $suffix) = $this->factorizeSizes(
+                [$sizeAsString, $limitAsString, $suffix] = $this->factorizeSizes(
                     $sizeInBytes,
                     $limitInBytes,
                     $constraint->binaryFormat

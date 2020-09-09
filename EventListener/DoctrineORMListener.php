@@ -11,10 +11,7 @@ use Doctrine\ORM\Event\LifecycleEventArgs;
 
 class DoctrineORMListener implements EventSubscriber
 {
-    /**
-     * @var Manager
-     */
-    private $manager;
+    private Manager $manager;
 
     public function __construct(Manager $manager)
     {

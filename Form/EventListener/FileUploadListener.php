@@ -12,15 +12,9 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class FileUploadListener implements EventSubscriberInterface
 {
-    /** @var Manager */
-    private $fileManager;
+    private Manager $fileManager;
     private $data;
 
-    /**
-     * FileUploadListener constructor.
-     *
-     * @param Manager $fileManager
-     */
     public function __construct(Manager $fileManager)
     {
         $this->fileManager = $fileManager;

@@ -9,8 +9,7 @@ use Arxy\FilesBundle\NamingStrategy;
 
 class AppendExtensionStrategy implements NamingStrategy
 {
-    /** @var NamingStrategy */
-    private $originalStrategy;
+    private NamingStrategy $originalStrategy;
 
     public function __construct(NamingStrategy $originalStrategy)
     {

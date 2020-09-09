@@ -8,6 +8,7 @@
         }
     ],
     "require": {
+        "php": "^7.4",
         "league/flysystem": "^1.0",
         "ext-mbstring": "*"
     },

@@ -6,30 +6,11 @@ namespace Arxy\FilesBundle\Model;
 
 abstract class File
 {
-    /**
-     * @var string|null
-     */
-    protected $originalFilename;
-
-    /**
-     * @var string|null
-     */
-    protected $fileSize;
-
-    /**
-     * @var string|null
-     */
-    protected $md5Hash;
-
-    /**
-     * @var \DateTimeImmutable
-     */
-    protected $createdAt;
-
-    /**
-     * @var string|null
-     */
-    protected $mimeType;
+    protected ?string $originalFilename = null;
+    protected ?string $fileSize = null;
+    protected ?string $md5Hash = null;
+    protected \DateTimeImmutable $createdAt;
+    protected ?string $mimeType = null;
 
     abstract public function getId();
 
@@ -68,7 +49,7 @@ abstract class File
         $this->md5Hash = $md5Hash;
     }
 
-    public function getCreatedAt(): ?\DateTimeImmutable
+    public function getCreatedAt(): \DateTimeImmutable
     {
         return $this->createdAt;
     }

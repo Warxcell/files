@@ -15,11 +15,8 @@ class RefreshDatabaseCommand extends Command
 {
     protected static $defaultName = 'arxy:files:refresh-database';
 
-    /** @var Manager */
-    private $fileManager;
-
-    /** @var ManagerRegistry */
-    private $doctrine;
+    private Manager $fileManager;
+    private ManagerRegistry $doctrine;
 
     public function __construct(Manager $fileManager, ManagerRegistry $registry)
     {
