@@ -50,7 +50,7 @@ class Manager
         $this->filesystem->delete($this->getPathname($entity));
     }
 
-    public function getMimeTypeByFile(\SplFileInfo $file): string
+    private function getMimeTypeByFile(\SplFileInfo $file): string
     {
         $finfo = new \finfo();
 
@@ -104,9 +104,13 @@ class Manager
         return $fileEntity;
     }
 
-    private function getPathnameFromNamingStrategy(File $file): string
+    private function getPathnameFromNamingStrategy(File $file, NamingStrategy $namingStrategy = null): string
     {
-        return $this->namingStrategy->getDirectoryName($file).$this->namingStrategy->getFileName($file);
+        if ($namingStrategy === null) {
+            $namingStrategy = $this->namingStrategy;
+        }
+
+        return $namingStrategy->getDirectoryName($file).$namingStrategy->getFileName($file);
     }
 
     public function getPathname(File $file): string
@@ -143,6 +147,19 @@ class Manager
         $file->setFileSize($this->filesystem->getSize($this->getPathname($file)));
         $file->setMd5Hash(md5($this->filesystem->read($this->getPathname($file))));
         $file->setMimeType($this->filesystem->getMimetype($this->getPathname($file)));
+    }
+
+    public function migrate(File $file, NamingStrategy $oldStrategy): bool
+    {
+        $oldName = $this->getPathnameFromNamingStrategy($file, $oldStrategy);
+
+        if (!$this->filesystem->has($oldName)) {
+            return false;
+        }
+
+        $newName = $this->getPathnameFromNamingStrategy($file);
+
+        return $this->filesystem->rename($oldName, $newName);
     }
 
     public function getClass(): string
