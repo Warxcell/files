@@ -7,7 +7,7 @@ namespace Arxy\FilesBundle\Model;
 abstract class File
 {
     protected ?string $originalFilename = null;
-    protected ?string $fileSize = null;
+    protected ?int $fileSize = null;
     protected ?string $md5Hash = null;
     protected \DateTimeImmutable $createdAt;
     protected ?string $mimeType = null;
