@@ -447,3 +447,23 @@ You will receive following json as response:
    }
 }
 ```
+
+## Migrating between naming strategy.
+
+First configure the new naming strategy, but keep the old one as service.
+Then register the command for migration:
+```yaml
+services:
+    Arxy\FilesBundle\Command\MigrateNamingStrategyCommand:
+        arguments:
+            $oldNamingStrategy: 'old_naming_strategy_service_id'
+```
+
+then run it. 
+```shell script
+bin/console arxy:files:migrate-naming-strategy
+```
+
+Please note that until files are migrated - if some file is requested - it will throw error.
+
+
