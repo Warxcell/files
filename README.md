@@ -1,4 +1,7 @@
 # Files
+
+[![Build Status](https://travis-ci.org/Warxcell/files.svg?branch=master)](https://travis-ci.org/Warxcell/files)
+
 ## Provides easy file management (with persistence layer for metadata).
 
 ### Main Features
