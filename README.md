@@ -2,6 +2,8 @@
 
 [![Build Status](https://travis-ci.org/Warxcell/files.svg?branch=master)](https://travis-ci.org/Warxcell/files)
 
+[![codecov](https://codecov.io/gh/Warxcell/files/branch/master/graph/badge.svg)](https://codecov.io/gh/Warxcell/files)
+
 ## Provides easy file management (with persistence layer for metadata).
 
 ### Main Features
