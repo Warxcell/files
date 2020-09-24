@@ -48,3 +48,7 @@
 /.web-server-pid
 
 /.idea
+
+composer.lock
+
+.phpunit.result.cache

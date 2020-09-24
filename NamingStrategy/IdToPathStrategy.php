@@ -12,13 +12,9 @@ class IdToPathStrategy implements NamingStrategy
     public function getDirectoryName(File $file): string
     {
         $id = (string)$file->getId();
+        $path = str_split($id);
 
-        $path = [];
-        for ($i = 0; $i < mb_strlen($id); $i++) {
-            $path[] = mb_substr($id, $i, 1);
-        }
-
-        return implode('/', $path).'/';
+        return implode(DIRECTORY_SEPARATOR, $path).DIRECTORY_SEPARATOR;
     }
 
     public function getFileName(File $file): string
