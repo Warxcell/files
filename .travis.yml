@@ -1,9 +1,7 @@
 language: php
 
-matrix:
-    fast_finish: true
-    include:
-        -   php: '7.4'
+php:
+    - '7.4'
 
 install:
     - COMPOSER_MEMORY_LIMIT=-1 travis_retry composer update
