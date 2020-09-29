@@ -2,10 +2,10 @@
 
     {% if file and file.id %}
         <div>
-            <span>Original filename: {{ file.originalFilename }}</span>
-            <span>Size: {{ file.fileSize|format_bytes }}</span>
-            <span>Mime Type: {{ file.mimeType }}</span>
-            <span>Created: {{ file.createdAt|localizeddate }}</span>
+            <span>{% trans %}Original filename{% endtrans %}: {{ file.originalFilename }}</span>
+            <span>{% trans %}Size{% endtrans %}: {{ file.fileSize|format_bytes }}</span>
+            <span>{% trans %}Mime Type{% endtrans %}: {{ file.mimeType }}</span>
+            <span>{% trans %}Created{% endtrans %}: {{ file.createdAt|format_datetime }}</span>
         </div>
     {% endif %}
 
