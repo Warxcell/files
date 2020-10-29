@@ -6,7 +6,7 @@ namespace Arxy\FilesBundle\Tests\NamingStrategy;
 use Arxy\FilesBundle\NamingStrategy;
 use Arxy\FilesBundle\Tests\File;
 
-class SplitHashStrategy extends AbstractStrategyTest
+class SplitHashStrategyTest extends AbstractStrategyTest
 {
     public function getStrategy(): NamingStrategy
     {
