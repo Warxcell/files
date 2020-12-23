@@ -6,21 +6,21 @@ namespace Arxy\FilesBundle;
 
 use Arxy\FilesBundle\Model\File;
 use Doctrine\Common\Persistence\ManagerRegistry;
-use League\Flysystem\Filesystem;
+use League\Flysystem\FilesystemOperator;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class Manager
 {
     private string $class;
     private ManagerRegistry $doctrine;
-    private Filesystem $filesystem;
+    private FilesystemOperator $filesystem;
     private NamingStrategy $namingStrategy;
     private FileMap $fileMap;
 
     public function __construct(
         string $class,
         ManagerRegistry $doctrine,
-        Filesystem $filesystem,
+        FilesystemOperator $filesystem,
         NamingStrategy $namingStrategy
     ) {
         $this->class = $class;
