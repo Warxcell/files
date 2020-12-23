@@ -38,7 +38,7 @@ class Manager
 
         $path = $this->getPathname($entity);
 
-        $this->filesystem->createDir($this->namingStrategy->getDirectoryName($entity));
+        $this->filesystem->createDirectory($this->namingStrategy->getDirectoryName($entity));
 
         $stream = fopen($file->getPathname(), 'r+');
         $this->filesystem->writeStream($path, $stream);
@@ -144,22 +144,24 @@ class Manager
 
     public function refresh(File $file): void
     {
-        $file->setFileSize($this->filesystem->getSize($this->getPathname($file)));
+        $file->setFileSize($this->filesystem->fileSize($this->getPathname($file)));
         $file->setMd5Hash(md5($this->filesystem->read($this->getPathname($file))));
-        $file->setMimeType($this->filesystem->getMimetype($this->getPathname($file)));
+        $file->setMimeType($this->filesystem->mimeType($this->getPathname($file)));
     }
 
     public function migrate(File $file, NamingStrategy $oldStrategy): bool
     {
         $oldName = $this->getPathnameFromNamingStrategy($file, $oldStrategy);
 
-        if (!$this->filesystem->has($oldName)) {
+        if (!$this->filesystem->fileExists($oldName)) {
             return false;
         }
 
         $newName = $this->getPathnameFromNamingStrategy($file);
 
-        return $this->filesystem->rename($oldName, $newName);
+        $this->filesystem->move($oldName, $newName);
+
+        return true;
     }
 
     public function getClass(): string
