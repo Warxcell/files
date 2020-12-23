@@ -143,7 +143,7 @@ Either configure symlink of upload path to web directory.
 
 1. Serving with Controller
 
-Create controller which will serve files.
+Create the controller which will serve files.
 
 ```php
 <?php
@@ -155,13 +155,18 @@ namespace App\Controller;
 use App\Entity\File;
 use Arxy\FilesBundle\Manager;
 use Doctrine\ORM\EntityManagerInterface;
-use League\Flysystem\Adapter\Local;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Component\HttpFoundation\HeaderUtils;
+use Symfony\Component\HttpFoundation\StreamedResponse;
+use Symfony\Component\Routing\Annotation\Route;
 
 class FileController extends AbstractController
 {
-    public function download($id, Manager $fileManager, Local $localAdapter, EntityManagerInterface $em)
+    /**
+     * @Route(path="/file/{id}", name="file_download")
+     */
+    public function download($id, Manager $fileManager, EntityManagerInterface $em)
     {
         /** @var FileEntity $file */
         $file = $em->getRepository(File::class)->findOneBy(
@@ -174,18 +179,34 @@ class FileController extends AbstractController
             throw $this->createNotFoundException('File not found');
         }
 
-        $response = $this->file(
-            $localAdapter->applyPathPrefix($fileManager->getPathname($file)),
-            $file->getOriginalFilename(),
-            ResponseHeaderBag::DISPOSITION_INLINE
+        $response = new StreamedResponse();
+
+        $disposition = HeaderUtils::makeDisposition(
+            HeaderUtils::DISPOSITION_INLINE,
+            $file->getOriginalFilename()
         );
+        $response->headers->set('Content-Disposition', $disposition);
+
         $response->headers->set('Content-Type', $file->getMimeType());
         $response->setLastModified($file->getCreatedAt());
         $response->setPublic();
+        $response->setEtag($file->getMd5Hash());
 
         $now = new \DateTimeImmutable();
         $expireAt = $now->modify("+30 days");
         $response->setExpires($expireAt);
+
+        $stream = $fileManager->readStream($file);
+        $response->setCallback(
+            function () use ($stream) {
+                $out = fopen('php://output', 'wb');
+
+                stream_copy_to_stream($stream, $out);
+
+                fclose($out);
+                fclose($stream);
+            }
+        );
 
         return $response;
     }
