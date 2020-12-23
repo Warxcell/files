@@ -61,7 +61,7 @@ class File extends \Arxy\FilesBundle\Entity\File
 ```yaml
 services:
     files_local_adapter:
-        class: League\Flysystem\Adapter\Local
+        class: League\Flysystem\Local\LocalFilesystemAdapter
         arguments:
             - "/directory/for/files/"
     League\Flysystem\Filesystem:
@@ -98,7 +98,7 @@ services:
 or using pure PHP
 
 ```php
-$adapter = new \League\Flysystem\Adapter\Local;
+$adapter = new \League\Flysystem\Local\LocalFilesystemAdapter;
 $filesystem = new \League\Flysystem\Filesystem($adapter);
 
 $namingStrategy = new \Arxy\FilesBundle\NamingStrategy\IdToPathStrategy();
