@@ -136,10 +136,7 @@ You can even write your own FileSystem backend for Flysystem and use it here.
 Currently only Doctrine ORM is supported as persistence layer. Feel free to submit PRs for others.
 
 
-## Serving local files
-
-There are 2 possibilities to serve files: Either app will serve files with controller, which allow fine-control of ACL for example.
-Either configure symlink of upload path to web directory.
+## Serving files from controller
 
 1. Serving with Controller
 
@@ -211,14 +208,6 @@ class FileController extends AbstractController
         return $response;
     }
 }
-```
-Register route
-
-```yaml
-file_download:
-    path: /file/{id}
-    controller: App\Controller\FileController::download
-```
 
 ## usage with <a href="https://github.com/liip/LiipImagineBundle">LiipImagineBundle</a> for image processing.
 
