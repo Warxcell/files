@@ -6,7 +6,7 @@
 
 Dependency Matrix:
 
-Versions 1.X.X uses FlySystem ^1.0
+Versions 1.X.X uses FlySystem ^1.0   
 Versions 2.X.X uses FlySystem ^2.0
 
 ## Provides easy file management (with persistence layer for metadata).
