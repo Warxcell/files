@@ -10,7 +10,8 @@
     "require": {
         "php": "^7.4",
         "league/flysystem": "^2.0",
-        "ext-mbstring": "*"
+        "ext-mbstring": "*",
+        "ext-fileinfo": "*"
     },
     "suggest": {
         "symfony/validator": "Validate files against constraints",
