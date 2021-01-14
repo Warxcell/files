@@ -10,7 +10,7 @@ interface ManagerInterface
 {
     public function upload(\SplFileInfo $file): File;
 
-    public function getPathname(): string;
+    public function getPathname(File $file): string;
 
     public function read(File $file): string;
 

@@ -9,7 +9,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use League\Flysystem\FilesystemOperator;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
-class Manager implements ManagerInterface
+final class Manager implements ManagerInterface
 {
     private string $class;
     private ManagerRegistry $doctrine;

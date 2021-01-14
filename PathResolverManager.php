@@ -5,7 +5,7 @@ namespace Arxy\FilesBundle;
 
 use Arxy\FilesBundle\Model\File;
 
-class PathResolverManager implements ManagerInterface, PathResolver
+final class PathResolverManager implements ManagerInterface, PathResolver
 {
     private ManagerInterface $manager;
     private PathResolver $pathResolver;
@@ -21,9 +21,9 @@ class PathResolverManager implements ManagerInterface, PathResolver
         return $this->manager->upload($file);
     }
 
-    public function getPathname(): string
+    public function getPathname(File $file): string
     {
-        return $this->manager->getPathname();
+        return $this->manager->getPathname($file);
     }
 
     public function read(File $file): string
