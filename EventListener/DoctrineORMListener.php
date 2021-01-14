@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace Arxy\FilesBundle\EventListener;
 
-use Arxy\FilesBundle\Manager;
+use Arxy\FilesBundle\ManagerInterface;
 use Arxy\FilesBundle\Model\File;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 
 class DoctrineORMListener implements EventSubscriber
 {
-    private Manager $manager;
+    private ManagerInterface $manager;
 
-    public function __construct(Manager $manager)
+    public function __construct(ManagerInterface $manager)
     {
         $this->manager = $manager;
     }

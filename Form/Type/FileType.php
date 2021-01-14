@@ -3,7 +3,7 @@
 namespace Arxy\FilesBundle\Form\Type;
 
 use Arxy\FilesBundle\Form\EventListener\FileUploadListener;
-use Arxy\FilesBundle\Manager;
+use Arxy\FilesBundle\ManagerInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
@@ -12,9 +12,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class FileType extends AbstractType
 {
-    private Manager $fileManager;
+    private ManagerInterface $fileManager;
 
-    public function __construct(Manager $fileManager)
+    public function __construct(ManagerInterface $fileManager)
     {
         $this->fileManager = $fileManager;
     }

@@ -16,7 +16,8 @@ Versions 2.X.X uses FlySystem ^2.0
 - Uses FlySystem for File management (this allows you to use existing adapters to save files anywhere)
 - Persist file information in database
 - Uses checksums (md5) to prevent double upload (thus saving space). If same file is found - it's reused
-- Automatic hooks that manages the files (on entity persist file will be uploaded, on entity remove - file will be removed)
+- Automatic hooks that manages the files (on entity persist file will be uploaded, on entity remove - file will be
+  removed)
 - Different naming strategies for handling files.
 
 ```php
@@ -64,9 +65,13 @@ services:
         class: League\Flysystem\Local\LocalFilesystemAdapter
         arguments:
             - "/directory/for/files/"
+
     League\Flysystem\Filesystem:
         arguments:
             - "@files_local_adapter"
+
+    League\Flysystem\FilesystemOperator:
+        alias: League\Flysystem\Filesystem
 
     Arxy\FilesBundle\Twig\FilesExtension:
         tags:
@@ -81,16 +86,19 @@ services:
         alias: Arxy\FilesBundle\NamingStrategy\AppendExtensionStrategy
 
     Arxy\FilesBundle\Manager:
-        arguments: 
+        arguments:
             $class: "App\\Entity\\File"
 
+    Arxy\FilesBundle\ManagerInterface:
+        alias: Arxy\FilesBundle\Manager
+
     Arxy\FilesBundle\EventListener\DoctrineORMListener:
-        arguments: ["@Arxy\\FilesBundle\\Manager"]
+        arguments: [ "@Arxy\\FilesBundle\\ManagerInterface" ] # This can be omit, if using autowiring.
         tags:
             - { name: doctrine.event_subscriber }
 
     Arxy\FilesBundle\Form\Type\FileType:
-        arguments: ["@Arxy\\FilesBundle\\Manager"]
+        arguments: [ "@Arxy\\FilesBundle\\ManagerInterface" ] # This can be omit, if using autowiring.
         tags:
             - { name: form.type }
 ```
@@ -106,16 +114,18 @@ $namingStrategy = new \Arxy\FilesBundle\NamingStrategy\IdToPathStrategy();
 $fileManager = new \Arxy\FilesBundle\Manager(\App\Entity\File::class, DoctrineManagerRegistry, $filesystem, $namingStrategy);
 ```
 
-
 ## Upload file
+
 ```php
 $file = new \SplFileInfo($pathname);
 $fileEntity = $fileManager->upload($file);
 ```
 
-Please note that file is not actually moved to its final location until file is persisted into db, which is done by Listeners. (Arxy\FilesBundle\DoctrineORMListener for example)
+Please note that file is not actually moved to its final location until file is persisted into db, which is done by
+Listeners. (Arxy\FilesBundle\DoctrineORMListener for example)
 
 ## Read file content
+
 ```php
 $file = $em->find(File::class, 1);
 
@@ -123,18 +133,17 @@ $content = $fileManager->read($file);
 ```
 
 ## Read stream
+
 ```php
 $file = $em->find(File::class, 1);
 
 $fileHandle = $fileManager->readStream($file);
 ```
 
-This bundle also contains form and constraint for uploading and validating files.
-You can write your own naming strategy how files are created on Filesystem.
-You can even write your own FileSystem backend for Flysystem and use it here.
+This bundle also contains form and constraint for uploading and validating files. You can write your own naming strategy
+how files are created on Filesystem. You can even write your own FileSystem backend for Flysystem and use it here.
 
 Currently only Doctrine ORM is supported as persistence layer. Feel free to submit PRs for others.
-
 
 ## Serving files from controller
 
@@ -150,7 +159,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Entity\File;
-use Arxy\FilesBundle\Manager;
+use Arxy\FilesBundle\ManagerInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
@@ -163,7 +172,7 @@ class FileController extends AbstractController
     /**
      * @Route(path="/file/{id}", name="file_download")
      */
-    public function download($id, Manager $fileManager, EntityManagerInterface $em)
+    public function download($id, ManagerInterface $fileManager, EntityManagerInterface $em)
     {
         /** @var FileEntity $file */
         $file = $em->getRepository(File::class)->findOneBy(
@@ -240,26 +249,23 @@ liip_imagine:
 namespace App\Service;
 
 use App\Entity\File;
-use Arxy\FilesBundle\Manager;
+use Arxy\FilesBundle\ManagerInterface;
 use Liip\ImagineBundle\Imagine\Cache\CacheManager;
 
 class ImageHelper
 {
-    /** @var CacheManager */
-    private $cacheManager;
+    private CacheManager $cacheManager;
+    private ManagerInterface $fileManager;
 
-    /** @var Manager */
-    private $fileManager;
-
-    public function __construct(CacheManager $cacheManager, Manager $fileManager)
+    public function __construct(CacheManager $cacheManager, ManagerInterface $fileManager)
     {
         $this->cacheManager = $cacheManager;
         $this->fileManager = $fileManager;
     }
 
-    public function getUrl(File $file, string $mode)
+    public function getUrl(File $file, string $filter)
     {
-        return $this->cacheManager->getBrowserPath($this->fileManager->getPathname($file), $mode);
+        return $this->cacheManager->getBrowserPath($this->fileManager->getPathname($file), $filter);
     }
 }
 ```
@@ -303,7 +309,6 @@ final class Upload
     }
 }
 ```
-
 
 ```php
 <?php
@@ -373,7 +378,8 @@ class File extends \Arxy\FilesBundle\Entity\File
 
 ```
 
-Serving depends from how you want to serve it. You might want to use LiipImagineBundle as mention above, or CDN solution.
+Serving depends from how you want to serve it. You might want to use LiipImagineBundle as mention above, or CDN
+solution.
 
 If you want to use it with own image hosting and LiipImagineBundle, you probably could add something like that:
 
@@ -461,17 +467,17 @@ You will receive following json as response:
 
 ```json
 {
-   "id":145,
-   "formats":{
-      "squared_thumbnail":"https:\/\/host.com\/media\/cache\/resolve\/squared_thumbnail\/1\/4\/5\/145"
-   }
+  "id": 145,
+  "formats": {
+    "squared_thumbnail": "https:\/\/host.com\/media\/cache\/resolve\/squared_thumbnail\/1\/4\/5\/145"
+  }
 }
 ```
 
 ## Migrating between naming strategy.
 
-First configure the new naming strategy, but keep the old one as service.
-Then register the command for migration:
+First configure the new naming strategy, but keep the old one as service. Then register the command for migration:
+
 ```yaml
 services:
     Arxy\FilesBundle\Command\MigrateNamingStrategyCommand:
@@ -479,11 +485,69 @@ services:
             $oldNamingStrategy: 'old_naming_strategy_service_id'
 ```
 
-then run it. 
+then run it.
+
 ```shell script
 bin/console arxy:files:migrate-naming-strategy
 ```
 
 Please note that until files are migrated - if some file is requested - it will throw error.
 
+## PathResolver: used to generate browser URL to access the file. Few built-in resolvers exists:
 
+### AssetsPathResolver:
+
+```yaml
+    Arxy\FilesBundle\PathResolver\AssetsPathResolver:
+        arguments:
+            $manager: '@Arxy\FilesBundle\Manager' # this is important, you should pass non-decorated Manager, to avoid circular dependancy.
+            $package: 'packageName' # https://symfony.com/doc/current/components/asset.html#asset-packages
+
+    Arxy\FilesBundle\PathResolver:
+        alias: App\LocalPathResolver
+
+    Arxy\FilesBundle\PathResolverManager:
+        decorates: Arxy\FilesBundle\ManagerInterface
+        arguments:
+            $manager: '@Arxy\FilesBundle\PathResolverManager.inner'
+```
+
+### AwsS3PathResolver:
+
+```yaml
+    Arxy\FilesBundle\PathResolver\AwsS3PathResolver:
+        arguments:
+            $bucket: '%env(AWS_S3_BUCKET)%'
+            $manager: '@Arxy\FilesBundle\Manager'
+
+    Arxy\FilesBundle\PathResolver:
+        alias: Arxy\FilesBundle\PathResolver\AwsS3PathResolver
+
+    Arxy\FilesBundle\PathResolverManager:
+        decorates: Arxy\FilesBundle\ManagerInterface
+        arguments:
+            $manager: '@Arxy\FilesBundle\PathResolverManager.inner'
+```
+
+### Cached Path Resolver: 
+Used to cache the result from decorated Path Resolver. 
+Useful for example in conjunction with AwsS3PathResolver, where to get the path to uploaded file, an API call is made.
+This resolver will cache the response from AWS S3 servers and next time you need the file path, it will be returned from cache.
+
+    Arxy\FilesBundle\PathResolver\AwsS3PathResolver:
+        arguments:
+            $bucket: '%env(AWS_S3_BUCKET)%'
+            $manager: '@Arxy\FilesBundle\Manager'
+
+    Arxy\FilesBundle\PathResolver\SymfonyCachePathResolver:
+        arguments:
+            $pathResolver: '@Arxy\FilesBundle\PathResolver\AwsS3PathResolver'
+            $cache: '@cache.app'
+
+    Arxy\FilesBundle\PathResolver:
+        alias: Arxy\FilesBundle\PathResolver\SymfonyCachePathResolver
+
+    Arxy\FilesBundle\PathResolverManager:
+        decorates: Arxy\FilesBundle\ManagerInterface
+        arguments:
+            $manager: '@Arxy\FilesBundle\PathResolverManager.inner'

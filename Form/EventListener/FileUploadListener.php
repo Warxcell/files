@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Arxy\FilesBundle\Form\EventListener;
 
-use Arxy\FilesBundle\Manager;
+use Arxy\FilesBundle\ManagerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -12,10 +12,10 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class FileUploadListener implements EventSubscriberInterface
 {
-    private Manager $fileManager;
+    private ManagerInterface $fileManager;
     private $data;
 
-    public function __construct(Manager $fileManager)
+    public function __construct(ManagerInterface $fileManager)
     {
         $this->fileManager = $fileManager;
     }
