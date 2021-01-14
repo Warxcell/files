@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Arxy\FilesBundle\Command;
 
-use Arxy\FilesBundle\Manager;
+use Arxy\FilesBundle\ManagerInterface;
 use Arxy\FilesBundle\Model\File;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Symfony\Component\Console\Command\Command;
@@ -15,10 +15,10 @@ class RefreshDatabaseCommand extends Command
 {
     protected static $defaultName = 'arxy:files:refresh-database';
 
-    private Manager $fileManager;
+    private ManagerInterface $fileManager;
     private ManagerRegistry $doctrine;
 
-    public function __construct(Manager $fileManager, ManagerRegistry $registry)
+    public function __construct(ManagerInterface $fileManager, ManagerRegistry $registry)
     {
         parent::__construct();
         $this->fileManager = $fileManager;

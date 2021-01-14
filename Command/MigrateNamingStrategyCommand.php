@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Arxy\FilesBundle\Command;
 
-use Arxy\FilesBundle\Manager;
+use Arxy\FilesBundle\ManagerInterface;
 use Arxy\FilesBundle\Model\File;
 use Arxy\FilesBundle\NamingStrategy;
 use Doctrine\Common\Persistence\ManagerRegistry;
@@ -16,12 +16,15 @@ class MigrateNamingStrategyCommand extends Command
 {
     protected static $defaultName = 'arxy:files:migrate-naming-strategy';
 
-    private Manager $fileManager;
+    private ManagerInterface $fileManager;
     private ManagerRegistry $doctrine;
     private NamingStrategy $oldNamingStrategy;
 
-    public function __construct(Manager $fileManager, ManagerRegistry $registry, NamingStrategy $oldNamingStrategy)
-    {
+    public function __construct(
+        ManagerInterface $fileManager,
+        ManagerRegistry $registry,
+        NamingStrategy $oldNamingStrategy
+    ) {
         parent::__construct();
         $this->fileManager = $fileManager;
         $this->doctrine = $registry;
