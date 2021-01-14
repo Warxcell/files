@@ -142,11 +142,45 @@ class Manager
         }
     }
 
+    private function fileSize(File $file)
+    {
+        $pathname = $this->getPathname($file);
+
+        if ($this->fileMap->has($file)) {
+            return filesize($pathname);
+        } else {
+            return $this->filesystem->fileSize($pathname);
+        }
+    }
+
+    private function md5Hash(File $file)
+    {
+        $pathname = $this->getPathname($file);
+
+        if ($this->fileMap->has($file)) {
+            return md5_file($pathname);
+        } else {
+            return md5($this->filesystem->read($pathname));
+        }
+    }
+
+    private function mimeType(File $file)
+    {
+        $pathname = $this->getPathname($file);
+        if ($this->fileMap->has($file)) {
+            $finfo = new \finfo();
+
+            return $finfo->file($pathname, FILEINFO_MIME_TYPE);
+        } else {
+            return $this->filesystem->mimeType($pathname);
+        }
+    }
+
     public function refresh(File $file): void
     {
-        $file->setFileSize($this->filesystem->fileSize($this->getPathname($file)));
-        $file->setMd5Hash(md5($this->filesystem->read($this->getPathname($file))));
-        $file->setMimeType($this->filesystem->mimeType($this->getPathname($file)));
+        $file->setFileSize($this->fileSize($file));
+        $file->setMd5Hash($this->md5Hash($file));
+        $file->setMimeType($this->mimeType($file));
     }
 
     public function migrate(File $file, NamingStrategy $oldStrategy): bool
