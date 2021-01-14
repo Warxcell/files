@@ -495,7 +495,7 @@ Please note that until files are migrated - if some file is requested - it will 
 
 ## PathResolver: used to generate browser URL to access the file. Few built-in resolvers exists:
 
-### AssetsPathResolver:
+### Arxy\FilesBundle\PathResolver\AssetsPathResolver:
 
 ```yaml
     Arxy\FilesBundle\PathResolver\AssetsPathResolver:
@@ -512,7 +512,7 @@ Please note that until files are migrated - if some file is requested - it will 
             $manager: '@Arxy\FilesBundle\PathResolverManager.inner'
 ```
 
-### AwsS3PathResolver:
+### Arxy\FilesBundle\PathResolver\AwsS3PathResolver:
 
 ```yaml
     Arxy\FilesBundle\PathResolver\AwsS3PathResolver:
@@ -529,11 +529,12 @@ Please note that until files are migrated - if some file is requested - it will 
             $manager: '@Arxy\FilesBundle\PathResolverManager.inner'
 ```
 
-### Cached Path Resolver:
+### Arxy\FilesBundle\PathResolver\SymfonyCachePathResolver:
 
 Used to cache the result from decorated Path Resolver. Useful for example in conjunction with AwsS3PathResolver, where
 to get the path to uploaded file, an API call is made. This resolver will cache the response from AWS S3 servers and
 next time you need the file path, it will be returned from cache.
+Uses https://symfony.com/doc/current/components/cache.html
 
 ```yaml
     Arxy\FilesBundle\PathResolver\AwsS3PathResolver:
