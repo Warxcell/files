@@ -22,11 +22,7 @@ class SplitHashStrategy implements NamingStrategy
 
     public function getDirectoryName(File $file): string
     {
-        $hash = $file->getMd5Hash();
-
-        $path = str_split($hash, $this->splitLength);
-
-        return implode(DIRECTORY_SEPARATOR, $path).DIRECTORY_SEPARATOR;
+        return chunk_split($file->getMd5Hash(), $this->splitLength, DIRECTORY_SEPARATOR);
     }
 
     public function getFileName(File $file): string
