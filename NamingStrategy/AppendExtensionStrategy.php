@@ -16,7 +16,7 @@ class AppendExtensionStrategy implements NamingStrategy
         $this->originalStrategy = $originalStrategy;
     }
 
-    public function getDirectoryName(File $file): string
+    public function getDirectoryName(File $file): ?string
     {
         return $this->originalStrategy->getDirectoryName($file);
     }

@@ -38,7 +38,10 @@ final class Manager implements ManagerInterface
 
         $path = $this->getPathname($entity);
 
-        $this->filesystem->createDirectory($this->namingStrategy->getDirectoryName($entity));
+        $directory = $this->namingStrategy->getDirectoryName($entity);
+        if ($directory !== null) {
+            $this->filesystem->createDirectory($directory);
+        }
 
         $stream = fopen($file->getPathname(), 'r+');
         $this->filesystem->writeStream($path, $stream);

@@ -20,7 +20,7 @@ class SplitHashStrategy implements NamingStrategy
         $this->splitLength = $splitLength;
     }
 
-    public function getDirectoryName(File $file): string
+    public function getDirectoryName(File $file): ?string
     {
         return chunk_split($file->getMd5Hash(), $this->splitLength, DIRECTORY_SEPARATOR);
     }

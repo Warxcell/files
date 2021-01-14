@@ -9,12 +9,11 @@ use Arxy\FilesBundle\NamingStrategy;
 
 class IdToPathStrategy implements NamingStrategy
 {
-    public function getDirectoryName(File $file): string
+    public function getDirectoryName(File $file): ?string
     {
         $id = (string)$file->getId();
-        $path = str_split($id);
 
-        return implode(DIRECTORY_SEPARATOR, $path).DIRECTORY_SEPARATOR;
+        return chunk_split($id, 1, DIRECTORY_SEPARATOR);
     }
 
     public function getFileName(File $file): string

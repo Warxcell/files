@@ -18,9 +18,12 @@ class DirectoryPrefixStrategy implements NamingStrategy
         $this->prefix = rtrim($prefix, DIRECTORY_SEPARATOR);
     }
 
-    public function getDirectoryName(File $file): string
+    public function getDirectoryName(File $file): ?string
     {
-        return $this->prefix.DIRECTORY_SEPARATOR.$this->originalStrategy->getDirectoryName($file);
+        return rtrim(
+                $this->prefix.DIRECTORY_SEPARATOR.$this->originalStrategy->getDirectoryName($file),
+                DIRECTORY_SEPARATOR
+            ).DIRECTORY_SEPARATOR;
     }
 
     public function getFileName(File $file): string
