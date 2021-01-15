@@ -40,6 +40,7 @@ class FileType extends AbstractType
                 return $options['multiple'] ? null : $this->fileManager->getClass();
             }
         );
+        $resolver->setDefault('error_bubbling', false);
         $resolver->setDefault('input_options', []);
         $resolver->setDefault('multiple', false);
         $resolver->setDefault('compound', true);
