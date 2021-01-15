@@ -13,35 +13,40 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 class FileUploadListener implements EventSubscriberInterface
 {
     private ManagerInterface $fileManager;
-    private $data;
+    private bool $multiple;
 
-    public function __construct(ManagerInterface $fileManager)
+    public function __construct(ManagerInterface $fileManager, bool $multiple)
     {
         $this->fileManager = $fileManager;
+        $this->multiple = $multiple;
     }
 
     public static function getSubscribedEvents()
     {
         return [
-            FormEvents::POST_SET_DATA => 'postSetData',
             FormEvents::SUBMIT => 'submit',
         ];
     }
 
-    public function postSetData(FormEvent $event)
+    private function transform($data)
     {
-        $this->data = $event->getData();
+        if ($this->multiple) {
+            return array_map(
+                fn(UploadedFile $file) => $this->fileManager->upload($data),
+                $data
+            );
+        } else {
+            return $this->fileManager->upload($data);
+        }
     }
 
     public function submit(FormEvent $event)
     {
-        /** @var UploadedFile $uploadedFile */
-        $uploadedFile = $event->getData();
+        /** @var UploadedFile|UploadedFile[] $uploadedFile */
+        $uploadedFile = $event->getForm()->get('file')->getData();
 
-        if ($uploadedFile instanceof UploadedFile && $uploadedFile->isValid()) {
-            $event->setData($this->fileManager->upload($uploadedFile));
-        } else {
-            $event->setData($this->data);
+        if (!empty($uploadedFile)) {
+            $event->setData($this->transform($uploadedFile));
         }
     }
 }

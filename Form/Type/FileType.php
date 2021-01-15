@@ -5,9 +5,9 @@ namespace Arxy\FilesBundle\Form\Type;
 use Arxy\FilesBundle\Form\EventListener\FileUploadListener;
 use Arxy\FilesBundle\ManagerInterface;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\FileType as SymfonyFileType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
+use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class FileType extends AbstractType
@@ -21,22 +21,28 @@ class FileType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->addEventSubscriber(new FileUploadListener($this->fileManager));
-    }
+        $fileOptions = $options['input_options'];
+        $fileOptions['mapped'] = false;
+        $fileOptions['label'] = false;
+        $fileOptions['multiple'] = $options['multiple'];
+        $fileOptions['required'] = $options['required'];
 
-    public function getParent()
-    {
-        return \Symfony\Component\Form\Extension\Core\Type\FileType::class;
+        $builder->add('file', SymfonyFileType::class, $fileOptions);
+
+        $builder->addEventSubscriber(new FileUploadListener($this->fileManager, $options['multiple']));
     }
 
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefault('data_class', null);
-    }
-
-    public function buildView(FormView $view, FormInterface $form, array $options)
-    {
-        $view->vars['file'] = $form->getData();
+        $resolver->setDefault(
+            'data_class',
+            function (Options $options) {
+                return $options['multiple'] ? null : $this->fileManager->getClass();
+            }
+        );
+        $resolver->setDefault('input_options', []);
+        $resolver->setDefault('multiple', false);
+        $resolver->setDefault('compound', true);
     }
 
     public function getBlockPrefix()

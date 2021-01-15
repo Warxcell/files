@@ -13,6 +13,11 @@
         "ext-mbstring": "*",
         "ext-fileinfo": "*"
     },
+    "require-dev": {
+      "symfony/phpunit-bridge": "*",
+      "symfony/validator": "*",
+      "symfony/form": "*"
+    },
     "suggest": {
         "symfony/validator": "Validate files against constraints",
         "symfony/form": "Integrate file upload with forms",
@@ -23,8 +28,5 @@
         "psr-4": {
             "Arxy\\FilesBundle\\": ""
         }
-    },
-    "require-dev": {
-        "symfony/phpunit-bridge": "*"
     }
 }

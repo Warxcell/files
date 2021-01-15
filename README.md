@@ -95,11 +95,12 @@ services:
     Arxy\FilesBundle\EventListener\DoctrineORMListener:
         arguments: [ "@Arxy\\FilesBundle\\ManagerInterface" ] # This can be omit, if using autowiring.
         tags:
-            - { name: doctrine.event_subscriber }
+            - { name: doctrine.event_listener, event: 'postPersist' }
+            - { name: doctrine.event_listener, event: 'preRemove' }
 
     Arxy\FilesBundle\Form\Type\FileType:
         arguments: [ "@Arxy\\FilesBundle\\ManagerInterface" ] # This can be omit, if using autowiring.
-        tags:
+        tags: # This can be omit, if using autowiring.
             - { name: form.type }
 ```
 
@@ -124,6 +125,27 @@ $fileEntity = $fileManager->upload($file);
 Please note that file is not actually moved to its final location until file is persisted into db, which is done by
 Listeners. (Arxy\FilesBundle\DoctrineORMListener for example)
 
+Upload using form Type:
+
+```php
+
+$formMapper->add(
+    'image',
+    FileType::class,
+    [
+        'required' => false,
+        'constraints' => [ConstraintsOnEntity]
+        'input_options' => [
+            'attr' => [
+                'accept' => 'image/*',
+            ],
+            'constraints' => [
+                   SymfonyConstraintsOnFiles
+            ]
+        ],
+    ]
+);
+```
 ## Read file content
 
 ```php
