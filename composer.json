@@ -16,7 +16,9 @@
     "require-dev": {
       "symfony/phpunit-bridge": "*",
       "symfony/validator": "*",
-      "symfony/form": "*"
+      "doctrine/orm": "*",
+      "symfony/form": "*",
+      "symfony/http-foundation": "*"
     },
     "suggest": {
         "symfony/validator": "Validate files against constraints",

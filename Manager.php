@@ -5,26 +5,25 @@ declare(strict_types=1);
 namespace Arxy\FilesBundle;
 
 use Arxy\FilesBundle\Model\File;
-use Doctrine\Common\Persistence\ManagerRegistry;
 use League\Flysystem\FilesystemOperator;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 final class Manager implements ManagerInterface
 {
     private string $class;
-    private ManagerRegistry $doctrine;
+    private Repository $repository;
     private FilesystemOperator $filesystem;
     private NamingStrategy $namingStrategy;
     private FileMap $fileMap;
 
     public function __construct(
         string $class,
-        ManagerRegistry $doctrine,
+        Repository $repository,
         FilesystemOperator $filesystem,
         NamingStrategy $namingStrategy
     ) {
         $this->class = $class;
-        $this->doctrine = $doctrine;
+        $this->repository = $repository;
         $this->filesystem = $filesystem;
         $this->namingStrategy = $namingStrategy;
         $this->fileMap = new FileMap();
@@ -88,10 +87,7 @@ final class Manager implements ManagerInterface
         $fileSize = $file->getSize();
         $md5 = md5_file($file->getPathname());
 
-        /** @var File $fileEntity */
-        $fileEntity = $this->doctrine->getRepository($this->class)->findOneBy(
-            ['md5Hash' => $md5, 'fileSize' => $fileSize]
-        );
+        $fileEntity = $this->repository->findByHashAndSize($md5, $fileSize);
 
         if ($fileEntity === null) {
             $fileEntity = new $this->class();

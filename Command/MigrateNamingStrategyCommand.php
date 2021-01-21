@@ -4,9 +4,9 @@ declare(strict_types=1);
 namespace Arxy\FilesBundle\Command;
 
 use Arxy\FilesBundle\ManagerInterface;
-use Arxy\FilesBundle\Model\File;
 use Arxy\FilesBundle\NamingStrategy;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Arxy\FilesBundle\Repository;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -17,17 +17,20 @@ class MigrateNamingStrategyCommand extends Command
     protected static $defaultName = 'arxy:files:migrate-naming-strategy';
 
     private ManagerInterface $fileManager;
-    private ManagerRegistry $doctrine;
+    private ManagerRegistry $registry;
+    private Repository $repository;
     private NamingStrategy $oldNamingStrategy;
 
     public function __construct(
         ManagerInterface $fileManager,
         ManagerRegistry $registry,
+        Repository $repository,
         NamingStrategy $oldNamingStrategy
     ) {
         parent::__construct();
         $this->fileManager = $fileManager;
-        $this->doctrine = $registry;
+        $this->registry = $registry;
+        $this->repository = $repository;
         $this->oldNamingStrategy = $oldNamingStrategy;
     }
 
@@ -36,19 +39,13 @@ class MigrateNamingStrategyCommand extends Command
         $io = new SymfonyStyle($input, $output);
         $progressBar = $io->createProgressBar();
 
-        $em = $this->doctrine->getManagerForClass($this->fileManager->getClass());
-
-        $queryBuilder = $em->createQueryBuilder();
-        $queryBuilder->select('file')->from($this->fileManager->getClass(), 'file');
-
         $totalMigrated = 0;
         $totalFailed = 0;
 
-        $iterableResult = $queryBuilder->getQuery()->iterate();
-        foreach ($iterableResult as $row) {
-            /** @var File $file */
-            $file = $row[0];
+        $objectManager = $this->registry->getManagerForClass($this->fileManager);
 
+        $files = $this->repository->findAllForBatchProcessing();
+        foreach ($files as $file) {
             $migrated = $this->fileManager->migrate($file, $this->oldNamingStrategy);
             if ($migrated) {
                 $totalMigrated++;
@@ -57,6 +54,8 @@ class MigrateNamingStrategyCommand extends Command
                 $totalFailed++;
                 $io->warning('File '.$file->getId().' not migrated');
             }
+
+            $objectManager->clear();
 
             $progressBar->advance();
         }
