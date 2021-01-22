@@ -2,10 +2,10 @@
 
     {% if form.vars.data %}
         <div>
-            <span>{% trans %}Original filename{% endtrans %}: {{ file.originalFilename }}</span>
-            <span>{% trans %}Size{% endtrans %}: {{ file.fileSize|format_bytes }}</span>
-            <span>{% trans %}Mime Type{% endtrans %}: {{ file.mimeType }}</span>
-            <span>{% trans %}Created{% endtrans %}: {{ file.createdAt|format_datetime }}</span>
+            <span>{% trans %}Original filename{% endtrans %}: {{ form.vars.data.originalFilename }}</span>
+            <span>{% trans %}Size{% endtrans %}: {{ form.vars.data.fileSize|format_bytes }}</span>
+            <span>{% trans %}Mime Type{% endtrans %}: {{ form.vars.data.mimeType }}</span>
+            <span>{% trans %}Created{% endtrans %}: {{ form.vars.data.createdAt|format_datetime }}</span>
         </div>
     {% endif %}
 
