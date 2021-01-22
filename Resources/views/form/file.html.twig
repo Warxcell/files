@@ -1,6 +1,6 @@
 {% block arxy_file_widget %}
 
-    {% if file and file.id %}
+    {% if form.vars.data %}
         <div>
             <span>{% trans %}Original filename{% endtrans %}: {{ file.originalFilename }}</span>
             <span>{% trans %}Size{% endtrans %}: {{ file.fileSize|format_bytes }}</span>
