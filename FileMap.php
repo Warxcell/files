@@ -14,7 +14,7 @@ class FileMap
     /**
      * @var \SplFileInfo[]
      */
-    private $map = [];
+    private array $map = [];
 
     public function put(File $file, \SplFileInfo $fileInfo): void
     {
@@ -36,8 +36,8 @@ class FileMap
         unset($this->map[$this->getObjectId($file)]);
     }
 
-    private function getObjectId(File $file): string
+    private function getObjectId(File $file): int
     {
-        return spl_object_hash($file);
+        return spl_object_id($file);
     }
 }
