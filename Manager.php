@@ -67,7 +67,6 @@ final class Manager implements ManagerInterface
 
             $tempFilename = tempnam(sys_get_temp_dir(), 'file_manager');
             $file = new \SplFileObject($tempFilename, 'r+');
-
             $chunkSize = 1024 * 1024;
             while ($content = $remoteFile->fread($chunkSize)) {
                 $file->fwrite($content);
