@@ -42,7 +42,7 @@ final class Manager implements ManagerInterface
             $this->filesystem->createDirectory($directory);
         }
 
-        $stream = fopen($file->getPathname(), 'r+');
+        $stream = fopen($file->getPathname(), 'r');
         $this->filesystem->writeStream($path, $stream);
         fclose($stream);
     }
