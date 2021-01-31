@@ -14,12 +14,14 @@
         "ext-fileinfo": "*"
     },
     "require-dev": {
-        "symfony/phpunit-bridge": "*",
-        "symfony/validator": "*",
-        "doctrine/orm": "*",
-        "symfony/form": "*",
-        "symfony/http-foundation": "*",
-        "twig/twig": "*"
+      "symfony/phpunit-bridge": "*",
+      "symfony/validator": "*",
+      "doctrine/orm": "*",
+      "symfony/form": "*",
+      "symfony/http-foundation": "*",
+      "twig/twig": "*",
+      "symfony/cache": "*",
+      "symfony/asset": "*"
     },
     "suggest": {
         "symfony/validator": "Validate files against constraints",
