@@ -22,7 +22,7 @@ interface ManagerInterface
 
     public function moveFile(File $file): void;
 
-    public function remove(File $entity): void;
+    public function remove(File $file): void;
 
     public function getClass(): string;
 }
