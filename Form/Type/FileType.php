@@ -29,7 +29,7 @@ class FileType extends AbstractType
 
         $builder->add('file', SymfonyFileType::class, $fileOptions);
 
-        $builder->addEventSubscriber(new FileUploadListener($this->fileManager, $options['multiple']));
+        $builder->addEventSubscriber(new FileUploadListener($options['manager'], $options['multiple']));
     }
 
     public function configureOptions(OptionsResolver $resolver)
@@ -37,13 +37,15 @@ class FileType extends AbstractType
         $resolver->setDefault(
             'data_class',
             function (Options $options) {
-                return $options['multiple'] ? null : $this->fileManager->getClass();
+                return $options['multiple'] ? null : $options['manager']->getClass();
             }
         );
         $resolver->setDefault('error_bubbling', false);
         $resolver->setDefault('input_options', []);
         $resolver->setDefault('multiple', false);
         $resolver->setDefault('compound', true);
+        $resolver->setDefault('manager', $this->fileManager);
+        $resolver->setAllowedTypes('manager', ManagerInterface::class);
     }
 
     public function getBlockPrefix()
