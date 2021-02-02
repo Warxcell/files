@@ -577,3 +577,13 @@ Uses https://symfony.com/doc/current/components/cache.html
         arguments:
             $manager: '@Arxy\FilesBundle\PathResolverManager.inner'
 ```
+
+### Arxy\FilesBundle\PathResolver\DelegatingPathResolver:
+
+Used when your system have multiple file entities:
+
+```yaml
+    Arxy\FilesBundle\PathResolver\DelegatingPathResolver:
+        arguments:
+            $resolvers: {'App\Entity\File': '@resolver'}
+```
