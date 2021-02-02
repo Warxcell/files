@@ -24,13 +24,13 @@ final class DelegatingManager implements ManagerInterface
 
     private function getManagerFor(File $file): ManagerInterface
     {
-        $class = get_class($file);
         foreach ($this->managers as $manager) {
-            if ($manager->getClass() === $class) {
+            $class = $manager->getClass();
+            if ($file instanceof $class) {
                 return $manager;
             }
         }
-        throw new \LogicException('No manager for '.$class);
+        throw new \LogicException('No manager for '.get_class($file));
     }
 
     public function upload(\SplFileInfo $file): File
