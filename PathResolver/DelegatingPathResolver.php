@@ -19,12 +19,13 @@ class DelegatingPathResolver implements PathResolver
 
     private function getResolver(File $file): PathResolver
     {
-        $class = get_class($file);
-        if (!isset($this->resolvers[$class])) {
-            throw new \LogicException('No resolver for '.$class);
+        foreach ($this->resolvers as $class => $resolver) {
+            if ($file instanceof $class) {
+                return $resolver;
+            }
         }
 
-        return $this->resolvers[$class];
+        throw new \LogicException('No resolver for '.get_class($file));
     }
 
     public function getPath(File $file): string
