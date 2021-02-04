@@ -4,16 +4,31 @@ declare(strict_types=1);
 
 namespace Arxy\FilesBundle\Twig;
 
+use Arxy\FilesBundle\ManagerInterface;
+use Arxy\FilesBundle\Model\File;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 
 class FilesExtension extends AbstractExtension
 {
-    public function getFilters()
+    private ManagerInterface $manager;
+
+    public function __construct(ManagerInterface $manager)
+    {
+        $this->manager = $manager;
+    }
+
+    public function getFilters(): array
     {
         return [
             new TwigFilter('format_bytes', [$this, 'formatBytes']),
+            new TwigFilter('file_content', [$this, 'readContent']),
         ];
+    }
+
+    public function readContent(File $file): string
+    {
+        return $this->manager->read($file);
     }
 
     public function formatBytes($bytes, $precision = 2): string
