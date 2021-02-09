@@ -11,9 +11,12 @@ use Symfony\Component\Asset\Packages;
 
 class AssetsPathResolver implements PathResolver
 {
-    private ManagerInterface $manager;
-    private Packages $packages;
-    private ?string $package;
+    /** @var ManagerInterface */
+    private $manager;
+    /** @var Packages */
+    private $packages;
+    /** @var string|null */
+    private $package;
 
     public function __construct(ManagerInterface $manager, Packages $packages, string $package = null)
     {

@@ -9,7 +9,8 @@ use Arxy\FilesBundle\NamingStrategy;
 
 class SplitHashStrategy implements NamingStrategy
 {
-    private int $splitLength;
+    /** @var int */
+    private $splitLength;
 
     public function __construct(int $splitLength = 4)
     {

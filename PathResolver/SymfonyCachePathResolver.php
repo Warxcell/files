@@ -10,8 +10,10 @@ use Symfony\Contracts\Cache\ItemInterface;
 
 class SymfonyCachePathResolver implements PathResolver
 {
-    private PathResolver $pathResolver;
-    private CacheInterface $cache;
+    /** @var PathResolver */
+    private $pathResolver;
+    /** @var CacheInterface */
+    private $cache;
     /** @var int|\DateInterval|null $time */
     private $expiresAfter;
 

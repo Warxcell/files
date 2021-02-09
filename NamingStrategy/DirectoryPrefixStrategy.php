@@ -9,8 +9,10 @@ use Arxy\FilesBundle\NamingStrategy;
 
 class DirectoryPrefixStrategy implements NamingStrategy
 {
-    private NamingStrategy $originalStrategy;
-    private string $prefix;
+    /** @var NamingStrategy */
+    private $originalStrategy;
+    /** @var string */
+    private $prefix;
 
     public function __construct(NamingStrategy $originalStrategy, string $prefix)
     {

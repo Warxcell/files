@@ -11,7 +11,8 @@ use Twig\TwigFilter;
 
 class FilesExtension extends AbstractExtension
 {
-    private ManagerInterface $manager;
+    /** @var ManagerInterface */
+    private $manager;
 
     public function __construct(ManagerInterface $manager)
     {

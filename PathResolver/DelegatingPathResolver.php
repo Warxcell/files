@@ -10,7 +10,7 @@ use Arxy\FilesBundle\PathResolver;
 class DelegatingPathResolver implements PathResolver
 {
     /** @var PathResolver[] */
-    private array $resolvers;
+    private $resolvers;
 
     public function __construct(array $resolvers)
     {

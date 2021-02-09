@@ -11,7 +11,8 @@ use Twig\TwigFunction;
 
 class PathResolverExtension extends AbstractExtension
 {
-    private PathResolver $pathResolver;
+    /** @var PathResolver */
+    private $pathResolver;
 
     public function __construct(PathResolver $pathResolver)
     {

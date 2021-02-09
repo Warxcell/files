@@ -7,8 +7,10 @@ use Arxy\FilesBundle\Model\File;
 
 final class PathResolverManager implements ManagerInterface, PathResolver
 {
-    private ManagerInterface $manager;
-    private PathResolver $pathResolver;
+    /** @var ManagerInterface */
+    private $manager;
+    /** @var PathResolver */
+    private $pathResolver;
 
     public function __construct(ManagerInterface $manager, PathResolver $pathResolver)
     {

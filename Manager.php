@@ -10,11 +10,16 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 final class Manager implements ManagerInterface
 {
-    private string $class;
-    private Repository $repository;
-    private FilesystemOperator $filesystem;
-    private NamingStrategy $namingStrategy;
-    private FileMap $fileMap;
+    /** @var string */
+    private $class;
+    /** @var Repository */
+    private $repository;
+    /** @var FilesystemOperator */
+    private $filesystem;
+    /** @var NamingStrategy */
+    private $namingStrategy;
+    /** @var FileMap */
+    private $fileMap;
 
     public function __construct(
         string $class,

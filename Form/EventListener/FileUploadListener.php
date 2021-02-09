@@ -12,8 +12,10 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class FileUploadListener implements EventSubscriberInterface
 {
-    private ManagerInterface $fileManager;
-    private bool $multiple;
+    /** @var ManagerInterface */
+    private $fileManager;
+    /** @var bool */
+    private $multiple;
 
     public function __construct(ManagerInterface $fileManager, bool $multiple)
     {
@@ -32,7 +34,9 @@ class FileUploadListener implements EventSubscriberInterface
     {
         if ($this->multiple) {
             return array_map(
-                fn(UploadedFile $file) => $this->fileManager->upload($file),
+                function (UploadedFile $file) {
+                    return $this->fileManager->upload($file);
+                },
                 $data
             );
         } else {

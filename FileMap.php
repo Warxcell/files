@@ -14,7 +14,7 @@ class FileMap
     /**
      * @var \SplFileInfo[]
      */
-    private array $map = [];
+    private $map = [];
 
     public function put(File $file, \SplFileInfo $fileInfo): void
     {

@@ -16,10 +16,14 @@ class MigrateNamingStrategyCommand extends Command
 {
     protected static $defaultName = 'arxy:files:migrate-naming-strategy';
 
-    private ManagerInterface $fileManager;
-    private ManagerRegistry $registry;
-    private Repository $repository;
-    private NamingStrategy $oldNamingStrategy;
+    /** @var ManagerInterface */
+    private $fileManager;
+    /** @var ManagerRegistry */
+    private $registry;
+    /** @var Repository */
+    private $repository;
+    /** @var NamingStrategy */
+    private $oldNamingStrategy;
 
     public function __construct(
         ManagerInterface $fileManager,

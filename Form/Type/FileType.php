@@ -12,7 +12,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class FileType extends AbstractType
 {
-    private ManagerInterface $fileManager;
+    /** @var ManagerInterface */
+    private $fileManager;
 
     public function __construct(ManagerInterface $fileManager)
     {

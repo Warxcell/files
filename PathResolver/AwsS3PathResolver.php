@@ -10,9 +10,12 @@ use Aws\S3\S3ClientInterface;
 
 class AwsS3PathResolver implements PathResolver
 {
-    private S3ClientInterface $s3Client;
-    private string $bucket;
-    private ManagerInterface $manager;
+    /** @var S3ClientInterface */
+    private $s3Client;
+    /** @var string */
+    private $bucket;
+    /** @var ManagerInterface */
+    private $manager;
 
     public function __construct(S3ClientInterface $s3Client, string $bucket, ManagerInterface $manager)
     {

@@ -8,9 +8,14 @@ use Arxy\FilesBundle\Model\File;
 final class DelegatingManager implements ManagerInterface
 {
     /** @var ManagerInterface[] */
-    private array $managers;
-    private ManagerInterface $manager;
+    private $managers;
+    /** @var ManagerInterface */
+    private $manager;
 
+    /**
+     * @param ManagerInterface[] $managers
+     * @param ManagerInterface|null $manager
+     */
     public function __construct(array $managers, ManagerInterface $manager = null)
     {
         $this->managers = $managers;
