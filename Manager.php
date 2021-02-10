@@ -43,8 +43,13 @@ final class Manager implements ManagerInterface
         }
 
         $stream = fopen($file->getPathname(), 'r');
+        if (!$stream) {
+            throw new \RuntimeException('Failed to open ', $file->getPathname());
+        }
         $this->filesystem->writeStream($path, $stream);
-        fclose($stream);
+        if (is_resource($stream)) {
+            fclose($stream);
+        }
     }
 
     public function remove(File $entity): void
