@@ -21,7 +21,9 @@
       "symfony/http-foundation": "*",
       "twig/twig": "*",
       "symfony/cache": "*",
-      "symfony/asset": "*"
+      "symfony/asset": "*",
+      "microsoft/azure-storage-blob": "*",
+      "aws/aws-sdk-php": "*"
     },
     "suggest": {
         "symfony/validator": "Validate files against constraints",
