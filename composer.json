@@ -14,17 +14,17 @@
         "ext-fileinfo": "*"
     },
     "require-dev": {
-      "symfony/phpunit-bridge": "*",
-      "symfony/validator": "*",
-      "doctrine/orm": "*",
-      "symfony/form": "*",
-      "symfony/http-foundation": "*",
-      "twig/twig": "*",
-      "symfony/cache": "*",
-      "symfony/asset": "*",
-      "microsoft/azure-storage-blob": "*",
-      "aws/aws-sdk-php": "*",
-      "league/flysystem-memory": "^2.0"
+        "symfony/phpunit-bridge": "*",
+        "symfony/validator": "*",
+        "doctrine/orm": "*",
+        "symfony/form": "*",
+        "symfony/http-foundation": "*",
+        "twig/twig": "*",
+        "symfony/cache": "*",
+        "symfony/asset": "*",
+        "microsoft/azure-storage-blob": "*",
+        "aws/aws-sdk-php": "*",
+        "league/flysystem-memory": "^2.0"
     },
     "suggest": {
         "symfony/validator": "Validate files against constraints",

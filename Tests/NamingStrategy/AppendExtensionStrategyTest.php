@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Arxy\FilesBundle\Tests\NamingStrategy;
@@ -11,7 +12,7 @@ class AppendExtensionStrategyTest extends AbstractStrategyTest
     public function getStrategy(): NamingStrategy
     {
         return new NamingStrategy\AppendExtensionStrategy(
-            new class implements NamingStrategy {
+            new class() implements NamingStrategy {
                 public function getDirectoryName(\Arxy\FilesBundle\Model\File $file): string
                 {
                     return '1/2/3/';
