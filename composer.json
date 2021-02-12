@@ -23,7 +23,8 @@
       "symfony/cache": "*",
       "symfony/asset": "*",
       "microsoft/azure-storage-blob": "*",
-      "aws/aws-sdk-php": "*"
+      "aws/aws-sdk-php": "*",
+      "league/flysystem-memory": "^2.0"
     },
     "suggest": {
         "symfony/validator": "Validate files against constraints",

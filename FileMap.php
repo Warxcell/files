@@ -28,6 +28,10 @@ class FileMap
 
     public function get(File $file): \SplFileInfo
     {
+        if (!$this->has($file)) {
+            throw new \InvalidArgumentException('File not found in map');
+        }
+
         return $this->map[$this->getObjectId($file)];
     }
 
