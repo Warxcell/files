@@ -21,7 +21,8 @@
       "symfony/http-foundation": "*",
       "twig/twig": "*",
       "symfony/cache": "*",
-      "symfony/asset": "*"
+      "symfony/asset": "*",
+      "league/flysystem-memory": "^2.0"
     },
     "suggest": {
         "symfony/validator": "Validate files against constraints",
