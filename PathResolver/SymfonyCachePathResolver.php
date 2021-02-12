@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Arxy\FilesBundle\PathResolver;
@@ -12,7 +13,7 @@ class SymfonyCachePathResolver implements PathResolver
 {
     private PathResolver $pathResolver;
     private CacheInterface $cache;
-    /** @var int|\DateInterval|null $time */
+    /** @var int|\DateInterval|null */
     private $expiresAfter;
 
     public function __construct(PathResolver $pathResolver, CacheInterface $cache, $expiresAfter = null)
