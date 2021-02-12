@@ -71,7 +71,7 @@ class ManagerTest extends TestCase
 
     public function testSimpleDelete()
     {
-        $this->assertFileNotExists($this->uploadDirectory.'/2');
+        $this->assertFileDoesNotExist($this->uploadDirectory.'/2');
 
         /** @var File $file */
         $file = $this->manager->upload(new \SplFileObject(__DIR__.'/files/image1.jpg'));
@@ -82,7 +82,7 @@ class ManagerTest extends TestCase
         $this->assertFileExists($this->uploadDirectory.'/1');
 
         $this->manager->remove($file);
-        $this->assertFileNotExists($this->uploadDirectory.'/2');
+        $this->assertFileDoesNotExist($this->uploadDirectory.'/2');
     }
 
     public function testTemporaryFilePathname()
