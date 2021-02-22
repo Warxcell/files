@@ -6,6 +6,8 @@ namespace Arxy\FilesBundle;
 
 use Arxy\FilesBundle\Model\File;
 use League\Flysystem\FilesystemOperator;
+use League\MimeTypeDetection\FinfoMimeTypeDetector;
+use League\MimeTypeDetection\MimeTypeDetector;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 final class Manager implements ManagerInterface
@@ -15,18 +17,21 @@ final class Manager implements ManagerInterface
     private FilesystemOperator $filesystem;
     private NamingStrategy $namingStrategy;
     private FileMap $fileMap;
+    private MimeTypeDetector $mimeTypeDetector;
 
     public function __construct(
         string $class,
         Repository $repository,
         FilesystemOperator $filesystem,
-        NamingStrategy $namingStrategy
+        NamingStrategy $namingStrategy,
+        MimeTypeDetector $mimeTypeDetector = null
     ) {
         $this->class = $class;
         $this->repository = $repository;
         $this->filesystem = $filesystem;
         $this->namingStrategy = $namingStrategy;
         $this->fileMap = new FileMap();
+        $this->mimeTypeDetector = $mimeTypeDetector ?: new FinfoMimeTypeDetector();
     }
 
     public function moveFile(File $entity): void
@@ -59,9 +64,12 @@ final class Manager implements ManagerInterface
 
     private function getMimeTypeByFile(\SplFileInfo $file): string
     {
-        $finfo = new \finfo();
+        $mimeType = $this->mimeTypeDetector->detectMimeTypeFromFile($file->getPathname());
+        if ($mimeType === null) {
+            throw new \InvalidArgumentException('Failed to detect mimeType for '.$file->getPathname());
+        }
 
-        return $finfo->file($file->getPathname(), FILEINFO_MIME_TYPE);
+        return $mimeType;
     }
 
     public function upload(\SplFileInfo $file): File
@@ -169,12 +177,11 @@ final class Manager implements ManagerInterface
 
     private function mimeType(File $file)
     {
-        $pathname = $this->getPathname($file);
         if ($this->fileMap->has($file)) {
-            $finfo = new \finfo();
-
-            return $finfo->file($pathname, FILEINFO_MIME_TYPE);
+            return $this->getMimeTypeByFile($this->fileMap->get($file));
         } else {
+            $pathname = $this->getPathname($file);
+
             return $this->filesystem->mimeType($pathname);
         }
     }

@@ -11,7 +11,8 @@
         "php": "^7.4 | ^8.0",
         "league/flysystem": "^2.0",
         "ext-mbstring": "*",
-        "ext-fileinfo": "*"
+        "ext-fileinfo": "*",
+        "league/mime-type-detection": "^1.7"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "*",
