@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Arxy\FilesBundle\Repository;
 
-
 use Arxy\FilesBundle\Model\File;
 use Doctrine\ORM\QueryBuilder;
 

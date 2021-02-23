@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Arxy\FilesBundle\Form\Type;
 
 use Arxy\FilesBundle\Form\EventListener\FileUploadListener;
