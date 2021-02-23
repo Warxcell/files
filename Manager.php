@@ -153,7 +153,7 @@ final class Manager implements ManagerInterface
         }
     }
 
-    private function fileSize(File $file)
+    private function fileSize(File $file): int
     {
         $pathname = $this->getPathname($file);
 
@@ -164,7 +164,7 @@ final class Manager implements ManagerInterface
         }
     }
 
-    private function md5Hash(File $file)
+    private function md5Hash(File $file): string
     {
         $pathname = $this->getPathname($file);
 
@@ -175,7 +175,7 @@ final class Manager implements ManagerInterface
         }
     }
 
-    private function mimeType(File $file)
+    private function mimeType(File $file): string
     {
         if ($this->fileMap->has($file)) {
             return $this->getMimeTypeByFile($this->fileMap->get($file));
@@ -211,5 +211,10 @@ final class Manager implements ManagerInterface
     public function getClass(): string
     {
         return $this->class;
+    }
+
+    public function clear(): void
+    {
+        $this->fileMap = new FileMap();
     }
 }

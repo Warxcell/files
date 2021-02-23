@@ -25,4 +25,6 @@ interface ManagerInterface
     public function remove(File $file): void;
 
     public function getClass(): string;
+
+    public function clear(): void;
 }

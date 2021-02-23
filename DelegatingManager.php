@@ -78,4 +78,13 @@ final class DelegatingManager implements ManagerInterface
     {
         return $this->manager->getClass();
     }
+
+    public function clear(): void
+    {
+        $this->manager->clear();
+
+        foreach ($this->managers as $manager) {
+            $manager->clear();
+        }
+    }
 }

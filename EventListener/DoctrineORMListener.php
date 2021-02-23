@@ -8,6 +8,7 @@ use Arxy\FilesBundle\ManagerInterface;
 use Arxy\FilesBundle\Model\File;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LifecycleEventArgs;
+use Doctrine\ORM\Event\OnClearEventArgs;
 
 class DoctrineORMListener implements EventSubscriber
 {
@@ -23,6 +24,7 @@ class DoctrineORMListener implements EventSubscriber
         return [
             'postPersist',
             'preRemove',
+            'onClear',
         ];
     }
 
@@ -44,5 +46,10 @@ class DoctrineORMListener implements EventSubscriber
         if ($entity instanceof File && $entity instanceof $class) {
             $this->manager->remove($entity);
         }
+    }
+
+    public function onClear(OnClearEventArgs $args)
+    {
+        $this->manager->clear();
     }
 }

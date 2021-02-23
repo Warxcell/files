@@ -66,4 +66,9 @@ final class PathResolverManager implements ManagerInterface, PathResolver
     {
         return $this->pathResolver->getPath($file);
     }
+
+    public function clear(): void
+    {
+        $this->manager->clear();
+    }
 }
