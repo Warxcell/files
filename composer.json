@@ -13,7 +13,6 @@
         "league/mime-type-detection": "^1.7"
     },
     "require-dev": {
-        "symfony/phpunit-bridge": "*",
         "symfony/validator": "*",
         "doctrine/orm": "*",
         "symfony/form": "*",
@@ -25,7 +24,8 @@
         "aws/aws-sdk-php": "*",
         "league/flysystem-memory": "^2.0",
         "ext-fileinfo": "*",
-        "friendsofphp/php-cs-fixer": "^2.18"
+        "friendsofphp/php-cs-fixer": "^2.18",
+        "phpunit/phpunit": "^9.5"
     },
     "suggest": {
         "symfony/validator": "Validate files against constraints",

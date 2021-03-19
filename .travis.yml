@@ -8,7 +8,7 @@ install:
     - COMPOSER_MEMORY_LIMIT=-1 travis_retry composer update
 
 script:
-    - ./vendor/bin/simple-phpunit --coverage-clover coverage.xml
+    - ./vendor/bin/phpunit --coverage-clover coverage.xml
 
 after_success:
     - bash <(curl -s https://codecov.io/bash)
