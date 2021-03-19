@@ -25,7 +25,9 @@
         "league/flysystem-memory": "^2.0",
         "ext-fileinfo": "*",
         "friendsofphp/php-cs-fixer": "^2.18",
-        "phpunit/phpunit": "^9.5"
+        "phpunit/phpunit": "^9.5",
+        "symfony/http-kernel": "*",
+        "symfony/dependency-injection": "^5.2"
     },
     "suggest": {
         "symfony/validator": "Validate files against constraints",
@@ -35,7 +37,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Arxy\\FilesBundle\\": ""
+            "Arxy\\FilesBundle\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Arxy\\FilesBundle\\Tests\\": "tests/"
         }
     }
 }
