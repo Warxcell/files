@@ -49,7 +49,10 @@ class DelegatingPathResolverTest extends TestCase
     {
         $this->assertSame(File::class, $this->pathResolver->getPath(new File()));
         $this->assertSame(File2::class, $this->pathResolver->getPath(new File2()));
+    }
 
+    public function testNotManagedFile()
+    {
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('No resolver for '.File3::class);
         $this->pathResolver->getPath(new File3());
