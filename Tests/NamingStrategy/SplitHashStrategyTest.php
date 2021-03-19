@@ -16,7 +16,7 @@ class SplitHashStrategyTest extends AbstractStrategyTest
 
     public function getExpectedDirectoryName(): string
     {
-        return '098f/6bcd/4621/d373/cade/4e83/2627/b4f6/';
+        return '098f6bcd/4621d373/cade4e83/2627b4f6/';
     }
 
     public function getExpectedFileName(): string
