@@ -23,7 +23,10 @@ class ManagerTest extends TestCase
         $this->filesystem = new Filesystem(new InMemoryFilesystemAdapter());
 
         $this->manager = new Manager(
-            File::class, new FileRepository(), $this->filesystem, new class implements NamingStrategy {
+            File::class,
+            new FileRepository(),
+            $this->filesystem,
+            new class implements NamingStrategy {
                 public function getDirectoryName(\Arxy\FilesBundle\Model\File $file): ?string
                 {
                     return null;

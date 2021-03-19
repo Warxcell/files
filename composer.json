@@ -24,7 +24,8 @@
         "microsoft/azure-storage-blob": "*",
         "aws/aws-sdk-php": "*",
         "league/flysystem-memory": "^2.0",
-        "ext-fileinfo": "*"
+        "ext-fileinfo": "*",
+        "friendsofphp/php-cs-fixer": "^2.18"
     },
     "suggest": {
         "symfony/validator": "Validate files against constraints",
