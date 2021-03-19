@@ -31,4 +31,12 @@ class SplitHashStrategyTest extends AbstractStrategyTest
 
         return $file;
     }
+
+    public function testIncorrectSplitLength()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('$splitLength parameter must be modulus of 32');
+
+        new NamingStrategy\SplitHashStrategy(6);
+    }
 }
