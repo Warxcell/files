@@ -361,4 +361,17 @@ class ManagerTest extends TestCase
 
         $this->assertFalse($manager->migrate($file, $oldStrategy));
     }
+
+    public function testClear()
+    {
+        $file = $this->manager->upload(new \SplFileObject(__DIR__.'/files/image1.jpg'));
+        assert($file instanceof File);
+        $file->setId(1);
+        $this->manager->clear();
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('File not found in map');
+
+        $this->manager->moveFile($file);
+    }
 }
