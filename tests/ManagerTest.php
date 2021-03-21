@@ -88,6 +88,49 @@ class ManagerTest extends TestCase
         $this->assertEquals('image/jpeg', $file->getMimeType());
     }
 
+    public function testNamingStrategyWithDirectory()
+    {
+        $manager = new Manager(
+            File::class,
+            new FileRepository(),
+            $this->filesystem,
+            new class implements NamingStrategy {
+                public function getDirectoryName(\Arxy\FilesBundle\Model\File $file): ?string
+                {
+                    return 'directory/test/';
+                }
+
+                public function getFileName(\Arxy\FilesBundle\Model\File $file): string
+                {
+                    return 'directory_test.jpg';
+                }
+            }
+        );
+
+        $file = $manager->upload(new \SplFileObject(__DIR__.'/files/image1.jpg'));
+        assert($file instanceof File);
+        $file->setId(1);
+
+        $manager->moveFile($file);
+
+        $this->assertTrue($this->filesystem->fileExists('directory/test/directory_test.jpg'));
+    }
+
+    public function testUploadDeletedFile()
+    {
+        $forUpload = __DIR__.'/files/image1.jpg';
+        $tmpFile = tempnam(sys_get_temp_dir(), 'arxy_files');
+        copy($forUpload, $tmpFile);
+
+        $file = $this->manager->upload(new \SplFileObject($tmpFile));
+        assert($file instanceof File);
+        $file->setId(1);
+        unlink($tmpFile);
+
+        $this->expectException(\RuntimeException::class);
+        $this->manager->moveFile($file);
+    }
+
     public function testWrongFileMove()
     {
         $this->expectException(\InvalidArgumentException::class);

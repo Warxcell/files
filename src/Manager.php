@@ -47,9 +47,9 @@ final class Manager implements ManagerInterface
             $this->filesystem->createDirectory($directory);
         }
 
-        $stream = fopen($file->getPathname(), 'r');
+        $stream = @fopen($file->getPathname(), 'r');
         if (!$stream) {
-            throw new \RuntimeException('Failed to open ', $file->getPathname());
+            throw new \RuntimeException('Failed to open '.$file->getPathname());
         }
         $this->filesystem->writeStream($path, $stream);
         if (is_resource($stream)) {
