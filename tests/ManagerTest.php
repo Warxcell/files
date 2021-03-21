@@ -249,9 +249,12 @@ class ManagerTest extends TestCase
             }
         );
 
-        $manager->migrate($file, $oldStrategy);
+        $this->assertTrue($manager->migrate($file, $oldStrategy));
 
         $this->assertFalse($this->filesystem->fileExists('7'));
         $this->assertTrue($this->filesystem->fileExists('test_migrate_7'));
+
+
+        $this->assertFalse($manager->migrate($file, $oldStrategy));
     }
 }
