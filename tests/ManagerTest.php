@@ -10,6 +10,7 @@ use League\Flysystem\Filesystem;
 use League\Flysystem\FilesystemOperator;
 use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class ManagerTest extends TestCase
 {
@@ -73,6 +74,18 @@ class ManagerTest extends TestCase
         $this->assertTrue($this->filesystem->fileExists('1'));
         $this->assertEquals('9aa1c5fc7c9388166d7ce7fd46648dd1', md5($this->filesystem->read('1')));
         $this->assertEquals(24053, strlen($this->filesystem->read('1')));
+    }
+
+    public function testUploadedFileUpload()
+    {
+        $uploadedFile = new UploadedFile(__DIR__.'/files/image1.jpg', 'image_1_uploaded.jpg', 'image/jpg');
+        $file = $this->manager->upload($uploadedFile);
+
+        $this->assertTrue($file instanceof File);
+        $this->assertEquals('9aa1c5fc7c9388166d7ce7fd46648dd1', $file->getMd5Hash());
+        $this->assertEquals(24053, $file->getFileSize());
+        $this->assertEquals('image_1_uploaded.jpg', $file->getOriginalFilename());
+        $this->assertEquals('image/jpeg', $file->getMimeType());
     }
 
     public function testWrongFileMove()
