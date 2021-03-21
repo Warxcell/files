@@ -116,7 +116,7 @@ class ManagerTest extends TestCase
         $this->assertTrue($this->filesystem->fileExists('directory/test/directory_test.jpg'));
     }
 
-    public function testUploadDeletedFile()
+    public function testMoveDeletedFile()
     {
         $forUpload = __DIR__.'/files/image1.jpg';
         $tmpFile = tempnam(sys_get_temp_dir(), 'arxy_files');
@@ -290,7 +290,6 @@ class ManagerTest extends TestCase
         $file->setId(6);
 
         $this->assertEquals('9aa1c5fc7c9388166d7ce7fd46648dd1', $file->getMd5Hash());
-        $this->assertEquals('9aa1c5fc7c9388166d7ce7fd46648dd1', $file->getMd5Hash());
 //        $this->assertEquals(24053, $file->getFileSize());
         $this->assertEquals('image/jpeg', $file->getMimeType());
 
@@ -300,6 +299,21 @@ class ManagerTest extends TestCase
         $this->assertEquals('59aeac36ae75786be1b573baad0e77c0', $file->getMd5Hash());
 //        $this->assertEquals(22518, $file->getFileSize());
         $this->assertEquals('image/jpeg', $file->getMimeType());
+    }
+
+    public function testRefreshDeletedFile()
+    {
+        $forUpload = __DIR__.'/files/image1.jpg';
+        $tmpFile = tempnam(sys_get_temp_dir(), 'arxy_files');
+        copy($forUpload, $tmpFile);
+
+        $file = $this->manager->upload(new \SplFileObject($tmpFile));
+
+        unlink($tmpFile);
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Failed to detect mimeType for '.$tmpFile);
+        $this->manager->refresh($file);
     }
 
     public function testMigrateStrategy()

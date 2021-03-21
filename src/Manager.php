@@ -188,9 +188,9 @@ final class Manager implements ManagerInterface
 
     public function refresh(File $file): void
     {
+        $file->setMimeType($this->mimeType($file));
         $file->setFileSize($this->fileSize($file));
         $file->setMd5Hash($this->md5Hash($file));
-        $file->setMimeType($this->mimeType($file));
     }
 
     public function migrate(File $file, NamingStrategy $oldStrategy): bool
