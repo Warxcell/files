@@ -53,6 +53,28 @@ class ManagerTest extends TestCase
         $this->assertEquals('image/jpeg', $file->getMimeType());
     }
 
+    public function testSimpleUploadFromUrl()
+    {
+        $url = 'file:///'.__DIR__.'/files/image1.jpg';
+
+        $this->assertEquals(File::class, $this->manager->getClass());
+        /** @var File $file */
+        $file = $this->manager->upload(new \SplFileObject($url));
+        $file->setId(1);
+
+        $this->assertTrue($file instanceof File);
+        $this->assertEquals('9aa1c5fc7c9388166d7ce7fd46648dd1', $file->getMd5Hash());
+        $this->assertEquals(24053, $file->getFileSize());
+        $this->assertEquals('image1.jpg', $file->getOriginalFilename());
+        $this->assertEquals('image/jpeg', $file->getMimeType());
+
+        $this->manager->moveFile($file);
+
+        $this->assertTrue($this->filesystem->fileExists('1'));
+        $this->assertEquals('9aa1c5fc7c9388166d7ce7fd46648dd1', md5($this->filesystem->read('1')));
+        $this->assertEquals(24053, strlen($this->filesystem->read('1')));
+    }
+
     public function testWrongFileMove()
     {
         $this->expectException(\InvalidArgumentException::class);
