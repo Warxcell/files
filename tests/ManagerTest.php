@@ -181,6 +181,7 @@ class ManagerTest extends TestCase
 
         $this->manager->moveFile($file);
 
+        $this->assertTrue($this->filesystem->fileExists('6'));
         $this->assertEquals(md5_file($forUpload), md5($this->filesystem->read('6')));
         $this->assertEquals('9aa1c5fc7c9388166d7ce7fd46648dd1', $file->getMd5Hash());
         $this->assertEquals(24053, $file->getFileSize());
@@ -195,5 +196,62 @@ class ManagerTest extends TestCase
         //$this->assertEquals(22518, $file->getFileSize());
         $this->assertEquals('image1.jpg', $file->getOriginalFilename());
         $this->assertEquals('image/jpeg', $file->getMimeType());
+    }
+
+    public function testMigrateStrategy()
+    {
+        $forUpload = __DIR__.'/files/image1.jpg';
+
+        $oldStrategy = new class implements NamingStrategy {
+            public function getDirectoryName(\Arxy\FilesBundle\Model\File $file): ?string
+            {
+                return null;
+            }
+
+            public function getFileName(\Arxy\FilesBundle\Model\File $file): string
+            {
+                return (string)$file->getId();
+            }
+        };
+
+        $manager = new Manager(
+            File::class,
+            new FileRepository(),
+            $this->filesystem,
+            $oldStrategy
+        );
+
+        /** @var File $file */
+        $file = $manager->upload(new \SplFileObject($forUpload));
+        $this->assertTrue($file instanceof File);
+        $file->setId(7);
+
+        $manager->moveFile($file);
+
+        $this->assertTrue($this->filesystem->fileExists('7'));
+        $this->assertFalse($this->filesystem->fileExists('test_migrate_7'));
+
+
+        $manager = new Manager(
+            File::class,
+            new FileRepository(),
+            $this->filesystem,
+            new class implements NamingStrategy {
+                public function getDirectoryName(\Arxy\FilesBundle\Model\File $file): ?string
+                {
+                    return null;
+                }
+
+                public function getFileName(\Arxy\FilesBundle\Model\File $file): string
+                {
+                    return (string)'test_migrate_'.$file->getId();
+                }
+            }
+        );
+
+        $manager->migrate($file, $oldStrategy);
+
+        $this->assertFalse($this->filesystem->fileExists('7'));
+        $this->assertTrue($this->filesystem->fileExists('test_migrate_7'));
     }
 }
