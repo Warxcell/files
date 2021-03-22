@@ -23,7 +23,6 @@
         "microsoft/azure-storage-blob": "*",
         "aws/aws-sdk-php": "*",
         "league/flysystem-memory": "^2.0",
-        "ext-fileinfo": "*",
         "friendsofphp/php-cs-fixer": "^2.18",
         "phpunit/phpunit": "^9.5",
         "symfony/http-kernel": "*",
