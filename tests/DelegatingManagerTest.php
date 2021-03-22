@@ -171,44 +171,35 @@ class DelegatingManagerTest extends TestCase
 
     public function testMainManager()
     {
+        $forUpload = new \SplFileInfo(__DIR__.'/files/image1.jpg');
+        $uploadedFile = new File2();
+
+        $manager1 = $this->createMock(ManagerInterface::class);
+
+        $manager2 = $this->createMock(ManagerInterface::class);
+        $manager2->expects($this->once())->method('upload')->with($forUpload)->willReturn($uploadedFile);
+
         $manager = new DelegatingManager(
             [
-                $this->manager1,
+                $manager1,
             ],
-            $this->manager2,
+            $manager2,
         );
 
-        $file = $manager->upload(new \SplFileInfo(__DIR__.'/files/image1.jpg'));
-
-        $this->assertInstanceOf(File2::class, $file);
+        $actualFile = $manager->upload($forUpload);
+        $this->assertSame($uploadedFile, $actualFile);
     }
 
     public function testClear()
     {
-        $this->expectNotToPerformAssertions();
+        $manager1 = $this->createMock(ManagerInterface::class);
+        $manager1->expects($this->once())->method('clear');
+        $manager2 = $this->createMock(ManagerInterface::class);
+        $manager2->expects($this->once())->method('clear');
+        $manager3 = $this->createMock(ManagerInterface::class);
+        $manager3->expects($this->once())->method('clear');
 
-        $file1 = $this->manager1->upload(new \SplFileObject(__DIR__.'/files/image1.jpg'));
-        assert($file1 instanceof File);
-        $file1->setId(1);
-
-        $file2 = $this->manager2->upload(new \SplFileObject(__DIR__.'/files/image1.jpg'));
-        assert($file2 instanceof File2);
-        $file2->setId(1);
-
-
-        $this->manager->clear();
-        try {
-            $this->manager1->moveFile($file1);
-            $this->fail('Expected '.\InvalidArgumentException::class);
-        } catch (\InvalidArgumentException $exception) {
-
-        }
-
-        try {
-            $this->manager2->moveFile($file2);
-            $this->fail('Expected '.\InvalidArgumentException::class);
-        } catch (\InvalidArgumentException $exception) {
-
-        }
+        $manager = new DelegatingManager([$manager1, $manager2], $manager3);
+        $manager->clear();
     }
 }
