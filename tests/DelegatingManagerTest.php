@@ -182,4 +182,33 @@ class DelegatingManagerTest extends TestCase
 
         $this->assertInstanceOf(File2::class, $file);
     }
+
+    public function testClear()
+    {
+        $this->expectNotToPerformAssertions();
+
+        $file1 = $this->manager1->upload(new \SplFileObject(__DIR__.'/files/image1.jpg'));
+        assert($file1 instanceof File);
+        $file1->setId(1);
+
+        $file2 = $this->manager2->upload(new \SplFileObject(__DIR__.'/files/image1.jpg'));
+        assert($file2 instanceof File);
+        $file2->setId(1);
+
+
+        $this->manager->clear();
+        try {
+            $this->manager1->moveFile($file1);
+            $this->fail('Expected '.\InvalidArgumentException::class);
+        } catch (\InvalidArgumentException $exception) {
+
+        }
+
+        try {
+            $this->manager2->moveFile($file2);
+            $this->fail('Expected '.\InvalidArgumentException::class);
+        } catch (\InvalidArgumentException $exception) {
+
+        }
+    }
 }
