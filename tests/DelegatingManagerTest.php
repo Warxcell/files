@@ -192,7 +192,7 @@ class DelegatingManagerTest extends TestCase
         $file1->setId(1);
 
         $file2 = $this->manager2->upload(new \SplFileObject(__DIR__.'/files/image1.jpg'));
-        assert($file2 instanceof File);
+        assert($file2 instanceof File2);
         $file2->setId(1);
 
 
