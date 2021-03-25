@@ -136,17 +136,7 @@ class DelegatingManagerTest extends TestCase
         $this->expectExceptionMessage('No manager for Arxy\FilesBundle\Tests\File3');
         $this->manager->migrate(
             new File3(),
-            new class implements NamingStrategy {
-                public function getDirectoryName(\Arxy\FilesBundle\Model\File $file): ?string
-                {
-                    return '';
-                }
-
-                public function getFileName(\Arxy\FilesBundle\Model\File $file): string
-                {
-                    return '';
-                }
-            }
+            $this->createMock(NamingStrategy::class)
         );
     }
 

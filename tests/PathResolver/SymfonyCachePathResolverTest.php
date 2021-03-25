@@ -20,22 +20,8 @@ class SymfonyCachePathResolverTest extends TestCase
     {
         parent::setUp();
 
-        $this->decoratedPathResolver = new class implements PathResolver {
-            private bool $called = false;
-
-            public function getPath(\Arxy\FilesBundle\Model\File $file): string
-            {
-                if ($this->called) {
-                    throw new \LogicException('This should be cached');
-                }
-
-                $this->called = true;
-
-                return (string)$file->getId();
-            }
-        };
         $this->cache = new ArrayAdapter();
-
+        $this->decoratedPathResolver = $this->createMock(PathResolver::class);
         $this->pathResolver = new PathResolver\SymfonyCachePathResolver(
             $this->decoratedPathResolver,
             $this->cache
@@ -48,9 +34,11 @@ class SymfonyCachePathResolverTest extends TestCase
         $file->setId(1);
         $file->setMd5Hash('1234567');
 
+        $this->decoratedPathResolver->expects($this->once())->method('getPath')->with($file)->willReturn('path');
+
         $this->assertFalse($this->cache->hasItem('1234567'));
-        $this->assertSame('1', $this->pathResolver->getPath($file));
+        $this->assertSame('path', $this->pathResolver->getPath($file));
         $this->assertTrue($this->cache->hasItem('1234567'));
-        $this->assertSame('1', $this->pathResolver->getPath($file));
+        $this->assertSame('path', $this->pathResolver->getPath($file));
     }
 }
