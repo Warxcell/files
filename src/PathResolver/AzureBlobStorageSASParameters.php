@@ -1,0 +1,158 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Arxy\FilesBundle\PathResolver;
+
+final class AzureBlobStorageSASParameters
+{
+    private ?\DateTimeInterface $expiry;
+    private ?\DateTimeInterface $start;
+    private ?string $ip;
+    private ?string $identifier;
+    private ?string $cacheControl;
+    private ?string $contentDisposition;
+    private ?string $contentEncoding;
+    private ?string $contentLanguage;
+    private ?string $contentType;
+
+    public function __construct(
+        ?\DateTimeInterface $expiry,
+        ?\DateTimeInterface $start = null,
+        ?string $ip = null,
+        ?string $identifier = null,
+        ?string $cacheControl = null,
+        ?string $contentDisposition = null,
+        ?string $contentEncoding = null,
+        ?string $contentLanguage = null,
+        ?string $contentType = null
+    ) {
+        $this->expiry = $expiry;
+        $this->start = $start;
+        $this->ip = $ip;
+        $this->identifier = $identifier;
+        $this->cacheControl = $cacheControl;
+        $this->contentDisposition = $contentDisposition;
+        $this->contentEncoding = $contentEncoding;
+        $this->contentLanguage = $contentLanguage;
+        $this->contentType = $contentType;
+    }
+
+    public function withExpiry(\DateTimeInterface $dateTime)
+    {
+        $new = clone($this);
+        $new->expiry = $dateTime;
+
+        return $new;
+    }
+
+    public function getExpiry(): ?\DateTimeInterface
+    {
+        return $this->expiry;
+    }
+
+    public function withStart(\DateTimeInterface $dateTime)
+    {
+        $new = clone($this);
+        $new->start = $dateTime;
+
+        return $new;
+    }
+
+    public function getStart(): ?\DateTimeInterface
+    {
+        return $this->start;
+    }
+
+    public function withIp(string $ip)
+    {
+        $new = clone($this);
+        $new->ip = $ip;
+
+        return $new;
+    }
+
+
+    public function getIp(): ?string
+    {
+        return $this->ip;
+    }
+
+    public function withIdentifier(string $identifier)
+    {
+        $new = clone($this);
+        $new->identifier = $identifier;
+
+        return $new;
+    }
+
+    public function getIdentifier(): ?string
+    {
+        return $this->identifier;
+    }
+
+    public function withCacheControl(string $cacheControl)
+    {
+        $new = clone($this);
+        $new->cacheControl = $cacheControl;
+
+        return $new;
+    }
+
+    public function getCacheControl(): ?string
+    {
+        return $this->cacheControl;
+    }
+
+    public function withContentDisposition(string $contentDisposition)
+    {
+        $new = clone($this);
+        $new->contentDisposition = $contentDisposition;
+
+        return $new;
+    }
+
+    public function getContentDisposition(): ?string
+    {
+        return $this->contentDisposition;
+    }
+
+    public function withContentEncoding(string $contentEncoding)
+    {
+        $new = clone($this);
+        $new->contentEncoding = $contentEncoding;
+
+        return $new;
+    }
+
+    public function getContentEncoding(): ?string
+    {
+        return $this->contentEncoding;
+    }
+
+    public function withContentLanguage(string $contentLanguage)
+    {
+        $new = clone($this);
+        $new->contentLanguage = $contentLanguage;
+
+        return $new;
+    }
+
+    public function getContentLanguage(): ?string
+    {
+        return $this->contentLanguage;
+    }
+
+    public function withContentType(string $contentType)
+    {
+        $new = clone($this);
+        $new->contentType = $contentType;
+
+        return $new;
+    }
+
+    public function getContentType(): ?string
+    {
+        return $this->contentType;
+    }
+}
