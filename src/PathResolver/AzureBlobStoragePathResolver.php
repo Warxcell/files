@@ -34,6 +34,6 @@ class AzureBlobStoragePathResolver implements PathResolver
 
     public function getPath(File $file): string
     {
-        return $this->client->getBlobUrl($this->container, $this->getBlob($file));
+        return $this->client->getBlobUrl($this->getContainer(), $this->getBlob($file));
     }
 }
