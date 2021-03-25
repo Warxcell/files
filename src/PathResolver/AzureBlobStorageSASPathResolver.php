@@ -35,12 +35,10 @@ class AzureBlobStorageSASPathResolver implements PathResolver
         $parameters = $this->parametersFactory->create($file);
         $expiry = $parameters->getExpiry();
 
-        if ($expiry instanceof \DateTimeImmutable) {
-            $expiry = \DateTime::createFromImmutable($expiry);
-        }
+        $expiry = \DateTime::createFromImmutable($expiry);
 
         $start = $parameters->getStart();
-        if ($start instanceof \DateTimeImmutable) {
+        if ($start !== null) {
             $start = \DateTime::createFromImmutable($start);
         }
 
