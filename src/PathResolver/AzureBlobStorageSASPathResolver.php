@@ -6,6 +6,7 @@ namespace Arxy\FilesBundle\PathResolver;
 
 use Arxy\FilesBundle\Model\File;
 use Arxy\FilesBundle\PathResolver;
+use DateTime;
 use MicrosoftAzure\Storage\Blob\BlobSharedAccessSignatureHelper;
 use MicrosoftAzure\Storage\Common\Internal\Resources;
 
@@ -18,16 +19,11 @@ class AzureBlobStorageSASPathResolver implements PathResolver
     public function __construct(
         AzureBlobStoragePathResolver $pathResolver,
         BlobSharedAccessSignatureHelper $signatureHelper,
-        AzureBlobStorageSASParametersFactory $factory = null
+        AzureBlobStorageSASParametersFactory $factory
     ) {
         $this->pathResolver = $pathResolver;
         $this->signatureHelper = $signatureHelper;
-        $this->parametersFactory = $factory ?? new class implements AzureBlobStorageSASParametersFactory {
-                public function create(File $file): AzureBlobStorageSASParameters
-                {
-                    return new AzureBlobStorageSASParameters(new \DateTimeImmutable('+5 minutes'));
-                }
-            };
+        $this->parametersFactory = $factory;
     }
 
     private function generateSas(File $file): string
@@ -35,11 +31,11 @@ class AzureBlobStorageSASPathResolver implements PathResolver
         $parameters = $this->parametersFactory->create($file);
         $expiry = $parameters->getExpiry();
 
-        $expiry = \DateTime::createFromImmutable($expiry);
+        $expiry = DateTime::createFromImmutable($expiry);
 
         $start = $parameters->getStart();
         if ($start !== null) {
-            $start = \DateTime::createFromImmutable($start);
+            $start = DateTime::createFromImmutable($start);
         }
 
         return $this->signatureHelper->generateBlobServiceSharedAccessSignatureToken(
