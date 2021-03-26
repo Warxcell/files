@@ -6,17 +6,10 @@ namespace Arxy\FilesBundle\Validator\Constraint;
 
 use Symfony\Component\Form\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\ConstraintValidator;
 
-class FileValidator extends \Symfony\Component\Validator\Constraints\FileValidator
+class FileValidator extends ConstraintValidator
 {
-    private static $suffices = [
-        1 => 'bytes',
-        self::KB_BYTES => 'kB',
-        self::MB_BYTES => 'MB',
-        self::KIB_BYTES => 'KiB',
-        self::MIB_BYTES => 'MiB',
-    ];
-
     public function validate($value, Constraint $constraint)
     {
         if (!$constraint instanceof File) {
@@ -29,30 +22,20 @@ class FileValidator extends \Symfony\Component\Validator\Constraints\FileValidat
             throw new UnexpectedTypeException($value, \Arxy\FilesBundle\Model\File::class);
         }
 
-        if ($constraint->maxSize) {
+        if ($constraint->maxSize !== null) {
             $limitInBytes = $constraint->maxSize;
-
             $sizeInBytes = $value->getFileSize();
 
             if ($sizeInBytes > $limitInBytes) {
-                [$sizeAsString, $limitAsString, $suffix] = $this->factorizeSizes(
-                    $sizeInBytes,
-                    $limitInBytes,
-                    $constraint->binaryFormat
-                );
                 $this->context->buildViolation($constraint->maxSizeMessage)
-                    ->setParameter('{{ size }}', $sizeAsString)
-                    ->setParameter('{{ limit }}', $limitAsString)
-                    ->setParameter('{{ suffix }}', $suffix)
-                    ->setCode(File::TOO_LARGE_ERROR)
+                    ->setParameter('{{ size }}', $this->humanizeBytes($sizeInBytes))
+                    ->setParameter('{{ limit }}', $this->humanizeBytes($limitInBytes))
                     ->addViolation();
-
-                return;
             }
         }
 
-        if ($constraint->mimeTypes) {
-            $mimeTypes = (array)$constraint->mimeTypes;
+        if (count($constraint->mimeTypes) > 0) {
+            $mimeTypes = $constraint->mimeTypes;
             $mime = $value->getMimeType();
 
             foreach ($mimeTypes as $mimeType) {
@@ -70,46 +53,17 @@ class FileValidator extends \Symfony\Component\Validator\Constraints\FileValidat
             $this->context->buildViolation($constraint->mimeTypesMessage)
                 ->setParameter('{{ type }}', $this->formatValue($mime))
                 ->setParameter('{{ types }}', $this->formatValues($mimeTypes))
-                ->setCode(File::INVALID_MIME_TYPE_ERROR)
                 ->addViolation();
         }
     }
 
-    private static function moreDecimalsThan($double, $numberOfDecimals)
+    private function humanizeBytes(int $bytes): string
     {
-        return \strlen((string)$double) > \strlen((string)round($double, $numberOfDecimals));
-    }
-
-    private function factorizeSizes($size, $limit, $binaryFormat)
-    {
-        if ($binaryFormat) {
-            $coef = self::MIB_BYTES;
-            $coefFactor = self::KIB_BYTES;
-        } else {
-            $coef = self::MB_BYTES;
-            $coefFactor = self::KB_BYTES;
+        $units = ['bytes', 'KB', 'MB', 'GB', 'TB', 'PB'];
+        for ($i = 0; $bytes > 1024; $i++) {
+            $bytes /= 1024;
         }
 
-        $limitAsString = (string)($limit / $coef);
-
-        // Restrict the limit to 2 decimals (without rounding! we
-        // need the precise value)
-        while (self::moreDecimalsThan($limitAsString, 2)) {
-            $coef /= $coefFactor;
-            $limitAsString = (string)($limit / $coef);
-        }
-
-        // Convert size to the same measure, but round to 2 decimals
-        $sizeAsString = (string)round($size / $coef, 2);
-
-        // If the size and limit produce the same string output
-        // (due to rounding), reduce the coefficient
-        while ($sizeAsString === $limitAsString) {
-            $coef /= $coefFactor;
-            $limitAsString = (string)($limit / $coef);
-            $sizeAsString = (string)round($size / $coef, 2);
-        }
-
-        return [$sizeAsString, $limitAsString, self::$suffices[$coef]];
+        return round($bytes, 2).' '.$units[$i];
     }
 }
