@@ -6,6 +6,7 @@ namespace Arxy\FilesBundle\Tests\Validator\Constraint;
 
 use Arxy\FilesBundle\Validator\Constraint\File;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Validator\Exception\ConstraintDefinitionException;
 
 class FileTest extends TestCase
 {
@@ -42,5 +43,13 @@ class FileTest extends TestCase
         $file = new File(['maxSize' => '1Mi']);
 
         $this->assertSame(1048576, $file->maxSize);
+    }
+
+    public function testInvalid()
+    {
+        $this->expectException(ConstraintDefinitionException::class);
+        $this->expectExceptionMessage('"1GB" is not a valid maximum size.');
+
+        new File(['maxSize' => '1GB']);
     }
 }

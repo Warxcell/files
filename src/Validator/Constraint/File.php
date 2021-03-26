@@ -45,7 +45,7 @@ class File extends Constraint
         } elseif (preg_match('/^(\d++)('.implode('|', array_keys($factors)).')$/i', $maxSize, $matches)) {
             return (int)($matches[1] * $factors[$unit = strtolower($matches[2])]);
         } else {
-            throw new ConstraintDefinitionException(sprintf('"%s" is not a valid maximum size.', $this->maxSize));
+            throw new ConstraintDefinitionException(sprintf('"%s" is not a valid maximum size.', $maxSize));
         }
     }
 }
