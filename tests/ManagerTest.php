@@ -6,6 +6,7 @@ namespace Arxy\FilesBundle\Tests;
 use Arxy\FilesBundle\Manager;
 use Arxy\FilesBundle\ManagerInterface;
 use Arxy\FilesBundle\NamingStrategy;
+use Arxy\FilesBundle\Repository;
 use League\Flysystem\Filesystem;
 use League\Flysystem\FilesystemOperator;
 use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
@@ -85,6 +86,37 @@ class ManagerTest extends TestCase
         $this->assertEquals('9aa1c5fc7c9388166d7ce7fd46648dd1', $file->getMd5Hash());
         $this->assertEquals(24053, $file->getFileSize());
         $this->assertEquals('image_1_uploaded.jpg', $file->getOriginalFilename());
+        $this->assertEquals('image/jpeg', $file->getMimeType());
+    }
+
+    public function testAlreadyUploadedFile()
+    {
+        $file = new File();
+        $file->setMd5Hash('9aa1c5fc7c9388166d7ce7fd46648dd1');
+        $file->setFileSize(24053);
+        $file->setOriginalFilename('image2.jpg');
+        $file->setMimeType('image/jpeg');
+
+        $repository = $this->createMock(Repository::class);
+        $repository->expects($this->once())->method('findByHashAndSize')->with(
+            '9aa1c5fc7c9388166d7ce7fd46648dd1',
+            24053
+        )->willReturn($file);
+
+        $manager = new Manager(
+            File::class,
+            $repository,
+            $this->filesystem,
+            $this->createMock(NamingStrategy::class)
+        );
+
+        $actual = $manager->upload(new \SplFileObject(__DIR__.'/files/image1.jpg'));
+
+        $this->assertInstanceOf(File::class, $actual);
+        $this->assertSame($file, $actual);
+        $this->assertEquals('9aa1c5fc7c9388166d7ce7fd46648dd1', $file->getMd5Hash());
+        $this->assertEquals(24053, $file->getFileSize());
+        $this->assertEquals('image2.jpg', $file->getOriginalFilename());
         $this->assertEquals('image/jpeg', $file->getMimeType());
     }
 
