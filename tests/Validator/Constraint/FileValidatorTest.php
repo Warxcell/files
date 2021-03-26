@@ -2,10 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Arxy\FilesBundle\Tests\Validator;
+namespace Arxy\FilesBundle\Tests\Validator\Constraint;
 
 use Arxy\FilesBundle\Tests\File;
 use Arxy\FilesBundle\Validator\Constraint\FileValidator;
+use Symfony\Component\Form\Exception\UnexpectedTypeException;
+use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class FileValidatorTest extends ConstraintValidatorTestCase
@@ -13,6 +15,49 @@ class FileValidatorTest extends ConstraintValidatorTestCase
     protected function createValidator()
     {
         return new FileValidator();
+    }
+
+    public function testNotValidValue()
+    {
+        $this->expectException(UnexpectedTypeException::class);
+        $this->expectExceptionMessage('Expected argument of type "Arxy\FilesBundle\Model\File", "stdClass" given');
+
+        $this->validator->validate(
+            new \stdClass(),
+            new \Arxy\FilesBundle\Validator\Constraint\File(
+                [
+                    'maxSize' => 10000,
+                ]
+            )
+        );
+    }
+
+    public function testNotValidConstraint()
+    {
+        $this->expectException(UnexpectedTypeException::class);
+        $this->expectExceptionMessage(
+            'Expected argument of type "Arxy\FilesBundle\Validator\Constraint\File", "Symfony\Component\Validator\Constraint@anonymous" given'
+        );
+
+        $this->validator->validate(
+            new File(),
+            new class extends Constraint {
+            }
+        );
+    }
+
+
+    public function testNull()
+    {
+        $this->validator->validate(
+            null,
+            new \Arxy\FilesBundle\Validator\Constraint\File(
+                [
+                    'maxSize' => 10000,
+                ]
+            )
+        );
+        $this->assertNoViolation();
     }
 
     public function testInvalidSize()
