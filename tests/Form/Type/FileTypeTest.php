@@ -40,7 +40,7 @@ class FileTypeTest extends TypeTestCase
         ];
     }
 
-    public function testSimpleUpload()
+    public function testSingleUpload()
     {
         $uploadedFile = new UploadedFile(__DIR__.'/../../files/image1.jpg', 'image1.jpg');
 
@@ -49,10 +49,7 @@ class FileTypeTest extends TypeTestCase
         $this->manager->expects($this->once())->method('upload')->with($uploadedFile)->willReturn($file);
         $this->manager->expects($this->once())->method('getClass')->willReturn(File::class);
 
-        $form = $this->factory->create(
-            FileType::class,
-            null
-        );
+        $form = $this->factory->create(FileType::class, null);
 
         $form->submit(['file' => $uploadedFile]);
 
@@ -61,5 +58,41 @@ class FileTypeTest extends TypeTestCase
         $this->assertTrue($form->isSynchronized());
         $this->assertInstanceOf(File::class, $actual);
         $this->assertSame($file, $actual);
+    }
+
+    public function testMultipleUpload()
+    {
+        $uploadedFile1 = new UploadedFile(__DIR__.'/../../files/image1.jpg', 'image1.jpg');
+        $uploadedFile2 = new UploadedFile(__DIR__.'/../../files/image2.jpg', 'image2.jpg');
+
+        $file1 = new File();
+        $file2 = new File();
+
+        $this->manager->expects($this->exactly(2))
+            ->method('upload')
+            ->withConsecutive(
+                [$this->identicalTo($uploadedFile1)],
+                [$this->identicalTo($uploadedFile2)]
+            )
+            ->will($this->onConsecutiveCalls($file1, $file2));
+
+        $this->manager->method('getClass')->willReturn(File::class);
+
+        $form = $this->factory->create(
+            FileType::class,
+            null,
+            [
+                'multiple' => true,
+            ]
+        );
+
+        $form->submit(['file' => [$uploadedFile1, $uploadedFile2]]);
+
+        $actual = $form->getData();
+
+        $this->assertTrue($form->isSynchronized());
+        $this->assertCount(2, $actual);
+        $this->assertSame($file1, $actual[0]);
+        $this->assertSame($file2, $actual[1]);
     }
 }
