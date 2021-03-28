@@ -38,7 +38,7 @@ class RefreshDatabaseCommand extends Command
 
         $objectManager = $this->registry->getManagerForClass($this->fileManager->getClass());
         if ($objectManager === null) {
-            throw new \LogicException();
+            throw new \LogicException('No manager found for '.$this->fileManager->getClass());
         }
 
         $files = $this->repository->findAllForBatchProcessing();
