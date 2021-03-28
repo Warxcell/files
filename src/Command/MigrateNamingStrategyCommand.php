@@ -43,8 +43,6 @@ class MigrateNamingStrategyCommand extends Command
         $totalMigrated = 0;
         $totalFailed = 0;
 
-        $objectManager = $this->registry->getManagerForClass($this->fileManager);
-
         $files = $this->repository->findAllForBatchProcessing();
         foreach ($files as $file) {
             $migrated = $this->fileManager->migrate($file, $this->oldNamingStrategy);
@@ -55,8 +53,6 @@ class MigrateNamingStrategyCommand extends Command
                 $totalFailed++;
                 $io->warning('File '.$file->getId().' not migrated');
             }
-
-            $objectManager->clear();
 
             $progressBar->advance();
         }
