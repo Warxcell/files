@@ -7,6 +7,7 @@ namespace Arxy\FilesBundle\Validator\Constraint;
 use Symfony\Component\Form\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
+use function ByteUnits\bytes;
 
 class FileValidator extends ConstraintValidator
 {
@@ -59,11 +60,6 @@ class FileValidator extends ConstraintValidator
 
     private function humanizeBytes(int $bytes): string
     {
-        $units = ['bytes', 'KB', 'MB', 'GB', 'TB', 'PB'];
-        for ($i = 0; $bytes > 1024; $i++) {
-            $bytes /= 1024;
-        }
-
-        return round($bytes, 2).' '.$units[$i];
+        return bytes($bytes)->format(2, ' ');
     }
 }

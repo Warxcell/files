@@ -77,8 +77,8 @@ class FileValidatorTest extends ConstraintValidatorTestCase
         $this->buildViolation(
             'The file is too large ({{ size }}). Allowed maximum size is {{ limit }}.'
         )
-            ->setParameter('{{ size }}', '1000 bytes')
-            ->setParameter('{{ limit }}', '100 bytes')
+            ->setParameter('{{ size }}', '1.00 kB')
+            ->setParameter('{{ limit }}', '100 B')
             ->assertRaised();
     }
 
@@ -188,8 +188,8 @@ class FileValidatorTest extends ConstraintValidatorTestCase
         $this->buildViolation(
             'The file is too large ({{ size }}). Allowed maximum size is {{ limit }}.'
         )
-            ->setParameter('{{ size }}', '1 KB')
-            ->setParameter('{{ limit }}', '1000 bytes')
+            ->setParameter('{{ size }}', '1.02 kB')
+            ->setParameter('{{ limit }}', '1.00 kB')
             ->buildNextViolation(
                 'The mime type of the file is invalid ({{ type }}). Allowed mime types are {{ types }}.'
             )
