@@ -49,7 +49,16 @@ class FileTest extends TestCase
     {
         $this->expectException(ConstraintDefinitionException::class);
         $this->expectExceptionMessage('"1 gigabyte" is not a valid maximum size.');
+        $this->expectExceptionCode(0);
 
         new File(['maxSize' => '1 gigabyte']);
+    }
+
+    public function testSingleMimeType()
+    {
+        $file = new File(['mimeTypes' => 'image/jpg']);
+
+        $this->assertCount(1, $file->mimeTypes);
+        $this->assertSame('image/jpg', $file->mimeTypes[0]);
     }
 }

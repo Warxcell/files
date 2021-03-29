@@ -25,8 +25,8 @@ class File extends Constraint
             $options['maxSize'] = $this->normalizeBinaryFormat($options['maxSize']);
         }
 
-        if (isset($options['mimeTypes'])) {
-            $options['mimeTypes'] = (array)$options['mimeTypes'];
+        if (isset($options['mimeTypes']) && !is_array($options['mimeTypes'])) {
+            $options['mimeTypes'] = [$options['mimeTypes']];
         }
         parent::__construct($options, $groups, $payload);
     }
