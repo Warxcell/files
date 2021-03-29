@@ -248,7 +248,7 @@ class ManagerTest extends TestCase
     public function testWrongFileMove()
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectErrorMessage('File not found in map');
+        $this->expectErrorMessage('File 25 not found in map');
 
         $file = new File();
         $file->setId(25);
@@ -498,7 +498,7 @@ class ManagerTest extends TestCase
         $this->manager->clear();
 
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('File not found in map');
+        $this->expectExceptionMessage('File 1 not found in map');
 
         $this->manager->moveFile($file);
     }
