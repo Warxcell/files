@@ -120,6 +120,58 @@ class ManagerTest extends TestCase
         $this->assertEquals('image/jpeg', $file->getMimeType());
     }
 
+    public function testCreateDirectoryCalled()
+    {
+        $filesystem = $this->createMock(FilesystemOperator::class);
+        $filesystem->expects($this->once())->method('createDirectory')->with('directory');
+
+        $manager = new Manager(
+            File::class,
+            new FileRepository(),
+            $filesystem,
+            new class implements NamingStrategy {
+                public function getDirectoryName(\Arxy\FilesBundle\Model\File $file): ?string
+                {
+                    return 'directory';
+                }
+
+                public function getFileName(\Arxy\FilesBundle\Model\File $file): string
+                {
+                    return 'file';
+                }
+            }
+        );
+
+        $upload = $manager->upload(new \SplFileObject(__DIR__.'/files/image1.jpg'));
+        $manager->moveFile($upload);
+    }
+
+    public function testCreateDirectoryNotCalled()
+    {
+        $filesystem = $this->createMock(FilesystemOperator::class);
+        $filesystem->expects($this->never())->method('createDirectory');
+
+        $manager = new Manager(
+            File::class,
+            new FileRepository(),
+            $filesystem,
+            new class implements NamingStrategy {
+                public function getDirectoryName(\Arxy\FilesBundle\Model\File $file): ?string
+                {
+                    return null;
+                }
+
+                public function getFileName(\Arxy\FilesBundle\Model\File $file): string
+                {
+                    return 'file';
+                }
+            }
+        );
+
+        $upload = $manager->upload(new \SplFileObject(__DIR__.'/files/image1.jpg'));
+        $manager->moveFile($upload);
+    }
+
     public function testNamingStrategyWithDirectory()
     {
         $manager = new Manager(
