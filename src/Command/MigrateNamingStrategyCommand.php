@@ -7,7 +7,6 @@ namespace Arxy\FilesBundle\Command;
 use Arxy\FilesBundle\ManagerInterface;
 use Arxy\FilesBundle\NamingStrategy;
 use Arxy\FilesBundle\Repository;
-use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -18,19 +17,16 @@ class MigrateNamingStrategyCommand extends Command
     protected static $defaultName = 'arxy:files:migrate-naming-strategy';
 
     private ManagerInterface $fileManager;
-    private ManagerRegistry $registry;
     private Repository $repository;
     private NamingStrategy $oldNamingStrategy;
 
     public function __construct(
         ManagerInterface $fileManager,
-        ManagerRegistry $registry,
         Repository $repository,
         NamingStrategy $oldNamingStrategy
     ) {
         parent::__construct();
         $this->fileManager = $fileManager;
-        $this->registry = $registry;
         $this->repository = $repository;
         $this->oldNamingStrategy = $oldNamingStrategy;
     }
@@ -59,6 +55,8 @@ class MigrateNamingStrategyCommand extends Command
 
         $progressBar->finish();
 
-        $io->note('Migrated: '.$totalMigrated.'. Failures: '.$totalFailed);
+        $io->note('Migrated: '.$totalMigrated.'. Failures: '.$totalFailed.'.');
+
+        return 0;
     }
 }

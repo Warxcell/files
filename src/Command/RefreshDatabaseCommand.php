@@ -34,11 +34,12 @@ class RefreshDatabaseCommand extends Command
         $progressBar = $io->createProgressBar();
 
         $batchSize = 20;
-        $i = 0;
+        $i = 1;
 
-        $objectManager = $this->registry->getManagerForClass($this->fileManager->getClass());
+        $class = $this->fileManager->getClass();
+        $objectManager = $this->registry->getManagerForClass($class);
         if ($objectManager === null) {
-            throw new \LogicException('No manager found for '.$this->fileManager->getClass());
+            throw new \LogicException('No manager found for '.$class);
         }
 
         $files = $this->repository->findAllForBatchProcessing();
@@ -57,5 +58,7 @@ class RefreshDatabaseCommand extends Command
         $objectManager->clear();
 
         $progressBar->finish();
+
+        return 0;
     }
 }
