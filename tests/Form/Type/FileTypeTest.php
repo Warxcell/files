@@ -11,6 +11,7 @@ use Symfony\Component\Form\Extension\HttpFoundation\Type\FormTypeHttpFoundationE
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\TypeTestCase;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 
 class FileTypeTest extends TypeTestCase
 {
@@ -94,5 +95,22 @@ class FileTypeTest extends TypeTestCase
         $this->assertCount(2, $actual);
         $this->assertSame($file1, $actual[0]);
         $this->assertSame($file2, $actual[1]);
+    }
+
+    public function testInvalidManagerPassed()
+    {
+        $this->expectException(InvalidOptionsException::class);
+        $this->expectExceptionMessage(
+            'The option "manager" with value stdClass is expected to be of type "Arxy\FilesBundle\ManagerInterface", but is of type "stdClass".'
+        );
+
+        $this->factory->create(
+            FileType::class,
+            null,
+            [
+                'manager' => new \stdClass(),
+            ]
+        );
+
     }
 }

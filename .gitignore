@@ -53,3 +53,5 @@ composer.lock
 
 .phpunit.result.cache
 .php_cs.cache
+.phpunit.cache
+infection
