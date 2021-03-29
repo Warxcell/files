@@ -48,8 +48,8 @@ class FileTest extends TestCase
     public function testInvalid()
     {
         $this->expectException(ConstraintDefinitionException::class);
-        $this->expectExceptionMessage('"1GB" is not a valid maximum size.');
+        $this->expectExceptionMessage('"1 gigabyte" is not a valid maximum size.');
 
-        new File(['maxSize' => '1GB']);
+        new File(['maxSize' => '1 gigabyte']);
     }
 }

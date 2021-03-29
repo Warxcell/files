@@ -47,11 +47,11 @@ class FilesExtensionTest extends TestCase
 
     public function testFormatBytes()
     {
-        $this->assertSame('1020 B', $this->extension->formatBytes(1020));
-        $this->assertSame('1 KiB', $this->extension->formatBytes(1024));
-        $this->assertSame('1.49 KiB', $this->extension->formatBytes(1524));
-        $this->assertSame('1 MiB', $this->extension->formatBytes(1048576));
-        $this->assertSame('1 GB', $this->extension->formatBytes(1073741824));
-        $this->assertSame('1 TB', $this->extension->formatBytes(1099511627776));
+        $this->assertSame('1.02 kB', $this->extension->formatBytes(1020));
+        $this->assertSame('1.02 kB', $this->extension->formatBytes(1024));
+        $this->assertSame('1.52 kB', $this->extension->formatBytes(1524));
+        $this->assertSame('1.05 MB', $this->extension->formatBytes(1048576));
+        $this->assertSame('1.07 GB', $this->extension->formatBytes(1073741824));
+        $this->assertSame('1.10 TB', $this->extension->formatBytes(1099511627776));
     }
 }

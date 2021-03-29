@@ -8,6 +8,7 @@ use Arxy\FilesBundle\ManagerInterface;
 use Arxy\FilesBundle\Model\File;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
+use function ByteUnits\bytes;
 
 class FilesExtension extends AbstractExtension
 {
@@ -33,14 +34,6 @@ class FilesExtension extends AbstractExtension
 
     public function formatBytes($bytes, $precision = 2): string
     {
-        $units = ['B', 'KiB', 'MiB', 'GB', 'TB'];
-        $bytes = max($bytes, 0);
-        $pow = floor(($bytes ? log($bytes) : 0) / log(1024));
-        $pow = min($pow, count($units) - 1);
-
-        // Uncomment one of the following alternatives
-        $bytes /= pow(1024, $pow);
-
-        return round($bytes, $precision).' '.$units[$pow];
+        return bytes($bytes)->format($precision, ' ');
     }
 }
