@@ -73,7 +73,7 @@ class AzureBlobStorageSASPathResolverTest extends TestCase
         $this->assertSame('url?sas', $sasResolver->getPath($file));
     }
 
-    public function testGetPathNullableStart()
+    public function testGetPathNullParams()
     {
         $file = new File();
 
@@ -91,14 +91,14 @@ class AzureBlobStorageSASPathResolverTest extends TestCase
                 'r',
                 new \DateTime('2021-03-25 23:00:00'),
                 null,
-                '127.0.0.1',
+                null,
                 'https',
-                'identifier',
-                'cache-control',
-                'content-disposition',
-                'content-encoding',
-                'content-language',
-                'content-type',
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
             )
             ->willReturn('sas');
 
@@ -111,13 +111,13 @@ class AzureBlobStorageSASPathResolverTest extends TestCase
                     return new PathResolver\AzureBlobStorageSASParameters(
                         new \DateTimeImmutable('2021-03-25 23:00:00'),
                         null,
-                        '127.0.0.1',
-                        'identifier',
-                        'cache-control',
-                        'content-disposition',
-                        'content-encoding',
-                        'content-language',
-                        'content-type',
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null
                     );
                 }
             }
