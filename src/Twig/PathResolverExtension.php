@@ -25,7 +25,7 @@ class PathResolverExtension extends AbstractExtension
         ];
     }
 
-    public function filePath(File $file)
+    public function filePath(File $file): string
     {
         return $this->pathResolver->getPath($file);
     }
