@@ -294,7 +294,7 @@ class ManagerTest extends TestCase
         $this->assertTrue($this->filesystem->fileExists('6'));
         $this->assertEquals('9aa1c5fc7c9388166d7ce7fd46648dd1', md5($this->filesystem->read('6')));
         $this->assertEquals('9aa1c5fc7c9388166d7ce7fd46648dd1', $file->getMd5Hash());
-//        $this->assertEquals(24053, $file->getFileSize());
+        $this->assertEquals(24053, $file->getFileSize());
         $this->assertEquals('image1.jpg', $file->getOriginalFilename());
         $this->assertEquals('image/jpeg', $file->getMimeType());
 

@@ -82,6 +82,24 @@ class FileValidatorTest extends ConstraintValidatorTestCase
             ->assertRaised();
     }
 
+
+    public function testValidExactSize()
+    {
+        $file = new File();
+        $file->setFileSize(1000);
+
+        $this->validator->validate(
+            $file,
+            new \Arxy\FilesBundle\Validator\Constraint\File(
+                [
+                    'maxSize' => 1000,
+                ]
+            )
+        );
+        $this->assertNoViolation();
+    }
+
+
     public function testValidSize()
     {
         $file = new File();

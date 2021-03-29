@@ -55,3 +55,4 @@ composer.lock
 .php_cs.cache
 .phpunit.cache
 infection
+coverage.xml

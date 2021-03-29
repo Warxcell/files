@@ -23,14 +23,18 @@ class FilesExtensionTest extends TestCase
 
     public function testGetFilters()
     {
-        $twiFilters = $this->extension->getFilters();
-        $this->assertCount(2, $twiFilters);
+        $twigFilters = $this->extension->getFilters();
+        $this->assertCount(2, $twigFilters);
 
-        $this->assertInstanceOf(TwigFilter::class, $twiFilters[0]);
-        $this->assertSame('format_bytes', $twiFilters[0]->getName());
+        $this->assertInstanceOf(TwigFilter::class, $twigFilters[0]);
+        $this->assertSame('format_bytes', $twigFilters[0]->getName());
+        $this->assertSame($this->extension, $twigFilters[0]->getCallable()[0]);
+        $this->assertSame('formatBytes', $twigFilters[0]->getCallable()[1]);
 
-        $this->assertInstanceOf(TwigFilter::class, $twiFilters[1]);
-        $this->assertSame('file_content', $twiFilters[1]->getName());
+        $this->assertInstanceOf(TwigFilter::class, $twigFilters[1]);
+        $this->assertSame('file_content', $twigFilters[1]->getName());
+        $this->assertSame($this->extension, $twigFilters[1]->getCallable()[0]);
+        $this->assertSame('readContent', $twigFilters[1]->getCallable()[1]);
     }
 
     public function testReadContent()
