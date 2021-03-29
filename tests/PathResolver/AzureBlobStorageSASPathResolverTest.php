@@ -37,8 +37,8 @@ class AzureBlobStorageSASPathResolverTest extends TestCase
                 Resources::RESOURCE_TYPE_BLOB,
                 'azure-container/azure-blob',
                 'r',
-                new \DateTimeImmutable('2021-03-25 23:00:00'),
-                new \DateTimeImmutable('2021-03-25 21:00:00'),
+                new \DateTime('2021-03-25 23:00:00'),
+                new \DateTime('2021-03-25 21:00:00'),
                 '127.0.0.1',
                 'https',
                 'identifier',
@@ -59,6 +59,58 @@ class AzureBlobStorageSASPathResolverTest extends TestCase
                     return new PathResolver\AzureBlobStorageSASParameters(
                         new \DateTimeImmutable('2021-03-25 23:00:00'),
                         new \DateTimeImmutable('2021-03-25 21:00:00'),
+                        '127.0.0.1',
+                        'identifier',
+                        'cache-control',
+                        'content-disposition',
+                        'content-encoding',
+                        'content-language',
+                        'content-type',
+                    );
+                }
+            }
+        );
+        $this->assertSame('url?sas', $sasResolver->getPath($file));
+    }
+
+    public function testGetPathNullableStart()
+    {
+        $file = new File();
+
+        $pathResolver = $this->createMock(PathResolver\AzureBlobStoragePathResolver::class);
+        $pathResolver->expects($this->once())->method('getPath')->with($file)->willReturn('url');
+        $pathResolver->expects($this->once())->method('getContainer')->willReturn('azure-container');
+        $pathResolver->expects($this->once())->method('getBlob')->willReturn('azure-blob');
+
+        $sasHelper = $this->createMock(BlobSharedAccessSignatureHelper::class);
+        $sasHelper->expects($this->once())
+            ->method('generateBlobServiceSharedAccessSignatureToken')
+            ->with(
+                Resources::RESOURCE_TYPE_BLOB,
+                'azure-container/azure-blob',
+                'r',
+                new \DateTime('2021-03-25 23:00:00'),
+                null,
+                '127.0.0.1',
+                'https',
+                'identifier',
+                'cache-control',
+                'content-disposition',
+                'content-encoding',
+                'content-language',
+                'content-type',
+            )
+            ->willReturn('sas');
+
+        $sasResolver = new PathResolver\AzureBlobStorageSASPathResolver(
+            $pathResolver,
+            $sasHelper,
+            new class implements PathResolver\AzureBlobStorageSASParametersFactory {
+                public function create(\Arxy\FilesBundle\Model\File $file): PathResolver\AzureBlobStorageSASParameters
+                {
+                    return new PathResolver\AzureBlobStorageSASParameters(
+                        new \DateTimeImmutable('2021-03-25 23:00:00'),
+                        null,
                         '127.0.0.1',
                         'identifier',
                         'cache-control',

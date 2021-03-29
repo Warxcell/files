@@ -148,6 +148,35 @@ class ManagerTest extends TestCase
         $this->assertTrue($this->filesystem->fileExists('directory/test/directory_test.jpg'));
     }
 
+
+    public function testNamingStrategyWithoutDirectory()
+    {
+        $manager = new Manager(
+            File::class,
+            new FileRepository(),
+            $this->filesystem,
+            new class implements NamingStrategy {
+                public function getDirectoryName(\Arxy\FilesBundle\Model\File $file): ?string
+                {
+                    return null;
+                }
+
+                public function getFileName(\Arxy\FilesBundle\Model\File $file): string
+                {
+                    return 'directory_test.jpg';
+                }
+            }
+        );
+
+        $file = $manager->upload(new \SplFileObject(__DIR__.'/files/image1.jpg'));
+        assert($file instanceof File);
+        $file->setId(1);
+
+        $manager->moveFile($file);
+
+        $this->assertTrue($this->filesystem->fileExists('directory_test.jpg'));
+    }
+
     public function testMoveDeletedFile()
     {
         $forUpload = __DIR__.'/files/image1.jpg';
@@ -160,6 +189,7 @@ class ManagerTest extends TestCase
         unlink($tmpFile);
 
         $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Failed to open '.$tmpFile);
         $this->manager->moveFile($file);
     }
 
@@ -303,7 +333,7 @@ class ManagerTest extends TestCase
         $this->manager->refresh($file);
 
         $this->assertEquals('59aeac36ae75786be1b573baad0e77c0', $file->getMd5Hash());
-        //$this->assertEquals(22518, $file->getFileSize());
+        $this->assertEquals(22518, $file->getFileSize());
         $this->assertEquals('image1.jpg', $file->getOriginalFilename());
         $this->assertEquals('image/jpeg', $file->getMimeType());
     }

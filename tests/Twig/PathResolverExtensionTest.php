@@ -28,6 +28,8 @@ class PathResolverExtensionTest extends TestCase
 
         $this->assertInstanceOf(TwigFunction::class, $twigFunctions[0]);
         $this->assertSame('file_path', $twigFunctions[0]->getName());
+        $this->assertSame($this->extension, $twigFunctions[0]->getCallable()[0]);
+        $this->assertSame('filePath', $twigFunctions[0]->getCallable()[1]);
     }
 
     public function testFilePath()

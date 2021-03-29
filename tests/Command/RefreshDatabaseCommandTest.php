@@ -57,7 +57,7 @@ class RefreshDatabaseCommandTest extends TestCase
             );
 
         $commandTester = new CommandTester($this->command);
-        $commandTester->execute([]);
+        $this->assertSame(0, $commandTester->execute([]));
     }
 
     public function testManagerNotFound()
@@ -69,10 +69,10 @@ class RefreshDatabaseCommandTest extends TestCase
         $this->expectExceptionMessage('No manager found for '.File::class);
 
         $commandTester = new CommandTester($this->command);
-        $commandTester->execute([]);
+        $this->assertSame(0, $commandTester->execute([]));
     }
 
-    public function testBatchSize()
+    public function testExactBatchSize()
     {
         $emMock = $this->createMock(EntityManagerInterface::class);
         $emMock->expects($this->exactly(3))->method('flush');
@@ -82,7 +82,7 @@ class RefreshDatabaseCommandTest extends TestCase
 
         $files = [];
 
-        for ($i = 0; $i < 50; $i++) {
+        for ($i = 0; $i < 40; $i++) {
             $file = new File();
             $file->setId($i);
             $files[] = $file;
@@ -91,6 +91,28 @@ class RefreshDatabaseCommandTest extends TestCase
         $this->repository->expects($this->once())->method('findAllForBatchProcessing')->willReturn($files);
 
         $commandTester = new CommandTester($this->command);
-        $commandTester->execute([]);
+        $this->assertSame(0, $commandTester->execute([]));
+    }
+
+    public function testExactMinusOneBatchSize()
+    {
+        $emMock = $this->createMock(EntityManagerInterface::class);
+        $emMock->expects($this->exactly(3))->method('flush');
+        $emMock->expects($this->exactly(3))->method('clear');
+
+        $this->registry->expects($this->once())->method('getManagerForClass')->with(File::class)->willReturn($emMock);
+
+        $files = [];
+
+        for ($i = 0; $i < 59; $i++) {
+            $file = new File();
+            $file->setId($i);
+            $files[] = $file;
+        }
+
+        $this->repository->expects($this->once())->method('findAllForBatchProcessing')->willReturn($files);
+
+        $commandTester = new CommandTester($this->command);
+        $this->assertSame(0, $commandTester->execute([]));
     }
 }
