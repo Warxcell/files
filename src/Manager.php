@@ -18,6 +18,7 @@ final class Manager implements ManagerInterface
     private NamingStrategy $namingStrategy;
     private FileMap $fileMap;
     private MimeTypeDetector $mimeTypeDetector;
+    private const CHUNK_SIZE = 1024 * 1024;
 
     public function __construct(
         string $class,
@@ -79,8 +80,7 @@ final class Manager implements ManagerInterface
 
             $tempFilename = tempnam(sys_get_temp_dir(), 'file_manager');
             $file = new \SplFileObject($tempFilename, 'r+');
-            $chunkSize = 1024 * 1024;
-            while ($content = $remoteFile->fread($chunkSize)) {
+            while ($content = $remoteFile->fread(self::CHUNK_SIZE)) {
                 $file->fwrite($content);
             }
             $file->rewind();
