@@ -11,7 +11,7 @@ class DateStrategy implements NamingStrategy
 {
     private string $format;
 
-    public function __construct(string $format = 'Y/m/d')
+    public function __construct(string $format = 'Y'.DIRECTORY_SEPARATOR.'m'.DIRECTORY_SEPARATOR.'d')
     {
         $this->format = $format;
     }

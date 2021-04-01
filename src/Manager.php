@@ -32,7 +32,7 @@ final class Manager implements ManagerInterface
         $this->filesystem = $filesystem;
         $this->namingStrategy = $namingStrategy;
         $this->fileMap = new FileMap();
-        $this->mimeTypeDetector = $mimeTypeDetector ?: new FinfoMimeTypeDetector();
+        $this->mimeTypeDetector = $mimeTypeDetector ?? new FinfoMimeTypeDetector();
     }
 
     public function moveFile(File $entity): void
@@ -83,7 +83,6 @@ final class Manager implements ManagerInterface
             while ($content = $remoteFile->fread(self::CHUNK_SIZE)) {
                 $file->fwrite($content);
             }
-            $file->rewind();
 
             $originalFilename = $remoteFile->getFilename();
 
