@@ -105,7 +105,6 @@ final class Manager implements ManagerInterface
             $fileEntity->setFileSize($fileSize);
             $fileEntity->setOriginalFilename($originalFilename);
             $fileEntity->setMd5Hash($md5);
-            $fileEntity->setCreatedAt(new \DateTimeImmutable());
             $fileEntity->setMimeType($this->getMimeTypeByFile($file));
 
             $this->fileMap->put($fileEntity, $file);

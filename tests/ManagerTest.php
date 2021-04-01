@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Arxy\FilesBundle\Tests;
@@ -10,6 +11,7 @@ use Arxy\FilesBundle\Repository;
 use League\Flysystem\Filesystem;
 use League\Flysystem\FilesystemOperator;
 use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
+use League\MimeTypeDetection\MimeTypeDetector;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
@@ -53,6 +55,14 @@ class ManagerTest extends TestCase
         $this->assertEquals(24053, $file->getFileSize());
         $this->assertEquals('image1.jpg', $file->getOriginalFilename());
         $this->assertEquals('image/jpeg', $file->getMimeType());
+
+        $expectedDateTime = new \DateTimeImmutable();
+        $this->assertTrue(
+            $expectedDateTime
+                ->diff($file->getCreatedAt())
+                ->format('%s')
+            < 5
+        );
     }
 
     public function testSimpleUploadFromUrl()
@@ -501,5 +511,31 @@ class ManagerTest extends TestCase
         $this->expectExceptionMessage('File 1 not found in map');
 
         $this->manager->moveFile($file);
+    }
+
+    public function testAnotherMimeTypeDetector()
+    {
+        $mimeTypeDetector = $this->createMock(MimeTypeDetector::class);
+        $mimeTypeDetector->expects($this->exactly(2))
+            ->method('detectMimeTypeFromFile')
+            ->withConsecutive(
+                [$this->identicalTo(__DIR__.'/files/image1.jpg')],
+                [$this->identicalTo(__DIR__.'/files/image1.jpg')]
+            )
+            ->willReturn('image/jpeg');
+
+        $manager = new Manager(
+            File::class,
+            new FileRepository(),
+            $this->createMock(FilesystemOperator::class),
+            $this->createMock(NamingStrategy::class),
+            $mimeTypeDetector
+        );
+
+        $file = $manager->upload(new \SplFileObject(__DIR__.'/files/image1.jpg'));
+
+        $this->assertSame('image/jpeg', $file->getMimeType());
+        $manager->refresh($file);
+        $this->assertSame('image/jpeg', $file->getMimeType());
     }
 }

@@ -42,10 +42,8 @@ class FileType extends AbstractType
                 return $options['multiple'] ? null : $options['manager']->getClass();
             }
         );
-        $resolver->setDefault('error_bubbling', false);
         $resolver->setDefault('input_options', []);
         $resolver->setDefault('multiple', false);
-        $resolver->setDefault('compound', true);
         $resolver->setDefault('manager', $this->fileManager);
         $resolver->setAllowedTypes('manager', ManagerInterface::class);
     }

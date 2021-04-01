@@ -111,6 +111,18 @@ class FileTypeTest extends TypeTestCase
                 'manager' => new \stdClass(),
             ]
         );
+    }
 
+    public function testLabelOfFileIsFalse()
+    {
+        $form = $this->factory->create(
+            FileType::class,
+            null,
+            [
+                'data_class' => File::class,
+            ]
+        );
+
+        $this->assertFalse($form->get('file')->getConfig()->getOption('label'));
     }
 }

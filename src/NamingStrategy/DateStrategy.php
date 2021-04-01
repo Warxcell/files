@@ -10,8 +10,9 @@ use Arxy\FilesBundle\NamingStrategy;
 class DateStrategy implements NamingStrategy
 {
     private string $format;
+    private const DEFAULT_FORMAT = 'Y'.DIRECTORY_SEPARATOR.'m'.DIRECTORY_SEPARATOR.'d';
 
-    public function __construct(string $format = 'Y'.DIRECTORY_SEPARATOR.'m'.DIRECTORY_SEPARATOR.'d')
+    public function __construct(string $format = self::DEFAULT_FORMAT)
     {
         $this->format = $format;
     }
