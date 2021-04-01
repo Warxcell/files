@@ -33,7 +33,8 @@ class DoctrineORMListener implements EventSubscriber
         $entity = $args->getObject();
 
         $class = $this->manager->getClass();
-        if ($entity instanceof File && $entity instanceof $class) {
+        if ($entity instanceof $class) {
+            /** @var $entity File */
             $this->manager->moveFile($entity);
         }
     }
@@ -43,7 +44,8 @@ class DoctrineORMListener implements EventSubscriber
         $entity = $args->getObject();
 
         $class = $this->manager->getClass();
-        if ($entity instanceof File && $entity instanceof $class) {
+        if ($entity instanceof $class) {
+            /** @var $entity File */
             $this->manager->remove($entity);
         }
     }

@@ -63,6 +63,16 @@ class DoctrineORMListenerTest extends TestCase
         $this->listener->postPersist($event);
     }
 
+    public function testPostPersistNonFile()
+    {
+        $this->manager->expects($this->never())->method('moveFile');
+
+        $event = $this->createMock(LifecycleEventArgs::class);
+        $event->method('getObject')->willReturn(new \stdClass());
+
+        $this->listener->postPersist($event);
+    }
+
     public function testPreRemove()
     {
         $file = new File();
@@ -85,6 +95,16 @@ class DoctrineORMListenerTest extends TestCase
         $event->method('getObject')->willReturn($file);
 
         $this->listener->preRemove($event);
+    }
+
+    public function testPreRemoveNonFile()
+    {
+        $this->manager->expects($this->never())->method('moveFile');
+
+        $event = $this->createMock(LifecycleEventArgs::class);
+        $event->method('getObject')->willReturn(new \stdClass());
+
+        $this->listener->postPersist($event);
     }
 
     public function testOnClear()
