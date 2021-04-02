@@ -11,15 +11,15 @@ use MicrosoftAzure\Storage\Blob\BlobRestProxy;
 
 class AzureBlobStoragePathResolver implements PathResolver
 {
-    private ManagerInterface $manager;
     private BlobRestProxy $client;
     private string $container;
+    private ManagerInterface $manager;
 
-    public function __construct(ManagerInterface $manager, BlobRestProxy $client, string $container)
+    public function __construct(BlobRestProxy $client, string $container, ManagerInterface $manager)
     {
-        $this->manager = $manager;
         $this->client = $client;
         $this->container = $container;
+        $this->manager = $manager;
     }
 
     public function getContainer()

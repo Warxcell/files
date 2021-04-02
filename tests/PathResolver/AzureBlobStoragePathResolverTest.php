@@ -34,9 +34,9 @@ class AzureBlobStoragePathResolverTest extends TestCase
             ->willReturn('all good');
 
         $pathResolver = new PathResolver\AzureBlobStoragePathResolver(
-            $this->manager,
             $this->blobRestProxy,
             'azure-container'
+            , $this->manager,
         );
         $this->assertSame('all good', $pathResolver->getPath($file));
     }
@@ -44,9 +44,9 @@ class AzureBlobStoragePathResolverTest extends TestCase
     public function testGetContainer()
     {
         $pathResolver = new PathResolver\AzureBlobStoragePathResolver(
-            $this->manager,
             $this->blobRestProxy,
-            'azure-container'
+            'azure-container',
+            $this->manager,
         );
 
         $this->assertSame('azure-container', $pathResolver->getContainer());
@@ -59,9 +59,9 @@ class AzureBlobStoragePathResolverTest extends TestCase
         $this->manager->expects($this->once())->method('getPathname')->with($file)->willReturn('all good');
 
         $pathResolver = new PathResolver\AzureBlobStoragePathResolver(
-            $this->manager,
             $this->blobRestProxy,
-            'azure-container'
+            'azure-container',
+            $this->manager,
         );
 
         $this->assertSame('all good', $pathResolver->getBlob($file));

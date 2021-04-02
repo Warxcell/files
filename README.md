@@ -532,15 +532,84 @@ Please note that until files are migrated - if some file is requested - it will 
 ### Arxy\FilesBundle\PathResolver\AwsS3PathResolver:
 
 ```yaml
+    Aws\S3\S3Client:
+        class: Aws\S3\S3Client
+        arguments:
+            $args:
+                region: 'region'
+                version: 'version'
+                credentials:
+                    key: 'key'
+                    secret: 'secret'
+
+    Aws\S3\S3ClientInterface:
+        alias: Aws\S3\S3Client
+
     Arxy\FilesBundle\PathResolver\AwsS3PathResolver:
       arguments:
-        $bucket: '%env(AWS_S3_BUCKET)%'
+        $s3Client: '@Aws\S3\S3ClientInterface'
+        $bucket: 'bucket-name'
         $manager: '@Arxy\FilesBundle\ManagerInterface'
 
     Arxy\FilesBundle\PathResolver:
       alias: Arxy\FilesBundle\PathResolver\AwsS3PathResolver
-
 ```
+### Arxy\FilesBundle\PathResolver\AzureBlobStoragePathResolver:
+
+```yaml
+    MicrosoftAzure\Storage\Blob\BlobRestProxy:
+        factory: [ 'MicrosoftAzure\Storage\Blob\BlobRestProxy', 'createBlobService' ]
+        arguments:
+            $connectionString: 'DefaultEndpointsProtocol=https;AccountName=xxxxxxxx;EndpointSuffix=core.windows.net'
+
+    Arxy\FilesBundle\PathResolver\AzureBlobStoragePathResolver:
+      arguments:
+        $client: '@MicrosoftAzure\Storage\Blob\BlobRestProxy'
+        $container: 'container-name'
+        $manager: '@Arxy\FilesBundle\ManagerInterface'
+
+    Arxy\FilesBundle\PathResolver:
+      alias: Arxy\FilesBundle\PathResolver\AzureBlobStoragePathResolver
+```
+### Arxy\FilesBundle\PathResolver\AzureBlobStorageSASPathResolver:
+
+- Decorator that accepts `Arxy\FilesBundle\PathResolver\AzureBlobStoragePathResolver` and adds <a href="https://docs.microsoft.com/en-us/rest/api/storageservices/create-service-sas">SAS Signature</a>
+
+Create `AzureBlobStorageSASParametersFactory` instance that will be responsible for creating parameters for signature.
+
+```php
+class MyFactory implements \Arxy\FilesBundle\PathResolver\AzureBlobStorageSASParametersFactory 
+{
+    public function create(\Arxy\FilesBundle\Model\File $file) : \Arxy\FilesBundle\PathResolver\AzureBlobStorageSASParameters
+    {
+        return new \Arxy\FilesBundle\PathResolver\AzureBlobStorageSASParameters(
+            new \DateTimeImmutable('+10 minutes'),
+        );
+    }
+}
+```
+
+```yaml
+    MicrosoftAzure\Storage\Blob\BlobSharedAccessSignatureHelper:
+        arguments:
+            $accountName: 'account-name'
+            $accountKey: 'account-key'
+
+    MyFactory: ~
+    
+    Arxy\FilesBundle\PathResolver\AzureBlobStorageSASParametersFactory:
+        alias: '@MyFactory'
+
+    Arxy\FilesBundle\PathResolver\AzureBlobStorageSASPathResolver:
+      arguments:
+        $pathResolver: '@Arxy\FilesBundle\PathResolver\AzureBlobStoragePathResolver'
+        $signatureHelper: '@MicrosoftAzure\Storage\Blob\BlobSharedAccessSignatureHelper'
+        $factory: '@Arxy\FilesBundle\PathResolver\AzureBlobStorageSASParametersFactory'
+
+    Arxy\FilesBundle\PathResolver:
+      alias: Arxy\FilesBundle\PathResolver\AzureBlobStorageSASPathResolver
+```
+
 
 ### Arxy\FilesBundle\PathResolver\SymfonyCachePathResolver:
 
