@@ -522,16 +522,11 @@ Please note that until files are migrated - if some file is requested - it will 
 ```yaml
     Arxy\FilesBundle\PathResolver\AssetsPathResolver:
       arguments:
-        $manager: '@Arxy\FilesBundle\Manager' # this is important, you should pass non-decorated Manager, to avoid circular dependancy.
+        $manager: '@Arxy\FilesBundle\ManagerInterface'
         $package: 'packageName' # https://symfony.com/doc/current/components/asset.html#asset-packages
 
     Arxy\FilesBundle\PathResolver:
-      alias: App\LocalPathResolver
-
-    Arxy\FilesBundle\PathResolverManager:
-      decorates: Arxy\FilesBundle\ManagerInterface
-      arguments:
-        $manager: '@Arxy\FilesBundle\PathResolverManager.inner'
+      alias: Arxy\FilesBundle\PathResolver\AssetsPathResolver
 ```
 
 ### Arxy\FilesBundle\PathResolver\AwsS3PathResolver:
@@ -540,15 +535,11 @@ Please note that until files are migrated - if some file is requested - it will 
     Arxy\FilesBundle\PathResolver\AwsS3PathResolver:
       arguments:
         $bucket: '%env(AWS_S3_BUCKET)%'
-        $manager: '@Arxy\FilesBundle\Manager'
+        $manager: '@Arxy\FilesBundle\ManagerInterface'
 
     Arxy\FilesBundle\PathResolver:
       alias: Arxy\FilesBundle\PathResolver\AwsS3PathResolver
 
-    Arxy\FilesBundle\PathResolverManager:
-      decorates: Arxy\FilesBundle\ManagerInterface
-      arguments:
-        $manager: '@Arxy\FilesBundle\PathResolverManager.inner'
 ```
 
 ### Arxy\FilesBundle\PathResolver\SymfonyCachePathResolver:
@@ -562,7 +553,7 @@ Uses https://symfony.com/doc/current/components/cache.html
     Arxy\FilesBundle\PathResolver\AwsS3PathResolver:
       arguments:
         $bucket: '%env(AWS_S3_BUCKET)%'
-        $manager: '@Arxy\FilesBundle\Manager'
+        $manager: '@Arxy\FilesBundle\ManagerInterface'
 
     Arxy\FilesBundle\PathResolver\SymfonyCachePathResolver:
       arguments:
@@ -571,11 +562,6 @@ Uses https://symfony.com/doc/current/components/cache.html
 
     Arxy\FilesBundle\PathResolver:
       alias: Arxy\FilesBundle\PathResolver\SymfonyCachePathResolver
-
-    Arxy\FilesBundle\PathResolverManager:
-      decorates: Arxy\FilesBundle\ManagerInterface
-      arguments:
-        $manager: '@Arxy\FilesBundle\PathResolverManager.inner'
 ```
 
 ### Arxy\FilesBundle\PathResolver\DelegatingPathResolver:
@@ -586,4 +572,19 @@ Used when your system have multiple file entities:
     Arxy\FilesBundle\PathResolver\DelegatingPathResolver:
         arguments:
             $resolvers: {'App\Entity\File': '@resolver'}
+```
+
+### You can also combine Manager and PathResolver into one, using PathResolverManager decorator, so you can use singe instance for both operations:
+
+```yaml
+    Arxy\FilesBundle\PathResolverManager:
+      arguments:
+        $manager: '@manager'
+        $pathResolver: '@path_resolver'
+
+    Arxy\FilesBundle\ManagerInterface:
+      alias: Arxy\FilesBundle\PathResolverManager
+
+    Arxy\FilesBundle\PathResolver:
+      alias: Arxy\FilesBundle\PathResolverManager
 ```
