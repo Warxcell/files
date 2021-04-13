@@ -6,6 +6,7 @@ namespace Arxy\FilesBundle\PathResolver;
 
 use Arxy\FilesBundle\Model\File;
 use Arxy\FilesBundle\PathResolver;
+use LogicException;
 
 class DelegatingPathResolver implements PathResolver
 {
@@ -17,6 +18,11 @@ class DelegatingPathResolver implements PathResolver
         $this->resolvers = $resolvers;
     }
 
+    public function getPath(File $file): string
+    {
+        return $this->getResolver($file)->getPath($file);
+    }
+
     private function getResolver(File $file): PathResolver
     {
         foreach ($this->resolvers as $class => $resolver) {
@@ -25,11 +31,6 @@ class DelegatingPathResolver implements PathResolver
             }
         }
 
-        throw new \LogicException('No resolver for '.get_class($file));
-    }
-
-    public function getPath(File $file): string
-    {
-        return $this->getResolver($file)->getPath($file);
+        throw new LogicException('No resolver for '.get_class($file));
     }
 }

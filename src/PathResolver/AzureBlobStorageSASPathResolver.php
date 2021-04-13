@@ -26,6 +26,11 @@ class AzureBlobStorageSASPathResolver implements PathResolver
         $this->parametersFactory = $factory;
     }
 
+    public function getPath(File $file): string
+    {
+        return $this->pathResolver->getPath($file).'?'.$this->generateSas($file);
+    }
+
     private function generateSas(File $file): string
     {
         $parameters = $this->parametersFactory->create($file);
@@ -53,10 +58,5 @@ class AzureBlobStorageSASPathResolver implements PathResolver
             $parameters->getContentLanguage(),
             $parameters->getContentType(),
         );
-    }
-
-    public function getPath(File $file): string
-    {
-        return $this->pathResolver->getPath($file).'?'.$this->generateSas($file);
     }
 }

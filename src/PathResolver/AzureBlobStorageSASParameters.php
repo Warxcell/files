@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Arxy\FilesBundle\PathResolver;
 
+use DateTimeImmutable;
+
 final class AzureBlobStorageSASParameters
 {
-    private \DateTimeImmutable $expiry;
-    private ?\DateTimeImmutable $start;
+    private DateTimeImmutable $expiry;
+    private ?DateTimeImmutable $start;
     private ?string $ip;
     private ?string $identifier;
     private ?string $cacheControl;
@@ -17,8 +19,8 @@ final class AzureBlobStorageSASParameters
     private ?string $contentType;
 
     public function __construct(
-        \DateTimeImmutable $expiry,
-        ?\DateTimeImmutable $start = null,
+        DateTimeImmutable $expiry,
+        ?DateTimeImmutable $start = null,
         ?string $ip = null,
         ?string $identifier = null,
         ?string $cacheControl = null,
@@ -38,7 +40,7 @@ final class AzureBlobStorageSASParameters
         $this->contentType = $contentType;
     }
 
-    public function withExpiry(\DateTimeImmutable $dateTime)
+    public function withExpiry(DateTimeImmutable $dateTime)
     {
         $new = clone($this);
         $new->expiry = $dateTime;
@@ -46,12 +48,12 @@ final class AzureBlobStorageSASParameters
         return $new;
     }
 
-    public function getExpiry(): ?\DateTimeImmutable
+    public function getExpiry(): ?DateTimeImmutable
     {
         return $this->expiry;
     }
 
-    public function withStart(\DateTimeImmutable $dateTime)
+    public function withStart(DateTimeImmutable $dateTime)
     {
         $new = clone($this);
         $new->start = $dateTime;
@@ -59,7 +61,7 @@ final class AzureBlobStorageSASParameters
         return $new;
     }
 
-    public function getStart(): ?\DateTimeImmutable
+    public function getStart(): ?DateTimeImmutable
     {
         return $this->start;
     }

@@ -22,7 +22,12 @@ class AzureBlobStoragePathResolver implements PathResolver
         $this->manager = $manager;
     }
 
-    public function getContainer()
+    public function getPath(File $file): string
+    {
+        return $this->client->getBlobUrl($this->getContainer(), $this->getBlob($file));
+    }
+
+    public function getContainer(): string
     {
         return $this->container;
     }
@@ -30,10 +35,5 @@ class AzureBlobStoragePathResolver implements PathResolver
     public function getBlob(File $file): string
     {
         return $this->manager->getPathname($file);
-    }
-
-    public function getPath(File $file): string
-    {
-        return $this->client->getBlobUrl($this->getContainer(), $this->getBlob($file));
     }
 }

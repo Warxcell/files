@@ -6,6 +6,7 @@ namespace Arxy\FilesBundle\PathResolver;
 
 use Arxy\FilesBundle\Model\File;
 use Arxy\FilesBundle\PathResolver;
+use DateInterval;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 
@@ -13,7 +14,7 @@ class SymfonyCachePathResolver implements PathResolver
 {
     private PathResolver $pathResolver;
     private CacheInterface $cache;
-    /** @var int|\DateInterval|null */
+    /** @var int|DateInterval|null */
     private $expiresAfter;
 
     public function __construct(PathResolver $pathResolver, CacheInterface $cache, $expiresAfter = null)
