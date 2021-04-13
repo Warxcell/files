@@ -6,6 +6,7 @@ namespace Arxy\FilesBundle\NamingStrategy;
 
 use Arxy\FilesBundle\Model\File;
 use Arxy\FilesBundle\NamingStrategy;
+use InvalidArgumentException;
 
 class SplitHashStrategy implements NamingStrategy
 {
@@ -14,7 +15,7 @@ class SplitHashStrategy implements NamingStrategy
     public function __construct(int $splitLength = 8)
     {
         if (32 % $splitLength !== 0) {
-            throw new \InvalidArgumentException('$splitLength parameter must be modulus of 32');
+            throw new InvalidArgumentException('$splitLength parameter must be modulus of 32');
         }
 
         $this->splitLength = $splitLength;
