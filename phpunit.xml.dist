@@ -16,6 +16,10 @@
         </testsuite>
     </testsuites>
 
+    <php>
+        <server name="KERNEL_CLASS" value="Arxy\FilesBundle\Tests\Functional\Kernel"/>
+    </php>
+
     <coverage cacheDirectory=".phpunit.cache/code-coverage"
               processUncoveredFiles="true">
         <include>

@@ -1,0 +1,58 @@
+framework:
+    test: ~
+    secret: ydslvbxkcen473w89r8qkaponbcyd
+
+doctrine:
+    dbal:
+        driver: pdo_sqlite
+        memory: true
+        charset: UTF8
+    orm:
+        auto_generate_proxy_classes: "%kernel.debug%"
+        naming_strategy: doctrine.orm.naming_strategy.underscore
+        auto_mapping: true
+        mappings:
+            ArxyFilesBundleTestsFunctionalEntity:
+                type: annotation
+                dir: '%kernel.project_dir%/Entity'
+                is_bundle: false
+                prefix: Arxy\FilesBundle\Tests\Functional\Entity
+
+services:
+    _defaults:
+        autowire: true      # Automatically injects dependencies in your services.
+        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+
+    Arxy\FilesBundle\Tests\Functional\Repository\FileRepository: ~
+
+    League\Flysystem\InMemory\InMemoryFilesystemAdapter: ~
+
+    League\Flysystem\FilesystemAdapter: '@League\Flysystem\InMemory\InMemoryFilesystemAdapter'
+
+    League\Flysystem\Filesystem: ~
+
+    League\Flysystem\FilesystemOperator: '@League\Flysystem\Filesystem'
+
+    Arxy\FilesBundle\Twig\FilesExtension: ~
+
+    Arxy\FilesBundle\NamingStrategy\SplitHashStrategy: ~
+
+    Arxy\FilesBundle\NamingStrategy: '@Arxy\FilesBundle\NamingStrategy\SplitHashStrategy'
+
+    Arxy\FilesBundle\Repository: '@Arxy\FilesBundle\Tests\Functional\Repository\FileRepository'
+
+    Arxy\FilesBundle\Manager:
+        arguments:
+            $class: 'Arxy\FilesBundle\Tests\Functional\Entity\File'
+
+    Arxy\FilesBundle\ManagerInterface:
+        alias: Arxy\FilesBundle\Manager
+        public: true
+
+    Arxy\FilesBundle\EventListener\DoctrineORMListener:
+        tags:
+            - {name: doctrine.event_listener, event: 'postPersist'}
+            - {name: doctrine.event_listener, event: 'preRemove'}
+            - {name: doctrine.event_listener, event: 'onClear'}
+
+    Arxy\FilesBundle\Form\Type\FileType: ~
