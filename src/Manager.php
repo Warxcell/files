@@ -58,9 +58,9 @@ final class Manager implements ManagerInterface
         }
     }
 
-    public function remove(File $entity): void
+    public function remove(File $file): void
     {
-        $this->filesystem->delete($this->getPathname($entity));
+        $this->filesystem->delete($this->getPathname($file));
     }
 
     private function getMimeTypeByFile(\SplFileInfo $file): string
@@ -98,8 +98,11 @@ final class Manager implements ManagerInterface
         $fileSize = $file->getSize();
         $md5 = md5_file($file->getPathname());
 
-        $fileEntity = $this->repository->findByHashAndSize($md5, $fileSize);
+        $fileEntity = $this->fileMap->findByHashAndSize($md5, $fileSize);
 
+        if ($fileEntity === null) {
+            $fileEntity = $this->repository->findByHashAndSize($md5, $fileSize);
+        }
         if ($fileEntity === null) {
             $fileEntity = new $this->class();
             $fileEntity->setFileSize($fileSize);

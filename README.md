@@ -742,3 +742,7 @@ Used when your system have multiple file entities:
     Arxy\FilesBundle\PathResolver:
         alias: Arxy\FilesBundle\PathResolverManager
 ```
+
+### Known issues
+
+- If file entity is deleted within transaction and transaction is rolled back - file will remain.

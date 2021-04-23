@@ -51,8 +51,7 @@ services:
 
     Arxy\FilesBundle\EventListener\DoctrineORMListener:
         tags:
-            - {name: doctrine.event_listener, event: 'postPersist'}
-            - {name: doctrine.event_listener, event: 'preRemove'}
+            - {name: doctrine.event_listener, event: 'onFlush'}
             - {name: doctrine.event_listener, event: 'onClear'}
 
     Arxy\FilesBundle\Form\Type\FileType: ~

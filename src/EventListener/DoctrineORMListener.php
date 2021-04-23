@@ -9,17 +9,20 @@ use Arxy\FilesBundle\Model\File;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\OnClearEventArgs;
+use Doctrine\ORM\Event\OnFlushEventArgs;
 
 class DoctrineORMListener implements EventSubscriber
 {
     private ManagerInterface $manager;
+    private string $class;
 
     public function __construct(ManagerInterface $manager)
     {
         $this->manager = $manager;
+        $this->class = $this->manager->getClass();
     }
 
-    public function getSubscribedEvents()
+    public function getSubscribedEvents(): array
     {
         return [
             'postPersist',
@@ -28,12 +31,33 @@ class DoctrineORMListener implements EventSubscriber
         ];
     }
 
+    private function supports($entity): bool
+    {
+        return $entity instanceof $this->class;
+    }
+
+    public function onFlush(OnFlushEventArgs $args)
+    {
+        $entityManager = $args->getEntityManager();
+        $unitOfWork = $entityManager->getUnitOfWork();
+        foreach ($unitOfWork->getScheduledEntityInsertions() as $entity) {
+            if ($this->supports($entity)) {
+                $this->manager->moveFile($entity);
+            }
+        }
+
+        foreach ($unitOfWork->getScheduledEntityDeletions() as $entity) {
+            if ($this->supports($entity)) {
+                $this->manager->remove($entity);
+            }
+        }
+    }
+
     public function postPersist(LifecycleEventArgs $args)
     {
         $entity = $args->getObject();
 
-        $class = $this->manager->getClass();
-        if ($entity instanceof $class) {
+        if ($this->supports($entity)) {
             /** @var $entity File */
             $this->manager->moveFile($entity);
         }
@@ -43,8 +67,7 @@ class DoctrineORMListener implements EventSubscriber
     {
         $entity = $args->getObject();
 
-        $class = $this->manager->getClass();
-        if ($entity instanceof $class) {
+        if ($this->supports($entity)) {
             /** @var $entity File */
             $this->manager->remove($entity);
         }
