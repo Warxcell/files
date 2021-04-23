@@ -18,7 +18,7 @@ interface File
 
     public function getFileSize(): int;
 
-    public function setMd5Hash(): string;
+    public function setMd5Hash(string $md5Hash): void;
 
     public function getMd5Hash(): string;
 
