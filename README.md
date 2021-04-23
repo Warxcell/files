@@ -334,6 +334,7 @@ final class Upload
 
 ```php
 <?php
+
 declare(strict_types=1);
 
 namespace App\Entity;
@@ -390,7 +391,7 @@ class File extends \Arxy\FilesBundle\Entity\File
      * @ORM\GeneratedValue
      * @Groups({"file_read"})
      */
-    protected $id;
+    protected ?int $id = null;
 
     public function getId(): ?int
     {
@@ -403,7 +404,69 @@ class File extends \Arxy\FilesBundle\Entity\File
 Serving depends from how you want to serve it. You might want to use LiipImagineBundle as mention above, or CDN
 solution.
 
-If you want to use it with own image hosting and LiipImagineBundle, you probably could add something like that:
+If you want directly to serve file with CDN, you can use Path Resolver + Normalizer:
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Serializer;
+
+use App\Entity\File;
+use Arxy\FilesBundle\PathResolver;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+
+class FileNormalizer implements NormalizerInterface
+{
+    private ObjectNormalizer $objectNormalizer;
+    private PathResolver $pathResolver;
+
+    public function __construct(
+        ObjectNormalizer $objectNormalizer,
+        PathResolver $pathResolver
+    ) {
+        $this->objectNormalizer = $objectNormalizer;
+        $this->pathResolver = $pathResolver;
+    }
+
+    public function normalize($object, $format = null, array $context = array())
+    {
+        assert($object instanceof File);
+        $data = $this->objectNormalizer->normalize($object, $format, $context);
+        $data['url'] = $this->pathResolver->getPath($object);
+
+        return $data;
+    }
+
+    public function supportsNormalization($data, $format = null)
+    {
+        return $data instanceof File;
+    }
+}
+```
+
+```php
+    /**
+     * @var string
+     * @Groups({"file_read"})
+     */
+    private string $url = null;
+
+    public function getUrl(): array
+    {
+        return $this->url;
+    }
+
+    public function setUrl(string $url): void
+    {
+        $this->url = $url;
+    }
+```
+
+
+If you want to use it with LiipImagineBundle, you probably could add something like that:
 
 ```php
     /**
@@ -429,6 +492,7 @@ here is example with Serializer Normalizer:
 
 ```php
 <?php
+
 declare(strict_types=1);
 
 namespace App\Serializer;
@@ -480,7 +544,7 @@ class FileNormalizer implements NormalizerInterface
 
     public function supportsNormalization($data, $format = null)
     {
-        return $format === 'json' && $data instanceof File;
+        return $data instanceof File;
     }
 }
 ```
