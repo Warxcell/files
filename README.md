@@ -404,7 +404,7 @@ class File extends \Arxy\FilesBundle\Entity\File
 Serving depends from how you want to serve it. You might want to use LiipImagineBundle as mention above, or CDN
 solution.
 
-If you want directly to serve file with CDN, you can use Path Resolver + Normalizer:
+### If you want directly to serve file with CDN, you can use Path Resolver + Normalizer:
 
 ```php
 <?php
@@ -465,8 +465,18 @@ class FileNormalizer implements NormalizerInterface
     }
 ```
 
+You will receive following json as response:
 
-If you want to use it with LiipImagineBundle, you probably could add something like that:
+```json
+{
+  "id": 145,
+  "mimeType": "application/pdf",
+  "size": 532423,
+  "url": "https://example.com/link-to-image.pdf"
+}
+```
+
+### If you want to use it with LiipImagineBundle, you probably could add something like that:
 
 ```php
     /**
