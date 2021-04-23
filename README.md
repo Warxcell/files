@@ -61,47 +61,47 @@ class File extends \Arxy\FilesBundle\Entity\File
 
 ```yaml
 services:
-  files_local_adapter:
-    class: League\Flysystem\Local\LocalFilesystemAdapter
-    arguments:
-      - "/directory/for/files/"
+    files_local_adapter:
+        class: League\Flysystem\Local\LocalFilesystemAdapter
+        arguments:
+            - "/directory/for/files/"
 
-  League\Flysystem\Filesystem:
-    arguments:
-      - "@files_local_adapter"
+    League\Flysystem\Filesystem:
+        arguments:
+            - "@files_local_adapter"
 
-  League\Flysystem\FilesystemOperator:
-    alias: League\Flysystem\Filesystem
+    League\Flysystem\FilesystemOperator:
+        alias: League\Flysystem\Filesystem
 
-  Arxy\FilesBundle\Twig\FilesExtension:
-    tags:
-      - { name: twig.extension }
+    Arxy\FilesBundle\Twig\FilesExtension:
+        tags:
+            - {name: twig.extension}
 
-  Arxy\FilesBundle\NamingStrategy\IdToPathStrategy: ~
-  Arxy\FilesBundle\NamingStrategy\AppendExtensionStrategy:
-    arguments:
-      - '@Arxy\FilesBundle\NamingStrategy\IdToPathStrategy'
+    Arxy\FilesBundle\NamingStrategy\IdToPathStrategy: ~
+    Arxy\FilesBundle\NamingStrategy\AppendExtensionStrategy:
+        arguments:
+            - '@Arxy\FilesBundle\NamingStrategy\IdToPathStrategy'
 
-  Arxy\FilesBundle\NamingStrategy:
-    alias: Arxy\FilesBundle\NamingStrategy\AppendExtensionStrategy
+    Arxy\FilesBundle\NamingStrategy:
+        alias: Arxy\FilesBundle\NamingStrategy\AppendExtensionStrategy
 
-  Arxy\FilesBundle\Manager:
-    arguments:
-      $class: "App\\Entity\\File"
+    Arxy\FilesBundle\Manager:
+        arguments:
+            $class: "App\\Entity\\File"
 
-  Arxy\FilesBundle\ManagerInterface:
-    alias: Arxy\FilesBundle\Manager
+    Arxy\FilesBundle\ManagerInterface:
+        alias: Arxy\FilesBundle\Manager
 
-  Arxy\FilesBundle\EventListener\DoctrineORMListener:
-    arguments: [ "@Arxy\\FilesBundle\\ManagerInterface" ] # This can be omit, if using autowiring.
-    tags:
-      - { name: doctrine.event_listener, event: 'postPersist' }
-      - { name: doctrine.event_listener, event: 'preRemove' }
+    Arxy\FilesBundle\EventListener\DoctrineORMListener:
+        arguments: ["@Arxy\\FilesBundle\\ManagerInterface"] # This can be omit, if using autowiring.
+        tags:
+            - {name: doctrine.event_listener, event: 'postPersist'}
+            - {name: doctrine.event_listener, event: 'preRemove'}
 
-  Arxy\FilesBundle\Form\Type\FileType:
-    arguments: [ "@Arxy\\FilesBundle\\ManagerInterface" ] # This can be omit, if using autowiring.
-    tags: # This can be omit, if using autowiring.
-      - { name: form.type }
+    Arxy\FilesBundle\Form\Type\FileType:
+        arguments: ["@Arxy\\FilesBundle\\ManagerInterface"] # This can be omit, if using autowiring.
+        tags: # This can be omit, if using autowiring.
+            - {name: form.type}
 ```
 
 or using pure PHP
@@ -146,6 +146,7 @@ $formMapper->add(
     ]
 );
 ```
+
 ## Read file content
 
 ```php
@@ -299,6 +300,8 @@ class ImageHelper
 
 ## Usage with <a href="https://api-platform.com/">API Platform</a>:
 
+### Uploading
+
 ```php
 <?php
 
@@ -401,10 +404,12 @@ class File extends \Arxy\FilesBundle\Entity\File
 
 ```
 
+### Serve
+
 Serving depends from how you want to serve it. You might want to use LiipImagineBundle as mention above, or CDN
 solution.
 
-### If you want directly to serve file with CDN, you can use Path Resolver + Normalizer:
+#### If you want directly to serve file with CDN, you can use Path Resolver + Normalizer:
 
 ```php
 <?php
@@ -476,7 +481,7 @@ You will receive following json as response:
 }
 ```
 
-### If you want to use it with LiipImagineBundle, you probably could add something like that:
+#### If you want to use it with LiipImagineBundle, you probably could add something like that:
 
 ```php
     /**
@@ -576,9 +581,9 @@ First configure the new naming strategy, but keep the old one as service. Then r
 
 ```yaml
 services:
-  Arxy\FilesBundle\Command\MigrateNamingStrategyCommand:
-    arguments:
-      $oldNamingStrategy: 'old_naming_strategy_service_id'
+    Arxy\FilesBundle\Command\MigrateNamingStrategyCommand:
+        arguments:
+            $oldNamingStrategy: 'old_naming_strategy_service_id'
 ```
 
 then run it.
@@ -595,12 +600,12 @@ Please note that until files are migrated - if some file is requested - it will 
 
 ```yaml
     Arxy\FilesBundle\PathResolver\AssetsPathResolver:
-      arguments:
-        $manager: '@Arxy\FilesBundle\ManagerInterface'
-        $package: 'packageName' # https://symfony.com/doc/current/components/asset.html#asset-packages
+        arguments:
+            $manager: '@Arxy\FilesBundle\ManagerInterface'
+            $package: 'packageName' # https://symfony.com/doc/current/components/asset.html#asset-packages
 
     Arxy\FilesBundle\PathResolver:
-      alias: Arxy\FilesBundle\PathResolver\AssetsPathResolver
+        alias: Arxy\FilesBundle\PathResolver\AssetsPathResolver
 ```
 
 ### Arxy\FilesBundle\PathResolver\AwsS3PathResolver:
@@ -620,34 +625,37 @@ Please note that until files are migrated - if some file is requested - it will 
         alias: Aws\S3\S3Client
 
     Arxy\FilesBundle\PathResolver\AwsS3PathResolver:
-      arguments:
-        $s3Client: '@Aws\S3\S3ClientInterface'
-        $bucket: 'bucket-name'
-        $manager: '@Arxy\FilesBundle\ManagerInterface'
+        arguments:
+            $s3Client: '@Aws\S3\S3ClientInterface'
+            $bucket: 'bucket-name'
+            $manager: '@Arxy\FilesBundle\ManagerInterface'
 
     Arxy\FilesBundle\PathResolver:
-      alias: Arxy\FilesBundle\PathResolver\AwsS3PathResolver
+        alias: Arxy\FilesBundle\PathResolver\AwsS3PathResolver
 ```
+
 ### Arxy\FilesBundle\PathResolver\AzureBlobStoragePathResolver:
 
 ```yaml
     MicrosoftAzure\Storage\Blob\BlobRestProxy:
-        factory: [ 'MicrosoftAzure\Storage\Blob\BlobRestProxy', 'createBlobService' ]
+        factory: ['MicrosoftAzure\Storage\Blob\BlobRestProxy', 'createBlobService']
         arguments:
             $connectionString: 'DefaultEndpointsProtocol=https;AccountName=xxxxxxxx;EndpointSuffix=core.windows.net'
 
     Arxy\FilesBundle\PathResolver\AzureBlobStoragePathResolver:
-      arguments:
-        $client: '@MicrosoftAzure\Storage\Blob\BlobRestProxy'
-        $container: 'container-name'
-        $manager: '@Arxy\FilesBundle\ManagerInterface'
+        arguments:
+            $client: '@MicrosoftAzure\Storage\Blob\BlobRestProxy'
+            $container: 'container-name'
+            $manager: '@Arxy\FilesBundle\ManagerInterface'
 
     Arxy\FilesBundle\PathResolver:
-      alias: Arxy\FilesBundle\PathResolver\AzureBlobStoragePathResolver
+        alias: Arxy\FilesBundle\PathResolver\AzureBlobStoragePathResolver
 ```
+
 ### Arxy\FilesBundle\PathResolver\AzureBlobStorageSASPathResolver:
 
-- Decorator that accepts `Arxy\FilesBundle\PathResolver\AzureBlobStoragePathResolver` and adds <a href="https://docs.microsoft.com/en-us/rest/api/storageservices/create-service-sas">SAS Signature</a>
+- Decorator that accepts `Arxy\FilesBundle\PathResolver\AzureBlobStoragePathResolver` and
+  adds <a href="https://docs.microsoft.com/en-us/rest/api/storageservices/create-service-sas">SAS Signature</a>
 
 Create `AzureBlobStorageSASParametersFactory` instance that will be responsible for creating parameters for signature.
 
@@ -670,20 +678,19 @@ class MyFactory implements \Arxy\FilesBundle\PathResolver\AzureBlobStorageSASPar
             $accountKey: 'account-key'
 
     MyFactory: ~
-    
+
     Arxy\FilesBundle\PathResolver\AzureBlobStorageSASParametersFactory:
         alias: '@MyFactory'
 
     Arxy\FilesBundle\PathResolver\AzureBlobStorageSASPathResolver:
-      arguments:
-        $pathResolver: '@Arxy\FilesBundle\PathResolver\AzureBlobStoragePathResolver'
-        $signatureHelper: '@MicrosoftAzure\Storage\Blob\BlobSharedAccessSignatureHelper'
-        $factory: '@Arxy\FilesBundle\PathResolver\AzureBlobStorageSASParametersFactory'
+        arguments:
+            $pathResolver: '@Arxy\FilesBundle\PathResolver\AzureBlobStoragePathResolver'
+            $signatureHelper: '@MicrosoftAzure\Storage\Blob\BlobSharedAccessSignatureHelper'
+            $factory: '@Arxy\FilesBundle\PathResolver\AzureBlobStorageSASParametersFactory'
 
     Arxy\FilesBundle\PathResolver:
-      alias: Arxy\FilesBundle\PathResolver\AzureBlobStorageSASPathResolver
+        alias: Arxy\FilesBundle\PathResolver\AzureBlobStorageSASPathResolver
 ```
-
 
 ### Arxy\FilesBundle\PathResolver\SymfonyCachePathResolver:
 
@@ -694,17 +701,17 @@ Uses https://symfony.com/doc/current/components/cache.html
 
 ```yaml
     Arxy\FilesBundle\PathResolver\AwsS3PathResolver:
-      arguments:
-        $bucket: '%env(AWS_S3_BUCKET)%'
-        $manager: '@Arxy\FilesBundle\ManagerInterface'
+        arguments:
+            $bucket: '%env(AWS_S3_BUCKET)%'
+            $manager: '@Arxy\FilesBundle\ManagerInterface'
 
     Arxy\FilesBundle\PathResolver\SymfonyCachePathResolver:
-      arguments:
-        $pathResolver: '@Arxy\FilesBundle\PathResolver\AwsS3PathResolver'
-        $cache: '@cache.app'
+        arguments:
+            $pathResolver: '@Arxy\FilesBundle\PathResolver\AwsS3PathResolver'
+            $cache: '@cache.app'
 
     Arxy\FilesBundle\PathResolver:
-      alias: Arxy\FilesBundle\PathResolver\SymfonyCachePathResolver
+        alias: Arxy\FilesBundle\PathResolver\SymfonyCachePathResolver
 ```
 
 ### Arxy\FilesBundle\PathResolver\DelegatingPathResolver:
@@ -721,13 +728,13 @@ Used when your system have multiple file entities:
 
 ```yaml
     Arxy\FilesBundle\PathResolverManager:
-      arguments:
-        $manager: '@manager'
-        $pathResolver: '@path_resolver'
+        arguments:
+            $manager: '@manager'
+            $pathResolver: '@path_resolver'
 
     Arxy\FilesBundle\ManagerInterface:
-      alias: Arxy\FilesBundle\PathResolverManager
+        alias: Arxy\FilesBundle\PathResolverManager
 
     Arxy\FilesBundle\PathResolver:
-      alias: Arxy\FilesBundle\PathResolverManager
+        alias: Arxy\FilesBundle\PathResolverManager
 ```
