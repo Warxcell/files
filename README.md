@@ -404,12 +404,14 @@ class File extends \Arxy\FilesBundle\Entity\File
 
 ```
 
-### Serve
+### Serving
 
 Serving depends from how you want to serve it. You might want to use LiipImagineBundle as mention above, or CDN
 solution.
 
-#### If you want directly to serve file with CDN, you can use Path Resolver + Normalizer:
+#### Directly
+
+If you want directly to serve file with CDN, you can use Path Resolver + Normalizer:
 
 ```php
 <?php
@@ -481,7 +483,9 @@ You will receive following json as response:
 }
 ```
 
-#### If you want to use it with LiipImagineBundle, you probably could add something like that:
+#### LiipImagineBundle
+
+If you want to use it with LiipImagineBundle, you probably could add something like that:
 
 ```php
     /**
