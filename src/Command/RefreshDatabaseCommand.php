@@ -7,6 +7,7 @@ namespace Arxy\FilesBundle\Command;
 use Arxy\FilesBundle\ManagerInterface;
 use Arxy\FilesBundle\Repository;
 use Doctrine\Persistence\ManagerRegistry;
+use LogicException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -19,6 +20,7 @@ class RefreshDatabaseCommand extends Command
     private ManagerInterface $fileManager;
     private ManagerRegistry $registry;
     private Repository $repository;
+    private const BATCH_SIZE = 20;
 
     public function __construct(ManagerInterface $fileManager, ManagerRegistry $registry, Repository $repository)
     {
@@ -28,25 +30,24 @@ class RefreshDatabaseCommand extends Command
         $this->repository = $repository;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
         $progressBar = $io->createProgressBar();
 
-        $batchSize = 20;
         $i = 1;
 
         $class = $this->fileManager->getClass();
         $objectManager = $this->registry->getManagerForClass($class);
         if ($objectManager === null) {
-            throw new \LogicException('No manager found for '.$class);
+            throw new LogicException('No manager found for '.$class);
         }
 
         $files = $this->repository->findAllForBatchProcessing();
         foreach ($files as $file) {
             $this->fileManager->refresh($file);
 
-            if (($i++ % $batchSize) === 0) {
+            if (($i++ % self::BATCH_SIZE) === 0) {
                 $objectManager->flush();
                 $objectManager->clear();
             }

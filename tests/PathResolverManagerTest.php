@@ -29,7 +29,7 @@ class PathResolverManagerTest extends TestCase
     public function testUpload()
     {
         $file = new \SplFileObject(__DIR__.'/files/image1.jpg');
-        $uploadedFile = new File();
+        $uploadedFile = new File('filename', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg');
         $this->decorated->expects($this->once())->method('upload')->with($file)->willReturn($uploadedFile);
         $actualFile = $this->decorator->upload($file);
         $this->assertSame($uploadedFile, $actualFile);
@@ -37,7 +37,7 @@ class PathResolverManagerTest extends TestCase
 
     public function testGetPathname()
     {
-        $file = new File();
+        $file = new File('filename', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg');
         $this->decorated->expects($this->once())->method('getPathname')->with($file)->willReturn('!!!');
 
         $actual = $this->decorator->getPathname($file);
@@ -46,7 +46,7 @@ class PathResolverManagerTest extends TestCase
 
     public function testRead()
     {
-        $file = new File();
+        $file = new File('filename', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg');
         $this->decorated->expects($this->once())->method('read')->with($file)->willReturn('!!!');
 
         $actual = $this->decorator->read($file);
@@ -55,7 +55,7 @@ class PathResolverManagerTest extends TestCase
 
     public function testReadStream()
     {
-        $file = new File();
+        $file = new File('filename', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg');
         $this->decorated->expects($this->once())->method('readStream')->with($file)->willReturn('!!!');
 
         $actual = $this->decorator->readStream($file);
@@ -64,7 +64,7 @@ class PathResolverManagerTest extends TestCase
 
     public function testRefresh()
     {
-        $file = new File();
+        $file = new File('filename', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg');
         $this->decorated->expects($this->once())->method('refresh')->with($file);
 
         $this->decorator->refresh($file);
@@ -72,7 +72,7 @@ class PathResolverManagerTest extends TestCase
 
     public function testMigrate()
     {
-        $file = new File();
+        $file = new File('filename', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg');
 
         $namingStrategy = $this->createMock(NamingStrategy::class);
         $this->decorated->expects($this->once())->method('migrate')->with($file, $namingStrategy)->willReturn(true);
@@ -83,7 +83,7 @@ class PathResolverManagerTest extends TestCase
 
     public function testMove()
     {
-        $file = new File();
+        $file = new File('filename', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg');
         $this->decorated->expects($this->once())->method('moveFile')->with($file);
 
         $this->decorator->moveFile($file);
@@ -91,7 +91,7 @@ class PathResolverManagerTest extends TestCase
 
     public function testRemove()
     {
-        $file = new File();
+        $file = new File('filename', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg');
         $this->decorated->expects($this->once())->method('remove')->with($file);
 
         $this->decorator->remove($file);
@@ -114,7 +114,7 @@ class PathResolverManagerTest extends TestCase
 
     public function testGetPath()
     {
-        $file = new File();
+        $file = new File('filename', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg');
         $this->pathResolver->expects($this->once())->method('getPath')->with($file)->willReturn('!!!');
 
         $actual = $this->decorator->getPath($file);

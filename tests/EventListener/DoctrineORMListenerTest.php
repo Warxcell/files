@@ -42,7 +42,7 @@ class DoctrineORMListenerTest extends TestCase
 
     public function testPostPersist()
     {
-        $file = new File();
+        $file = new File('filename', 125, '12345', 'image/jpeg');
 
         $this->manager->expects($this->once())->method('moveFile')->with($file);
 
@@ -54,7 +54,7 @@ class DoctrineORMListenerTest extends TestCase
 
     public function testPostPersistAnotherClass()
     {
-        $file = new File2();
+        $file = new File2('filename', 125, '12345', 'image/jpeg');
         $this->manager->expects($this->never())->method('moveFile');
 
         $event = $this->createMock(LifecycleEventArgs::class);
@@ -75,7 +75,7 @@ class DoctrineORMListenerTest extends TestCase
 
     public function testPreRemove()
     {
-        $file = new File();
+        $file = new File('filename', 125, '12345', 'image/jpeg');
 
         $this->manager->expects($this->once())->method('remove')->with($file);
 
@@ -87,7 +87,7 @@ class DoctrineORMListenerTest extends TestCase
 
     public function testPreRemoveAnotherClass()
     {
-        $file = new File2();
+        $file = new File2('filename', 125, '12345', 'image/jpeg');
 
         $this->manager->expects($this->never())->method('remove');
 

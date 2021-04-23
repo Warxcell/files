@@ -26,7 +26,7 @@ class IdToPathStrategyTest extends AbstractStrategyTest
 
     public function getFile(): \Arxy\FilesBundle\Model\File
     {
-        $file = new File();
+        $file = new File('original_filename.jpg', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg');
         $file->setId(12345);
 
         return $file;

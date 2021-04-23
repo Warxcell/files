@@ -40,7 +40,7 @@ class FileValidatorTest extends ConstraintValidatorTestCase
         );
 
         $this->validator->validate(
-            new File(),
+            new File('filename', 125, '12345', 'image/jpeg'),
             new class extends Constraint {
             }
         );
@@ -62,7 +62,7 @@ class FileValidatorTest extends ConstraintValidatorTestCase
 
     public function testInvalidSize()
     {
-        $file = new File();
+        $file = new File('filename', 125, '12345', 'image/jpeg');
         $file->setFileSize(1000);
 
         $this->validator->validate(
@@ -85,7 +85,7 @@ class FileValidatorTest extends ConstraintValidatorTestCase
 
     public function testValidExactSize()
     {
-        $file = new File();
+        $file = new File('filename', 125, '12345', 'image/jpeg');
         $file->setFileSize(1000);
 
         $this->validator->validate(
@@ -102,7 +102,7 @@ class FileValidatorTest extends ConstraintValidatorTestCase
 
     public function testValidSize()
     {
-        $file = new File();
+        $file = new File('filename', 125, '12345', 'image/jpeg');
         $file->setFileSize(1000);
 
         $this->validator->validate(
@@ -118,7 +118,7 @@ class FileValidatorTest extends ConstraintValidatorTestCase
 
     public function testInvalidMimeType()
     {
-        $file = new File();
+        $file = new File('filename', 125, '12345', 'image/jpeg');
         $file->setFileSize(1000);
         $file->setMimeType('text/html');
 
@@ -141,7 +141,7 @@ class FileValidatorTest extends ConstraintValidatorTestCase
 
     public function testValidMimeType()
     {
-        $file = new File();
+        $file = new File('filename', 125, '12345', 'image/jpeg');
         $file->setFileSize(1000);
         $file->setMimeType('image/jpeg');
 
@@ -154,7 +154,7 @@ class FileValidatorTest extends ConstraintValidatorTestCase
             )
         );
 
-        $file = new File();
+        $file = new File('filename', 125, '12345', 'image/jpeg');
         $file->setFileSize(1000);
         $file->setMimeType('application/pdf');
         $this->validator->validate(
@@ -171,7 +171,7 @@ class FileValidatorTest extends ConstraintValidatorTestCase
 
     public function testInvalidSizeAndMimeType()
     {
-        $file = new File();
+        $file = new File('filename', 125, '12345', 'image/jpeg');
         $file->setFileSize(1025);
         $file->setMimeType('text/html');
 

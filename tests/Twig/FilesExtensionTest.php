@@ -39,7 +39,7 @@ class FilesExtensionTest extends TestCase
 
     public function testReadContent()
     {
-        $file = new File();
+        $file = new File('filename', 125, '12345', 'image/jpeg');
         $this->manager->expects($this->once())->method('read')->with($file)->willReturn('all good');
 
         $this->assertSame('all good', $this->extension->readContent($file));

@@ -6,24 +6,15 @@ namespace Arxy\FilesBundle\Tests\PathResolver;
 
 use Arxy\FilesBundle\PathResolver;
 use Arxy\FilesBundle\Tests\File;
-use MicrosoftAzure\Storage\Blob\BlobRestProxy;
 use MicrosoftAzure\Storage\Blob\BlobSharedAccessSignatureHelper;
 use MicrosoftAzure\Storage\Common\Internal\Resources;
 use PHPUnit\Framework\TestCase;
 
 class AzureBlobStorageSASPathResolverTest extends TestCase
 {
-    private BlobRestProxy $blobRestProxy;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->blobRestProxy = $this->createMock(BlobRestProxy::class);
-    }
-
     public function testGetPath()
     {
-        $file = new File();
+        $file = new File('original_filename.jpg', 125, '1234567', 'image/jpeg');
 
         $pathResolver = $this->createMock(PathResolver\AzureBlobStoragePathResolver::class);
         $pathResolver->expects($this->once())->method('getPath')->with($file)->willReturn('url');
@@ -75,7 +66,7 @@ class AzureBlobStorageSASPathResolverTest extends TestCase
 
     public function testGetPathNullParams()
     {
-        $file = new File();
+        $file = new File('original_filename.jpg', 125, '1234567', 'image/jpeg');
 
         $pathResolver = $this->createMock(PathResolver\AzureBlobStoragePathResolver::class);
         $pathResolver->expects($this->once())->method('getPath')->with($file)->willReturn('url');

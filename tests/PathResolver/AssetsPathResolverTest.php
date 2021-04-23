@@ -36,7 +36,7 @@ class AssetsPathResolverTest extends TestCase
 
     public function testGetPath()
     {
-        $file = new File();
+        $file = new File('original_filename.jpg', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg');
         $this->manager->expects($this->once())->method('getPathname')->with($file)->willReturn('directory/5');
         $this->assertSame('/media/directory/5', $this->pathResolver->getPath($file));
     }

@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace Arxy\FilesBundle;
 
 use Arxy\FilesBundle\Model\File;
+use SplFileInfo;
 
 interface ManagerInterface
 {
-    public function upload(\SplFileInfo $file): File;
+    public function upload(SplFileInfo $file): File;
 
     public function getPathname(File $file): string;
 

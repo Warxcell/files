@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Arxy\FilesBundle\Validator\Constraint;
 
+use Exception;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Exception\ConstraintDefinitionException;
 use function ByteUnits\parse;
@@ -40,7 +41,7 @@ class File extends Constraint
             }
 
             return (int)parse($maxSize)->numberOfBytes();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             throw new ConstraintDefinitionException(sprintf('"%s" is not a valid maximum size.', $original), 0, $e);
         }
     }

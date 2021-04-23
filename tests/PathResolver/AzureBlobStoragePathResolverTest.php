@@ -24,7 +24,7 @@ class AzureBlobStoragePathResolverTest extends TestCase
 
     public function testGetPath()
     {
-        $file = new File();
+        $file = new File('original_filename.jpg', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg');
 
         $this->manager->expects($this->once())->method('getPathname')->with($file)->willReturn('pathname');
 
@@ -54,7 +54,7 @@ class AzureBlobStoragePathResolverTest extends TestCase
 
     public function testGetBlob()
     {
-        $file = new File();
+        $file = new File('original_filename.jpg', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg');
 
         $this->manager->expects($this->once())->method('getPathname')->with($file)->willReturn('all good');
 

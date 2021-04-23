@@ -42,13 +42,14 @@ class FileType extends AbstractType
                 return $options['multiple'] ? null : $options['manager']->getClass();
             }
         );
+        $resolver->setDefault('empty_data', null);
         $resolver->setDefault('input_options', []);
         $resolver->setDefault('multiple', false);
         $resolver->setDefault('manager', $this->fileManager);
         $resolver->setAllowedTypes('manager', ManagerInterface::class);
     }
 
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'arxy_file';
     }

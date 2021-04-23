@@ -5,9 +5,13 @@ declare(strict_types=1);
 namespace Arxy\FilesBundle;
 
 use Arxy\FilesBundle\Model\File;
+use InvalidArgumentException;
 use League\Flysystem\FilesystemOperator;
 use League\MimeTypeDetection\FinfoMimeTypeDetector;
 use League\MimeTypeDetection\MimeTypeDetector;
+use RuntimeException;
+use SplFileInfo;
+use SplFileObject;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 final class Manager implements ManagerInterface
@@ -35,22 +39,22 @@ final class Manager implements ManagerInterface
         $this->mimeTypeDetector = $mimeTypeDetector ?? new FinfoMimeTypeDetector();
     }
 
-    public function moveFile(File $entity): void
+    public function moveFile(File $file): void
     {
-        $file = $this->fileMap->get($entity);
+        $splFileInfo = $this->fileMap->get($file);
 
-        $this->fileMap->remove($entity);
+        $this->fileMap->remove($file);
 
-        $path = $this->getPathname($entity);
+        $path = $this->getPathname($file);
 
-        $directory = $this->namingStrategy->getDirectoryName($entity);
+        $directory = $this->namingStrategy->getDirectoryName($file);
         if ($directory !== null) {
             $this->filesystem->createDirectory($directory);
         }
 
-        $stream = @fopen($file->getPathname(), 'r');
+        $stream = @fopen($splFileInfo->getPathname(), 'r');
         if (!$stream) {
-            throw new \RuntimeException('Failed to open '.$file->getPathname());
+            throw new RuntimeException('Failed to open '.$splFileInfo->getPathname());
         }
         $this->filesystem->writeStream($path, $stream);
         if (is_resource($stream)) {
@@ -63,23 +67,23 @@ final class Manager implements ManagerInterface
         $this->filesystem->delete($this->getPathname($file));
     }
 
-    private function getMimeTypeByFile(\SplFileInfo $file): string
+    private function getMimeTypeByFile(SplFileInfo $file): string
     {
         $mimeType = $this->mimeTypeDetector->detectMimeTypeFromFile($file->getPathname());
         if ($mimeType === null) {
-            throw new \InvalidArgumentException('Failed to detect mimeType for '.$file->getPathname());
+            throw new InvalidArgumentException('Failed to detect mimeType for '.$file->getPathname());
         }
 
         return $mimeType;
     }
 
-    public function upload(\SplFileInfo $file): File
+    public function upload(SplFileInfo $file): File
     {
         if (!$file->getRealPath()) {
-            $remoteFile = $file->openFile('r');
+            $remoteFile = $file->openFile();
 
             $tempFilename = tempnam(sys_get_temp_dir(), 'file_manager');
-            $file = new \SplFileObject($tempFilename, 'r+');
+            $file = new SplFileObject($tempFilename, 'r+');
             while ($content = $remoteFile->fread(self::CHUNK_SIZE)) {
                 $file->fwrite($content);
             }
@@ -104,12 +108,7 @@ final class Manager implements ManagerInterface
             $fileEntity = $this->repository->findByHashAndSize($md5, $fileSize);
         }
         if ($fileEntity === null) {
-            $fileEntity = new $this->class();
-            $fileEntity->setFileSize($fileSize);
-            $fileEntity->setOriginalFilename($originalFilename);
-            $fileEntity->setMd5Hash($md5);
-            $fileEntity->setMimeType($this->getMimeTypeByFile($file));
-
+            $fileEntity = new $this->class($originalFilename, $fileSize, $md5, $this->getMimeTypeByFile($file));
             $this->fileMap->put($fileEntity, $file);
         }
 

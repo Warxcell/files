@@ -30,9 +30,8 @@ class SymfonyCachePathResolverTest extends TestCase
 
     public function testGetPath()
     {
-        $file = new File();
+        $file = new File('original_filename.jpg', 125, '1234567', 'image/jpeg');
         $file->setId(1);
-        $file->setMd5Hash('1234567');
 
         $this->decoratedPathResolver->expects($this->once())->method('getPath')->with($file)->willReturn('path');
 

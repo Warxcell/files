@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Arxy\FilesBundle;
 
 use Arxy\FilesBundle\Model\File;
+use LogicException;
+use SplFileInfo;
 
 final class DelegatingManager implements ManagerInterface
 {
@@ -31,10 +33,10 @@ final class DelegatingManager implements ManagerInterface
                 return $manager;
             }
         }
-        throw new \LogicException('No manager for '.get_class($file));
+        throw new LogicException('No manager for '.get_class($file));
     }
 
-    public function upload(\SplFileInfo $file): File
+    public function upload(SplFileInfo $file): File
     {
         return $this->manager->upload($file);
     }

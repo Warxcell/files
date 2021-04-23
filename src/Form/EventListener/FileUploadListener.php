@@ -21,7 +21,7 @@ class FileUploadListener implements EventSubscriberInterface
         $this->multiple = $multiple;
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             FormEvents::SUBMIT => 'submit',
@@ -32,7 +32,7 @@ class FileUploadListener implements EventSubscriberInterface
     {
         if ($this->multiple) {
             return array_map(
-                fn (UploadedFile $file) => $this->fileManager->upload($file),
+                fn(UploadedFile $file) => $this->fileManager->upload($file),
                 $data
             );
         } else {

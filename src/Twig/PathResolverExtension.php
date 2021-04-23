@@ -18,7 +18,7 @@ class PathResolverExtension extends AbstractExtension
         $this->pathResolver = $pathResolver;
     }
 
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return [
             new TwigFunction('file_path', [$this, 'filePath']),

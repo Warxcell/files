@@ -101,11 +101,7 @@ class ManagerTest extends TestCase
 
     public function testAlreadyUploadedFile()
     {
-        $file = new File();
-        $file->setMd5Hash('9aa1c5fc7c9388166d7ce7fd46648dd1');
-        $file->setFileSize(24053);
-        $file->setOriginalFilename('image2.jpg');
-        $file->setMimeType('image/jpeg');
+        $file = new File('image2.jpg', 24053, '9aa1c5fc7c9388166d7ce7fd46648dd1', 'image/jpeg');
 
         $repository = $this->createMock(Repository::class);
         $repository->expects($this->once())->method('findByHashAndSize')->with(
@@ -260,7 +256,7 @@ class ManagerTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
         $this->expectErrorMessage('File 25 not found in map');
 
-        $file = new File();
+        $file = new File('filename', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg');
         $file->setId(25);
 
         $this->manager->moveFile($file);

@@ -32,10 +32,10 @@ class MigrateNamingStrategyCommandTest extends TestCase
 
     public function testExecute()
     {
-        $file1 = new File();
+        $file1 = new File('filename', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg');
         $file1->setId(1);
 
-        $file2 = new File();
+        $file2 = new File('filename', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg');
         $file2->setId(2);
         $this->repository->expects($this->once())->method('findAllForBatchProcessing')->willReturn([$file1, $file2]);
 

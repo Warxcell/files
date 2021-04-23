@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Arxy\FilesBundle;
 
 use Arxy\FilesBundle\Model\File;
+use InvalidArgumentException;
+use SplFileInfo;
 
 /**
  * Holds map of files to be uploaded.
@@ -13,7 +15,7 @@ use Arxy\FilesBundle\Model\File;
 class FileMap
 {
     /**
-     * @var \SplFileInfo[]
+     * @var SplFileInfo[]
      */
     private array $map = [];
     /** @var File[] */
@@ -30,7 +32,7 @@ class FileMap
         return null;
     }
 
-    public function put(File $file, \SplFileInfo $fileInfo): void
+    public function put(File $file, SplFileInfo $fileInfo): void
     {
         $id = $this->getObjectId($file);
         $this->map[$id] = $fileInfo;
@@ -42,10 +44,10 @@ class FileMap
         return isset($this->map[$this->getObjectId($file)]);
     }
 
-    public function get(File $file): \SplFileInfo
+    public function get(File $file): SplFileInfo
     {
         if (!$this->has($file)) {
-            throw new \InvalidArgumentException('File '.$file->getId().' not found in map');
+            throw new InvalidArgumentException('File '.$file->getId().' not found in map');
         }
 
         return $this->map[$this->getObjectId($file)];

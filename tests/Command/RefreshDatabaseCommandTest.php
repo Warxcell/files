@@ -42,10 +42,10 @@ class RefreshDatabaseCommandTest extends TestCase
 
         $this->registry->expects($this->once())->method('getManagerForClass')->with(File::class)->willReturn($emMock);
 
-        $file1 = new File();
+        $file1 = new File('filename', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg');
         $file1->setId(1);
 
-        $file2 = new File();
+        $file2 = new File('filename', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg');
         $file2->setId(2);
         $this->repository->expects($this->once())->method('findAllForBatchProcessing')->willReturn([$file1, $file2]);
 
@@ -83,7 +83,7 @@ class RefreshDatabaseCommandTest extends TestCase
         $files = [];
 
         for ($i = 0; $i < 40; $i++) {
-            $file = new File();
+            $file = new File('original_filename.jpg', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg');
             $file->setId($i);
             $files[] = $file;
         }
@@ -105,7 +105,7 @@ class RefreshDatabaseCommandTest extends TestCase
         $files = [];
 
         for ($i = 0; $i < 59; $i++) {
-            $file = new File();
+            $file = new File('original_filename.jpg', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg');
             $file->setId($i);
             $files[] = $file;
         }

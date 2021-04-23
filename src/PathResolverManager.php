@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Arxy\FilesBundle;
 
 use Arxy\FilesBundle\Model\File;
+use SplFileInfo;
 
 final class PathResolverManager implements ManagerInterface, PathResolver
 {
@@ -17,7 +18,7 @@ final class PathResolverManager implements ManagerInterface, PathResolver
         $this->pathResolver = $pathResolver;
     }
 
-    public function upload(\SplFileInfo $file): File
+    public function upload(SplFileInfo $file): File
     {
         return $this->manager->upload($file);
     }

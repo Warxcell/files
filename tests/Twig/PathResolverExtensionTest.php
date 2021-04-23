@@ -34,7 +34,7 @@ class PathResolverExtensionTest extends TestCase
 
     public function testFilePath()
     {
-        $file = new File();
+        $file = new File('filename', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg');
         $this->pathResolver->expects($this->once())->method('getPath')->with($file)->willReturn('all good');
 
         $this->assertSame('all good', $this->extension->filePath($file));

@@ -26,9 +26,8 @@ class DateStrategyTest extends AbstractStrategyTest
 
     public function getFile(): \Arxy\FilesBundle\Model\File
     {
-        $file = new File();
+        $file = new File('filename', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg');
         $file->setCreatedAt(new \DateTimeImmutable('2021-03-19 22:10:00'));
-        $file->setMd5Hash('098f6bcd4621d373cade4e832627b4f6');
 
         return $file;
     }

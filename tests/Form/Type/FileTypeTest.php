@@ -45,7 +45,7 @@ class FileTypeTest extends TypeTestCase
     {
         $uploadedFile = new UploadedFile(__DIR__.'/../../files/image1.jpg', 'image1.jpg');
 
-        $file = new File();
+        $file = new File('filename', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg');
 
         $this->manager->expects($this->once())->method('upload')->with($uploadedFile)->willReturn($file);
         $this->manager->expects($this->once())->method('getClass')->willReturn(File::class);
@@ -66,8 +66,8 @@ class FileTypeTest extends TypeTestCase
         $uploadedFile1 = new UploadedFile(__DIR__.'/../../files/image1.jpg', 'image1.jpg');
         $uploadedFile2 = new UploadedFile(__DIR__.'/../../files/image2.jpg', 'image2.jpg');
 
-        $file1 = new File();
-        $file2 = new File();
+        $file1 = new File('filename', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg');
+        $file2 = new File('filename', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg');
 
         $this->manager->expects($this->exactly(2))
             ->method('upload')

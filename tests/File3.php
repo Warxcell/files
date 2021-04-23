@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Arxy\FilesBundle\Tests;
 
-class File3 extends \Arxy\FilesBundle\Model\File
+use Arxy\FilesBundle\Model\AbstractFile;
+
+class File3 extends AbstractFile
 {
     private ?int $id = null;
 

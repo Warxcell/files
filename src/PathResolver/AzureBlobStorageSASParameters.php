@@ -40,7 +40,7 @@ final class AzureBlobStorageSASParameters
         $this->contentType = $contentType;
     }
 
-    public function withExpiry(DateTimeImmutable $dateTime)
+    public function withExpiry(DateTimeImmutable $dateTime): AzureBlobStorageSASParameters
     {
         $new = clone($this);
         $new->expiry = $dateTime;
@@ -53,7 +53,7 @@ final class AzureBlobStorageSASParameters
         return $this->expiry;
     }
 
-    public function withStart(DateTimeImmutable $dateTime)
+    public function withStart(DateTimeImmutable $dateTime): AzureBlobStorageSASParameters
     {
         $new = clone($this);
         $new->start = $dateTime;
@@ -66,7 +66,7 @@ final class AzureBlobStorageSASParameters
         return $this->start;
     }
 
-    public function withIp(string $ip)
+    public function withIp(string $ip): AzureBlobStorageSASParameters
     {
         $new = clone($this);
         $new->ip = $ip;
@@ -80,7 +80,7 @@ final class AzureBlobStorageSASParameters
         return $this->ip;
     }
 
-    public function withIdentifier(string $identifier)
+    public function withIdentifier(string $identifier): AzureBlobStorageSASParameters
     {
         $new = clone($this);
         $new->identifier = $identifier;
@@ -93,7 +93,7 @@ final class AzureBlobStorageSASParameters
         return $this->identifier;
     }
 
-    public function withCacheControl(string $cacheControl)
+    public function withCacheControl(string $cacheControl): AzureBlobStorageSASParameters
     {
         $new = clone($this);
         $new->cacheControl = $cacheControl;
@@ -106,7 +106,7 @@ final class AzureBlobStorageSASParameters
         return $this->cacheControl;
     }
 
-    public function withContentDisposition(string $contentDisposition)
+    public function withContentDisposition(string $contentDisposition): AzureBlobStorageSASParameters
     {
         $new = clone($this);
         $new->contentDisposition = $contentDisposition;
@@ -119,7 +119,7 @@ final class AzureBlobStorageSASParameters
         return $this->contentDisposition;
     }
 
-    public function withContentEncoding(string $contentEncoding)
+    public function withContentEncoding(string $contentEncoding): AzureBlobStorageSASParameters
     {
         $new = clone($this);
         $new->contentEncoding = $contentEncoding;
@@ -132,7 +132,7 @@ final class AzureBlobStorageSASParameters
         return $this->contentEncoding;
     }
 
-    public function withContentLanguage(string $contentLanguage)
+    public function withContentLanguage(string $contentLanguage): AzureBlobStorageSASParameters
     {
         $new = clone($this);
         $new->contentLanguage = $contentLanguage;
@@ -145,7 +145,7 @@ final class AzureBlobStorageSASParameters
         return $this->contentLanguage;
     }
 
-    public function withContentType(string $contentType)
+    public function withContentType(string $contentType): AzureBlobStorageSASParameters
     {
         $new = clone($this);
         $new->contentType = $contentType;

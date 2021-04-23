@@ -31,7 +31,7 @@ class MigrateNamingStrategyCommand extends Command
         $this->oldNamingStrategy = $oldNamingStrategy;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
         $progressBar = $io->createProgressBar();
