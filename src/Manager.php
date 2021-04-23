@@ -6,6 +6,7 @@ namespace Arxy\FilesBundle;
 
 use Arxy\FilesBundle\Model\File;
 use InvalidArgumentException;
+use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
 use League\MimeTypeDetection\FinfoMimeTypeDetector;
 use League\MimeTypeDetection\MimeTypeDetector;
@@ -22,6 +23,7 @@ final class Manager implements ManagerInterface
     private NamingStrategy $namingStrategy;
     private FileMap $fileMap;
     private MimeTypeDetector $mimeTypeDetector;
+    private ModelFactory $modelFactory;
     private const CHUNK_SIZE = 1024 * 1024;
 
     public function __construct(
@@ -29,7 +31,8 @@ final class Manager implements ManagerInterface
         Repository $repository,
         FilesystemOperator $filesystem,
         NamingStrategy $namingStrategy,
-        MimeTypeDetector $mimeTypeDetector = null
+        MimeTypeDetector $mimeTypeDetector = null,
+        ModelFactory $modelFactory = null
     ) {
         $this->class = $class;
         $this->repository = $repository;
@@ -37,8 +40,12 @@ final class Manager implements ManagerInterface
         $this->namingStrategy = $namingStrategy;
         $this->fileMap = new FileMap();
         $this->mimeTypeDetector = $mimeTypeDetector ?? new FinfoMimeTypeDetector();
+        $this->modelFactory = $modelFactory ?? new AbstractModelFactory($class);
     }
 
+    /**
+     * @throws FilesystemException
+     */
     public function moveFile(File $file): void
     {
         $splFileInfo = $this->fileMap->get($file);
@@ -62,6 +69,9 @@ final class Manager implements ManagerInterface
         }
     }
 
+    /**
+     * @throws FilesystemException
+     */
     public function remove(File $file): void
     {
         $this->filesystem->delete($this->getPathname($file));
@@ -108,7 +118,12 @@ final class Manager implements ManagerInterface
             $fileEntity = $this->repository->findByHashAndSize($md5, $fileSize);
         }
         if ($fileEntity === null) {
-            $fileEntity = new $this->class($originalFilename, $fileSize, $md5, $this->getMimeTypeByFile($file));
+            $fileEntity = $this->modelFactory->create(
+                $originalFilename,
+                $fileSize,
+                $md5,
+                $this->getMimeTypeByFile($file)
+            );
             $this->fileMap->put($fileEntity, $file);
         }
 
@@ -133,6 +148,9 @@ final class Manager implements ManagerInterface
         }
     }
 
+    /**
+     * @throws FilesystemException
+     */
     public function read(File $file): string
     {
         $pathname = $this->getPathname($file);
@@ -143,6 +161,9 @@ final class Manager implements ManagerInterface
         }
     }
 
+    /**
+     * @throws FilesystemException
+     */
     public function readStream(File $file)
     {
         $pathname = $this->getPathname($file);
@@ -153,6 +174,9 @@ final class Manager implements ManagerInterface
         }
     }
 
+    /**
+     * @throws FilesystemException
+     */
     private function fileSize(File $file): int
     {
         $pathname = $this->getPathname($file);
@@ -164,6 +188,9 @@ final class Manager implements ManagerInterface
         }
     }
 
+    /**
+     * @throws FilesystemException
+     */
     private function md5Hash(File $file): string
     {
         $pathname = $this->getPathname($file);
@@ -175,6 +202,9 @@ final class Manager implements ManagerInterface
         }
     }
 
+    /**
+     * @throws FilesystemException
+     */
     private function mimeType(File $file): string
     {
         if ($this->fileMap->has($file)) {
@@ -186,6 +216,9 @@ final class Manager implements ManagerInterface
         }
     }
 
+    /**
+     * @throws FilesystemException
+     */
     public function refresh(File $file): void
     {
         $file->setMimeType($this->mimeType($file));
@@ -193,6 +226,9 @@ final class Manager implements ManagerInterface
         $file->setMd5Hash($this->md5Hash($file));
     }
 
+    /**
+     * @throws FilesystemException
+     */
     public function migrate(File $file, NamingStrategy $oldStrategy): bool
     {
         $oldName = $this->getPathnameFromNamingStrategy($file, $oldStrategy);
