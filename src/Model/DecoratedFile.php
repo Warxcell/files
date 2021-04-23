@@ -44,4 +44,29 @@ abstract class DecoratedFile implements File
     {
         return $this->decorated->getMimeType();
     }
+
+    public function setOriginalFilename(string $filename): void
+    {
+        $this->decorated->setOriginalFilename($filename);
+    }
+
+    public function setFileSize(int $size): void
+    {
+        $this->decorated->setFileSize($size);
+    }
+
+    public function setMd5Hash(string $md5Hash): void
+    {
+        $this->decorated->setMd5Hash($md5Hash);
+    }
+
+    public function setCreatedAt(DateTimeImmutable $createdAt): void
+    {
+        $this->decorated->setCreatedAt($createdAt);
+    }
+
+    public function setMimeType(string $mimeType): void
+    {
+        $this->decorated->setMimeType($mimeType);
+    }
 }
