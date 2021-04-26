@@ -600,7 +600,7 @@ Please note that until files are migrated - if some file is requested - it will 
 
 ## PathResolver: used to generate browser URL to access the file. Few built-in resolvers exists:
 
-### Arxy\FilesBundle\PathResolver\AssetsPathResolver:
+### AssetsPathResolver:
 
 ```yaml
     Arxy\FilesBundle\PathResolver\AssetsPathResolver:
@@ -612,7 +612,7 @@ Please note that until files are migrated - if some file is requested - it will 
         alias: Arxy\FilesBundle\PathResolver\AssetsPathResolver
 ```
 
-### Arxy\FilesBundle\PathResolver\AwsS3PathResolver:
+### AwsS3PathResolver:
 
 ```yaml
     Aws\S3\S3Client:
@@ -638,7 +638,7 @@ Please note that until files are migrated - if some file is requested - it will 
         alias: Arxy\FilesBundle\PathResolver\AwsS3PathResolver
 ```
 
-### Arxy\FilesBundle\PathResolver\AzureBlobStoragePathResolver:
+### AzureBlobStoragePathResolver:
 
 ```yaml
     MicrosoftAzure\Storage\Blob\BlobRestProxy:
@@ -656,7 +656,7 @@ Please note that until files are migrated - if some file is requested - it will 
         alias: Arxy\FilesBundle\PathResolver\AzureBlobStoragePathResolver
 ```
 
-### Arxy\FilesBundle\PathResolver\AzureBlobStorageSASPathResolver:
+### AzureBlobStorageSASPathResolver:
 
 - Decorator that accepts `Arxy\FilesBundle\PathResolver\AzureBlobStoragePathResolver` and
   adds <a href="https://docs.microsoft.com/en-us/rest/api/storageservices/create-service-sas">SAS Signature</a>
@@ -696,7 +696,7 @@ class MyFactory implements \Arxy\FilesBundle\PathResolver\AzureBlobStorageSASPar
         alias: Arxy\FilesBundle\PathResolver\AzureBlobStorageSASPathResolver
 ```
 
-### Arxy\FilesBundle\PathResolver\SymfonyCachePathResolver:
+### SymfonyCachePathResolver:
 
 Used to cache the result from decorated Path Resolver. Useful for example in conjunction with AwsS3PathResolver, where
 to get the path to uploaded file, an API call is made. This resolver will cache the response from AWS S3 servers and
@@ -718,7 +718,7 @@ Uses https://symfony.com/doc/current/components/cache.html
         alias: Arxy\FilesBundle\PathResolver\SymfonyCachePathResolver
 ```
 
-### Arxy\FilesBundle\PathResolver\DelegatingPathResolver:
+### DelegatingPathResolver:
 
 Used when your system have multiple file entities:
 
@@ -743,6 +743,50 @@ Used when your system have multiple file entities:
         alias: Arxy\FilesBundle\PathResolverManager
 ```
 
+### Sending additional parameters to path resolver.
+
+Ok, we have path generated to our files now, but what if we want to represent same file, differently? Obviously we
+cannot do this currently. Let's change that! Let's say we need to enforce different download name.
+
+1. We start by creating decorated file.
+
+```php
+class VirtualFile extends \Arxy\FilesBundle\Model\DecoratedFile {
+
+    private ?string $downloadFilename = null;
+    
+    public function setDownloadFilename(string $filename) {
+        $this->downloadFilename = $filename;
+    }
+    
+    public function getDownloadFilename(): ?string {
+        return $this->downloadFilename;
+    }
+}
+```
+
+2. Then we create/decorate also the path resolver
+
+```php
+class VirtualFilePathResolver implements \Arxy\FilesBundle\PathResolver 
+{
+    public function getPath(\Arxy\FilesBundle\Model\File $file) : string {
+        assert($file instanceof VirtualFile);
+        
+        return sprintf('url?download_filename=%s', $file->getDownloadFilename());
+    }
+}
+```
+
+3. Then we can use path resolver as usual:
+```php
+public function someAction(\Arxy\FilesBundle\PathResolver $pathResolver) {
+    $virtualFile = new \Arxy\FilesBundle\Tests\VirtualFile($file);
+    $virtualFile->setDownloadFilename('this_file_is_renamed_during_download.jpg');
+    $downloadUrl = $pathResolver->getPath($virtualFile);
+}
+```
+
 ### Known issues
 
-- If file entity is deleted within transaction and transaction is rolled back - file will remain.
+- If file entity is deleted within transaction and transaction is rolled back - file will be deleted.
