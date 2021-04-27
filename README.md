@@ -1,4 +1,6 @@
-# Files
+# About
+
+Provides easy file management (with persistence layer for metadata).
 
 [![Build Status](https://travis-ci.org/Warxcell/files.svg?branch=master)](https://travis-ci.org/Warxcell/files)
 
@@ -9,16 +11,16 @@ Dependency Matrix:
 Versions 1.X.X uses FlySystem ^1.0 (not maintained)  
 Versions 2.X.X uses FlySystem ^2.0
 
-## Provides easy file management (with persistence layer for metadata).
-
-### Main Features
-
 - Uses FlySystem for File management (this allows you to use existing adapters to save files anywhere)
 - Persist file information in database
 - Uses checksums (md5) to prevent double upload (thus saving space). If same file is found - it's reused
 - Automatic hooks that manages the files (on entity persist file will be uploaded, on entity remove - file will be
   removed)
 - Different naming strategies for handling files.
+
+# Usage
+
+## Configuring
 
 ```php
 <?php
@@ -517,41 +519,35 @@ declare(strict_types=1);
 namespace App\Serializer;
 
 use App\Entity\File;
-use App\Service\ImageHelper;
-use Liip\ImagineBundle\Imagine\Filter\FilterConfiguration;
+use Arxy\FilesBundle\LiipImagine\FileFilter;use Arxy\FilesBundle\LiipImagine\FileFilterPathResolver;use Liip\ImagineBundle\Imagine\Filter\FilterConfiguration;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
 class FileNormalizer implements NormalizerInterface
 {
-    /** @var ObjectNormalizer */
-    private $objectNormalizer;
-
-    /** @var ImageHelper */
-    private $imageHelper;
-
-    /** @var FilterConfiguration */
-    private $filterConfiguration;
+    private ObjectNormalizer $objectNormalizer;
+    private FileFilterPathResolver $fileFilterPathResolver;
+    private FilterConfiguration $filterConfiguration;
 
     public function __construct(
         ObjectNormalizer $objectNormalizer,
-        ImageHelper $imageHelper,
+        FileFilterPathResolver $fileFilterPathResolver,
         FilterConfiguration $filterConfiguration
     ) {
         $this->objectNormalizer = $objectNormalizer;
-        $this->imageHelper = $imageHelper;
+        $this->fileFilterPathResolver = $fileFilterPathResolver;
         $this->filterConfiguration = $filterConfiguration;
     }
 
     public function normalize($object, $format = null, array $context = array())
     {
-        /** @var File $object */
+        assert($object instanceof \Arxy\FilesBundle\Model\File);
         $data = $this->objectNormalizer->normalize($object, $format, $context);
 
         $data['formats'] = array_reduce(
             array_keys($this->filterConfiguration->all()),
             function ($array, $filter) use ($object) {
-                $array[$filter] = $this->imageHelper->getUrl($object, $filter);
+                $array[$filter] = $this->fileFilterPathResolver->getUrl(new FileFilter($object, $filter));
 
                 return $array;
             },
@@ -563,7 +559,7 @@ class FileNormalizer implements NormalizerInterface
 
     public function supportsNormalization($data, $format = null)
     {
-        return $data instanceof File;
+        return $data instanceof \Arxy\FilesBundle\Model\File;
     }
 }
 ```
@@ -725,7 +721,9 @@ Used when your system have multiple file entities:
 ```yaml
     Arxy\FilesBundle\PathResolver\DelegatingPathResolver:
         arguments:
-            $resolvers: {'App\Entity\File': '@resolver'}
+            $resolvers:
+                'App\Entity\File': '@path_resolver'
+                'App\Entity\OtherFile': '@other_path_resolver'
 ```
 
 ### You can also combine Manager and PathResolver into one, using PathResolverManager decorator, so you can use singe instance for both operations:
@@ -788,7 +786,7 @@ public function someAction(\Arxy\FilesBundle\PathResolver $pathResolver) {
 }
 ```
 
-### Twig Extensions:
+## Twig Extensions:
 
 1. Arxy\FilesBundle\Twig\FilesExtensions:
 
@@ -799,6 +797,16 @@ public function someAction(\Arxy\FilesBundle\PathResolver $pathResolver) {
 
 - `file_path(Arxy\FilesBundle\Model\File $file)` - return downloadable path for file using path resolver.
 
-### Known issues
+## LiipImagine:
+
+If you need to generate thumbnails for your files, you could use built-in integration
+with <a href="https://github.com/liip/LiipImagineBundle">LiipImagineBundle</a>:
+
+1. Setup LiipImagineBundle.
+2. Register `Arxy\FilesBundle\LiipImagine\FileFilterPathResolver` as service.
+3. Use service from point2 as follows:
+   `$pathResolver->getPath(new \Arxy\FilesBundle\LiipImagine\FileFilter($file, 'filterName'));`
+
+## Known issues
 
 - If file entity is deleted within transaction and transaction is rolled back - file will be deleted.
