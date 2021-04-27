@@ -779,6 +779,7 @@ class VirtualFilePathResolver implements \Arxy\FilesBundle\PathResolver
 ```
 
 3. Then we can use path resolver as usual:
+
 ```php
 public function someAction(\Arxy\FilesBundle\PathResolver $pathResolver) {
     $virtualFile = new \Arxy\FilesBundle\Tests\VirtualFile($file);
@@ -786,6 +787,17 @@ public function someAction(\Arxy\FilesBundle\PathResolver $pathResolver) {
     $downloadUrl = $pathResolver->getPath($virtualFile);
 }
 ```
+
+### Twig Extensions:
+
+1. Arxy\FilesBundle\Twig\FilesExtensions:
+
+- `format_bytes(int $bytes)` - format bytes as kb,mb, etc.
+- `file_content(Arxy\FilesBundle\Model\File $file)` - return the contents of file.
+
+2. Arxy\FilesBundle\Twig\PathResolverExtension:
+
+- `file_path(Arxy\FilesBundle\Model\File $file)` - return downloadable path for file using path resolver.
 
 ### Known issues
 
