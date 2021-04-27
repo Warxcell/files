@@ -32,7 +32,7 @@ class FilesExtension extends AbstractExtension
         return $this->manager->read($file);
     }
 
-    public function formatBytes($bytes, $precision = 2): string
+    public function formatBytes(int $bytes, int $precision = 2): string
     {
         return bytes($bytes)->format($precision, ' ');
     }

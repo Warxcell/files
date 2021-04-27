@@ -792,7 +792,7 @@ public function someAction(\Arxy\FilesBundle\PathResolver $pathResolver) {
 
 1. Arxy\FilesBundle\Twig\FilesExtensions:
 
-- `format_bytes(int $bytes)` - format bytes as kb,mb, etc.
+- `format_bytes(int $bytes, int $precision = 2)` - format bytes as kb,mb, etc.
 - `file_content(Arxy\FilesBundle\Model\File $file)` - return the contents of file.
 
 2. Arxy\FilesBundle\Twig\PathResolverExtension:
