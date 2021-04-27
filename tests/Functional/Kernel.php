@@ -6,6 +6,7 @@ namespace Arxy\FilesBundle\Tests\Functional;
 
 use Arxy\FilesBundle\ArxyFilesBundle;
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
+use Liip\ImagineBundle\LiipImagineBundle;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\HttpKernel\Kernel as BaseKernel;
@@ -23,6 +24,7 @@ class Kernel extends BaseKernel
             new FrameworkBundle(),
             new DoctrineBundle(),
             new ArxyFilesBundle(),
+            new LiipImagineBundle(),
         ];
     }
 

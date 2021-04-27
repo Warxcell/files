@@ -1,6 +1,9 @@
 framework:
     test: ~
     secret: ydslvbxkcen473w89r8qkaponbcyd
+    router:
+        resource: '%kernel.project_dir%/routes.yml'
+        utf8: true
 
 doctrine:
     dbal:
@@ -55,3 +58,23 @@ services:
             - {name: doctrine.event_listener, event: 'onClear'}
 
     Arxy\FilesBundle\Form\Type\FileType: ~
+
+    Arxy\FilesBundle\LiipImagine\FileFilterPathResolver:
+        public: true
+
+liip_imagine:
+    driver: "gd"
+    loaders:
+        default:
+            flysystem:
+                filesystem_service: League\Flysystem\Filesystem
+    data_loader: default
+    resolvers:
+        default:
+            web_path: ~
+    filter_sets:
+        thumbnail:
+            quality: 75
+            filters:
+                thumbnail: {size: [120, 90], mode: outbound}
+                background: {size: [124, 94], position: center, color: '#000000'}

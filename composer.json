@@ -30,7 +30,8 @@
         "symfony/dependency-injection": "^5.2",
         "infection/infection": "^0.21.4",
         "symfony/symfony": "^4.4 | ^5.2",
-        "doctrine/doctrine-bundle": "^2.3"
+        "doctrine/doctrine-bundle": "^2.3",
+        "liip/imagine-bundle": "^2.6"
     },
     "suggest": {
         "symfony/validator": "Validate files against constraints",
