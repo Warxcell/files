@@ -13,7 +13,7 @@ class DirectoryPrefixStrategyTest extends AbstractStrategyTest
     {
         return new NamingStrategy\DirectoryPrefixStrategy(
             new class() implements NamingStrategy {
-                public function getDirectoryName(\Arxy\FilesBundle\Model\File $file): string
+                public function getDirectoryName(\Arxy\FilesBundle\Model\File $file): ?string
                 {
                     return '1/2/3/';
                 }
@@ -43,5 +43,25 @@ class DirectoryPrefixStrategyTest extends AbstractStrategyTest
         $file->setId(12345);
 
         return $file;
+    }
+
+    public function testIfDecoratedStrategyIsNull()
+    {
+        $strategy = new NamingStrategy\DirectoryPrefixStrategy(
+            new class() implements NamingStrategy {
+                public function getDirectoryName(\Arxy\FilesBundle\Model\File $file): ?string
+                {
+                    return null;
+                }
+
+                public function getFileName(\Arxy\FilesBundle\Model\File $file): string
+                {
+                    return '123';
+                }
+            },
+            'cache/'
+        );
+
+        $this->assertNull($strategy->getDirectoryName($this->getFile()));
     }
 }
