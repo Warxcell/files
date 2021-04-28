@@ -10,6 +10,7 @@ use Arxy\FilesBundle\LiipImagine\FileFilterPathResolver;
 use Arxy\FilesBundle\ManagerInterface;
 use Arxy\FilesBundle\Model\File;
 use Doctrine\ORM\EntityManagerInterface;
+use InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -68,7 +69,7 @@ class FileFilterPathResolverTest extends KernelTestCase
         $pathResolver = self::$container->get(FileFilterPathResolver::class);
         assert($pathResolver instanceof FileFilterPathResolver);
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
             'Expected argument of type "Arxy\FilesBundle\LiipImagine\FileFilter", "Arxy\FilesBundle\Tests\Functional\Entity\File" given'
         );

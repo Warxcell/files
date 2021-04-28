@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Arxy\FilesBundle\EventListener;
 
+use Arxy\FilesBundle\InvalidArgumentException;
 use Arxy\FilesBundle\ManagerInterface;
 use Arxy\FilesBundle\Model\File;
 use Doctrine\Common\EventSubscriber;
@@ -42,7 +43,11 @@ class DoctrineORMListener implements EventSubscriber
         $unitOfWork = $entityManager->getUnitOfWork();
         foreach ($unitOfWork->getScheduledEntityInsertions() as $entity) {
             if ($this->supports($entity)) {
-                $this->manager->moveFile($entity);
+                try {
+                    $this->manager->moveFile($entity);
+                } catch (InvalidArgumentException $exception) {
+                    // file doesn't exists in FileMap.
+                }
             }
         }
 
@@ -59,7 +64,11 @@ class DoctrineORMListener implements EventSubscriber
 
         if ($this->supports($entity)) {
             assert($entity instanceof File);
-            $this->manager->moveFile($entity);
+            try {
+                $this->manager->moveFile($entity);
+            } catch (InvalidArgumentException $exception) {
+                // file doesn't exists in FileMap.
+            }
         }
     }
 

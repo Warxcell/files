@@ -24,7 +24,7 @@ class FileFilterPathResolver implements PathResolver
     public function getPath(File $file): string
     {
         if (!$file instanceof FileFilter) {
-            throw new InvalidArgumentException($file, FileFilter::class);
+            throw  InvalidArgumentException::invalidType($file, FileFilter::class);
         }
 
         return $this->cacheManager->getBrowserPath($this->fileManager->getPathname($file), $file->getFilter());

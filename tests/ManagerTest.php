@@ -253,11 +253,19 @@ class ManagerTest extends TestCase
 
     public function testWrongFileMove()
     {
+        $file = new File('filename', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg');
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectErrorMessage('File '.spl_object_id($file).' not found in map');
+
+        $this->manager->moveFile($file);
+    }
+
+    public function testWrongFileMoveStringable()
+    {
+        $file = new StringableFile('filename', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg');
+        $file->setId(25);
         $this->expectException(\InvalidArgumentException::class);
         $this->expectErrorMessage('File 25 not found in map');
-
-        $file = new File('filename', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg');
-        $file->setId(25);
 
         $this->manager->moveFile($file);
     }
@@ -504,7 +512,7 @@ class ManagerTest extends TestCase
         $this->manager->clear();
 
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('File 1 not found in map');
+        $this->expectExceptionMessage('File '.spl_object_id($file).' not found in map');
 
         $this->manager->moveFile($file);
     }

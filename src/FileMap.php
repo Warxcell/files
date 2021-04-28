@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Arxy\FilesBundle;
 
 use Arxy\FilesBundle\Model\File;
-use InvalidArgumentException;
 use SplFileInfo;
 
 /**
@@ -47,7 +46,7 @@ class FileMap
     public function get(File $file): SplFileInfo
     {
         if (!$this->has($file)) {
-            throw new InvalidArgumentException('File '.$file->getId().' not found in map');
+            throw InvalidArgumentException::fileNotExistsInMap($file);
         }
 
         return $this->map[$this->getObjectId($file)];

@@ -45,6 +45,7 @@ final class Manager implements ManagerInterface
 
     /**
      * @throws FilesystemException
+     * @throws \Arxy\FilesBundle\InvalidArgumentException
      */
     public function moveFile(File $file): void
     {
