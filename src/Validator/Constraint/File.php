@@ -16,11 +16,11 @@ use function ByteUnits\parse;
 class File extends Constraint
 {
     public ?int $maxSize = null;
-    public ?string $maxSizeMessage = 'The file is too large ({{ size }}). Allowed maximum size is {{ limit }}.';
+    public string $maxSizeMessage = 'The file is too large ({{ size }}). Allowed maximum size is {{ limit }}.';
     public array $mimeTypes = [];
-    public ?string $mimeTypesMessage = 'The mime type of the file is invalid ({{ type }}). Allowed mime types are {{ types }}.';
+    public string $mimeTypesMessage = 'The mime type of the file is invalid ({{ type }}). Allowed mime types are {{ types }}.';
 
-    public function __construct($options = null, array $groups = null, $payload = null)
+    public function __construct(array $options = null, array $groups = null, $payload = null)
     {
         if (isset($options['maxSize']) && is_string($options['maxSize'])) {
             $options['maxSize'] = $this->normalizeBinaryFormat($options['maxSize']);
@@ -36,7 +36,7 @@ class File extends Constraint
     {
         $original = $maxSize;
         try {
-            if (stripos('B', $maxSize) === false) {
+            if (stripos($maxSize, 'B') === false) {
                 $maxSize .= 'B';
             }
 

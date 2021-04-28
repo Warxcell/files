@@ -48,15 +48,15 @@ class AzureBlobStorageSASPathResolver implements PathResolver
             sprintf('%s/%s', $this->pathResolver->getContainer(), $this->pathResolver->getBlob($file)),
             'r',
             $expiry,
-            $start,
-            $parameters->getIp(),
+            $start ?? "",
+            $parameters->getIp() ?? "",
             'https',
-            $parameters->getIdentifier(),
-            $parameters->getCacheControl(),
-            $parameters->getContentDisposition(),
-            $parameters->getContentEncoding(),
-            $parameters->getContentLanguage(),
-            $parameters->getContentType(),
+            $parameters->getIdentifier() ?? "",
+            $parameters->getCacheControl() ?? "",
+            $parameters->getContentDisposition() ?? "",
+            $parameters->getContentEncoding() ?? "",
+            $parameters->getContentLanguage() ?? "",
+            $parameters->getContentType() ?? "",
         );
     }
 }

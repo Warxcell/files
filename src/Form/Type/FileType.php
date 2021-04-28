@@ -21,7 +21,7 @@ class FileType extends AbstractType
         $this->fileManager = $fileManager;
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $fileOptions = $options['input_options'];
         $fileOptions['mapped'] = false;
@@ -34,7 +34,7 @@ class FileType extends AbstractType
         $builder->addEventSubscriber(new FileUploadListener($options['manager'], $options['multiple']));
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefault(
             'data_class',

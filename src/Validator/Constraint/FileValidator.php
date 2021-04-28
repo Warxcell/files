@@ -11,7 +11,7 @@ use function ByteUnits\bytes;
 
 class FileValidator extends ConstraintValidator
 {
-    public function validate($value, Constraint $constraint)
+    public function validate($value, Constraint $constraint): void
     {
         if (!$constraint instanceof File) {
             throw new UnexpectedTypeException($constraint, File::class);

@@ -48,7 +48,7 @@ final class AzureBlobStorageSASParameters
         return $new;
     }
 
-    public function getExpiry(): ?DateTimeImmutable
+    public function getExpiry(): DateTimeImmutable
     {
         return $this->expiry;
     }

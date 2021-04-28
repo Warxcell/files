@@ -53,27 +53,27 @@ class DoctrineORMListener implements EventSubscriber
         }
     }
 
-    public function postPersist(LifecycleEventArgs $args)
+    public function postPersist(LifecycleEventArgs $args): void
     {
         $entity = $args->getObject();
 
         if ($this->supports($entity)) {
-            /** @var $entity File */
+            assert($entity instanceof File);
             $this->manager->moveFile($entity);
         }
     }
 
-    public function preRemove(LifecycleEventArgs $args)
+    public function preRemove(LifecycleEventArgs $args): void
     {
         $entity = $args->getObject();
 
         if ($this->supports($entity)) {
-            /** @var $entity File */
+            assert($entity instanceof File);
             $this->manager->remove($entity);
         }
     }
 
-    public function onClear(OnClearEventArgs $args)
+    public function onClear(OnClearEventArgs $args): void
     {
         $this->manager->clear();
     }

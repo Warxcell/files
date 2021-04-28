@@ -64,9 +64,7 @@ final class Manager implements ManagerInterface
             throw new RuntimeException('Failed to open '.$splFileInfo->getPathname());
         }
         $this->filesystem->writeStream($path, $stream);
-        if (is_resource($stream)) {
-            fclose($stream);
-        }
+        fclose($stream);
     }
 
     /**
@@ -136,7 +134,7 @@ final class Manager implements ManagerInterface
             $namingStrategy = $this->namingStrategy;
         }
 
-        return $namingStrategy->getDirectoryName($file).$namingStrategy->getFileName($file);
+        return ($namingStrategy->getDirectoryName($file) ?? "").$namingStrategy->getFileName($file);
     }
 
     public function getPathname(File $file): string
@@ -162,6 +160,7 @@ final class Manager implements ManagerInterface
     }
 
     /**
+     * @return resource
      * @throws FilesystemException
      */
     public function readStream(File $file)
