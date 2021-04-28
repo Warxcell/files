@@ -70,7 +70,7 @@ class FileFilterPathResolverTest extends KernelTestCase
 
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage(
-            FileFilterPathResolver::class.' supports only '.FileFilter::class.', '.\Arxy\FilesBundle\Tests\Functional\Entity\File::class.' passed'
+            'Expected argument of type "Arxy\FilesBundle\LiipImagine\FileFilter", "Arxy\FilesBundle\Tests\Functional\Entity\File" given'
         );
         $pathResolver->getPath($this->file);
     }
