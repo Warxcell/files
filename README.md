@@ -187,17 +187,15 @@ use App\Entity\File;
 use Arxy\FilesBundle\ManagerInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\ResponseHeaderBag;
-use Symfony\Component\HttpFoundation\HeaderUtils;
-use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Routing\Annotation\Route;
+use Arxy\FilesBundle\Utility\DownloadUtility;
 
 class FileController extends AbstractController
 {
     /**
      * @Route(path="/file/{id}", name="file_download")
      */
-    public function download($id, ManagerInterface $fileManager, EntityManagerInterface $em)
+    public function download($id, ManagerInterface $fileManager, EntityManagerInterface $em, DownloadUtility $downloadUtility)
     {
         /** @var FileEntity $file */
         $file = $em->getRepository(File::class)->findOneBy(
@@ -210,94 +208,48 @@ class FileController extends AbstractController
             throw $this->createNotFoundException('File not found');
         }
 
-        $response = new StreamedResponse();
-
-        $disposition = HeaderUtils::makeDisposition(
-            HeaderUtils::DISPOSITION_INLINE,
-            $file->getOriginalFilename()
-        );
-        $response->headers->set('Content-Disposition', $disposition);
-
-        $response->headers->set('Content-Type', $file->getMimeType());
-        $response->setLastModified($file->getCreatedAt());
-        $response->setPublic();
-        $response->setEtag($file->getMd5Hash());
-
-        $now = new \DateTimeImmutable();
-        $expireAt = $now->modify("+30 days");
-        $response->setExpires($expireAt);
-
-        $stream = $fileManager->readStream($file);
-        $response->setCallback(
-            function () use ($stream) {
-                $out = fopen('php://output', 'wb');
-
-                stream_copy_to_stream($stream, $out);
-
-                fclose($out);
-                fclose($stream);
-            }
-        );
-
-        return $response;
+        return $downloadUtility->createResponse($file);
     }
 }
-
-## usage with <a href="https://github.com/liip/LiipImagineBundle">LiipImagineBundle</a> for image processing.
-
-
-```yaml
-liip_imagine:
-    loaders:
-        arxy_file_loader:
-            flysystem:
-                filesystem_service: files_filesystem
-    data_loader: arxy_file_loader
-    filter_sets:
-            # an example thumbnail transformation definition
-            # https://symfony.com/doc/current/bundles/LiipImagineBundle/basic-usage.html#create-thumbnails
-            squared_thumbnail:
-                jpeg_quality:          85
-                png_compression_level: 8
-                filters:
-                    auto_rotate: ~
-                    strip: ~
-                    thumbnail:
-                        size:          [253, 253]
-                        mode:          outbound
-                        allow_upscale: false
 ```
 
+If you want to force different download name, you can decorate file with `Arxy\FilesBundle\Utility\DownloadableFile`:
 ```php
 <?php
 
-namespace App\Service;
+declare(strict_types=1);
+
+namespace App\Controller;
 
 use App\Entity\File;
 use Arxy\FilesBundle\ManagerInterface;
-use Liip\ImagineBundle\Imagine\Cache\CacheManager;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Routing\Annotation\Route;
+use Arxy\FilesBundle\Utility\DownloadUtility;
+use Arxy\FilesBundle\Utility\DownloadableFile;
 
-class ImageHelper
+class FileController extends AbstractController
 {
-    private CacheManager $cacheManager;
-    private ManagerInterface $fileManager;
-
-    public function __construct(CacheManager $cacheManager, ManagerInterface $fileManager)
+    /**
+     * @Route(path="/file/{id}", name="file_download")
+     */
+    public function download($id, ManagerInterface $fileManager, EntityManagerInterface $em, DownloadUtility $downloadUtility)
     {
-        $this->cacheManager = $cacheManager;
-        $this->fileManager = $fileManager;
-    }
+        /** @var FileEntity $file */
+        $file = $em->getRepository(File::class)->findOneBy(
+            [
+                'md5Hash' => $id,
+            ]
+        );
 
-    public function getUrl(File $file, string $filter)
-    {
-        return $this->cacheManager->getBrowserPath($this->fileManager->getPathname($file), $filter);
+        if ($file === null) {
+            throw $this->createNotFoundException('File not found');
+        }
+
+        return $downloadUtility->createResponse(new DownloadableFile($file, 'my_name.jpg', false, new \DateTimeImmutable('date of cache expiry')));
     }
 }
-```
-
-```php
-
- $this->imageHelper->getUrl($file, 'squared_thumbnail');
 ```
 
 ## Usage with <a href="https://api-platform.com/">API Platform</a>:
