@@ -131,7 +131,7 @@ Upload using form Type:
 
 ```php
 
-$formMapper->add(
+$formBuilder->add(
     'image',
     FileType::class,
     [
@@ -152,7 +152,7 @@ $formMapper->add(
 ## Read file content
 
 ```php
-$file = $em->find(File::class, 1);
+$file = $entityManager->find(File::class, 1);
 
 $content = $fileManager->read($file);
 ```
@@ -160,7 +160,7 @@ $content = $fileManager->read($file);
 ## Read stream
 
 ```php
-$file = $em->find(File::class, 1);
+$file = $entityManager->find(File::class, 1);
 
 $fileHandle = $fileManager->readStream($file);
 ```
@@ -184,7 +184,6 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Entity\File;
-use Arxy\FilesBundle\ManagerInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
@@ -195,9 +194,12 @@ class FileController extends AbstractController
     /**
      * @Route(path="/file/{id}", name="file_download")
      */
-    public function download($id, ManagerInterface $fileManager, EntityManagerInterface $em, DownloadUtility $downloadUtility)
+    public function download(
+        $id, 
+        EntityManagerInterface $em, 
+        DownloadUtility $downloadUtility
+    )
     {
-        /** @var FileEntity $file */
         $file = $em->getRepository(File::class)->findOneBy(
             [
                 'md5Hash' => $id,
@@ -214,6 +216,7 @@ class FileController extends AbstractController
 ```
 
 If you want to force different download name, you can decorate file with `Arxy\FilesBundle\Utility\DownloadableFile`:
+
 ```php
 <?php
 
@@ -222,7 +225,6 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Entity\File;
-use Arxy\FilesBundle\ManagerInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
@@ -234,9 +236,12 @@ class FileController extends AbstractController
     /**
      * @Route(path="/file/{id}", name="file_download")
      */
-    public function download($id, ManagerInterface $fileManager, EntityManagerInterface $em, DownloadUtility $downloadUtility)
+    public function download(
+        $id,
+        EntityManagerInterface $em, 
+        DownloadUtility $downloadUtility
+    )
     {
-        /** @var FileEntity $file */
         $file = $em->getRepository(File::class)->findOneBy(
             [
                 'md5Hash' => $id,
@@ -250,112 +255,6 @@ class FileController extends AbstractController
         return $downloadUtility->createResponse(new DownloadableFile($file, 'my_name.jpg', false, new \DateTimeImmutable('date of cache expiry')));
     }
 }
-```
-
-## Usage with <a href="https://api-platform.com/">API Platform</a>:
-
-### Uploading
-
-```php
-<?php
-
-declare(strict_types=1);
-
-namespace App\Controller\ApiPlatform;
-
-use Arxy\FilesBundle\Manager;
-use Arxy\FilesBundle\Model\File;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-
-final class Upload
-{
-    private Manager $fileManager;
-
-    public function __construct(Manager $fileManager)
-    {
-        $this->fileManager = $fileManager;
-    }
-
-    public function __invoke(Request $request): File
-    {
-        $uploadedFile = $request->files->get('file');
-        if (!$uploadedFile) {
-            throw new BadRequestHttpException('"file" is required');
-        }
-
-        return $this->fileManager->upload($uploadedFile);
-    }
-}
-```
-
-```php
-<?php
-
-declare(strict_types=1);
-
-namespace App\Entity;
-
-use ApiPlatform\Core\Annotation\ApiResource;
-use App\Controller\ApiPlatform\Upload;
-use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Annotation\Groups;
-
-/**
- * @ORM\Entity
- * @ORM\Table(name="files")
- * @ApiResource(
- *     iri="http://schema.org/MediaObject",
- *     normalizationContext={
- *         "groups"={"file_read"}
- *     },
- *     collectionOperations={
- *         "post"={
- *             "controller"=Upload::class,
- *             "deserialize"=false,
- *             "validation_groups"={"Default"},
- *             "openapi_context"={
- *                 "requestBody"={
- *                     "content"={
- *                         "multipart/form-data"={
- *                             "schema"={
- *                                 "type"="object",
- *                                 "properties"={
- *                                     "file"={
- *                                         "type"="string",
- *                                         "format"="binary"
- *                                     }
- *                                 }
- *                             }
- *                         }
- *                     }
- *                 }
- *             }
- *         }
- *     },
- *     itemOperations={
- *         "get"
- *     }
- * )
- */
-class File extends \Arxy\FilesBundle\Entity\File
-{
-    /**
-     * @var int|null
-     *
-     * @ORM\Id
-     * @ORM\Column(type="integer", nullable=false)
-     * @ORM\GeneratedValue
-     * @Groups({"file_read"})
-     */
-    protected ?int $id = null;
-
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-}
-
 ```
 
 ### Serving
@@ -758,6 +657,111 @@ with <a href="https://github.com/liip/LiipImagineBundle">LiipImagineBundle</a>:
 2. Register `Arxy\FilesBundle\LiipImagine\FileFilterPathResolver` as service.
 3. Use service from point2 as follows:
    `$pathResolver->getPath(new \Arxy\FilesBundle\LiipImagine\FileFilter($file, 'filterName'));`
+
+## Usage with <a href="https://api-platform.com/">API Platform</a>:
+
+### Uploading
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Controller\ApiPlatform;
+
+use Arxy\FilesBundle\Manager;
+use Arxy\FilesBundle\Model\File;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+
+final class Upload
+{
+    private Manager $fileManager;
+
+    public function __construct(Manager $fileManager)
+    {
+        $this->fileManager = $fileManager;
+    }
+
+    public function __invoke(Request $request): File
+    {
+        $uploadedFile = $request->files->get('file');
+        if (!$uploadedFile) {
+            throw new BadRequestHttpException('"file" is required');
+        }
+
+        return $this->fileManager->upload($uploadedFile);
+    }
+}
+```
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Entity;
+
+use ApiPlatform\Core\Annotation\ApiResource;
+use App\Controller\ApiPlatform\Upload;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+
+/**
+ * @ORM\Entity
+ * @ORM\Table(name="files")
+ * @ApiResource(
+ *     iri="http://schema.org/MediaObject",
+ *     normalizationContext={
+ *         "groups"={"file_read"}
+ *     },
+ *     collectionOperations={
+ *         "post"={
+ *             "controller"=Upload::class,
+ *             "deserialize"=false,
+ *             "validation_groups"={"Default"},
+ *             "openapi_context"={
+ *                 "requestBody"={
+ *                     "content"={
+ *                         "multipart/form-data"={
+ *                             "schema"={
+ *                                 "type"="object",
+ *                                 "properties"={
+ *                                     "file"={
+ *                                         "type"="string",
+ *                                         "format"="binary"
+ *                                     }
+ *                                 }
+ *                             }
+ *                         }
+ *                     }
+ *                 }
+ *             }
+ *         }
+ *     },
+ *     itemOperations={
+ *         "get"
+ *     }
+ * )
+ */
+class File extends \Arxy\FilesBundle\Entity\File
+{
+    /**
+     * @var int|null
+     *
+     * @ORM\Id
+     * @ORM\Column(type="integer", nullable=false)
+     * @ORM\GeneratedValue
+     * @Groups({"file_read"})
+     */
+    protected ?int $id = null;
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+}
+```
 
 ## Known issues
 
