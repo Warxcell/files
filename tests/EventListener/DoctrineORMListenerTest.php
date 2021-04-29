@@ -30,7 +30,7 @@ class DoctrineORMListenerTest extends TestCase
     {
         $actual = $this->listener->getSubscribedEvents();
 
-        $this->assertSame(
+        self::assertSame(
             [
                 'postPersist',
                 'preRemove',

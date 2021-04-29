@@ -36,6 +36,6 @@ class AwsS3PathResolverTest extends TestCase
             ->with('bucket', 'pathname')
             ->willReturn('all good');
 
-        $this->assertSame('all good', $this->pathResolver->getPath($file));
+        self::assertSame('all good', $this->pathResolver->getPath($file));
     }
 }

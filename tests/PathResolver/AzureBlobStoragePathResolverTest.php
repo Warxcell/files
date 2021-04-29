@@ -38,7 +38,7 @@ class AzureBlobStoragePathResolverTest extends TestCase
             'azure-container'
             , $this->manager,
         );
-        $this->assertSame('all good', $pathResolver->getPath($file));
+        self::assertSame('all good', $pathResolver->getPath($file));
     }
 
     public function testGetContainer()
@@ -49,7 +49,7 @@ class AzureBlobStoragePathResolverTest extends TestCase
             $this->manager,
         );
 
-        $this->assertSame('azure-container', $pathResolver->getContainer());
+        self::assertSame('azure-container', $pathResolver->getContainer());
     }
 
     public function testGetBlob()
@@ -64,6 +64,6 @@ class AzureBlobStoragePathResolverTest extends TestCase
             $this->manager,
         );
 
-        $this->assertSame('all good', $pathResolver->getBlob($file));
+        self::assertSame('all good', $pathResolver->getBlob($file));
     }
 }

@@ -82,8 +82,8 @@ class DelegatingManagerTest extends TestCase
         $file2 = $this->manager2->upload(new \SplFileObject($forUpload2));
         $this->manager2->moveFile($file2);
 
-        $this->assertEquals(md5_file($forUpload1), md5($this->manager->read($file1)));
-        $this->assertEquals(md5_file($forUpload2), md5($this->manager->read($file2)));
+        self::assertEquals(md5_file($forUpload1), md5($this->manager->read($file1)));
+        self::assertEquals(md5_file($forUpload2), md5($this->manager->read($file2)));
     }
 
     public function testReadStream()
@@ -98,8 +98,8 @@ class DelegatingManagerTest extends TestCase
         $file2 = $this->manager2->upload(new \SplFileObject($forUpload2));
         $this->manager2->moveFile($file2);
 
-        $this->assertEquals(md5_file($forUpload1), md5(stream_get_contents($this->manager->readStream($file1))));
-        $this->assertEquals(md5_file($forUpload2), md5(stream_get_contents($this->manager->readStream($file2))));
+        self::assertEquals(md5_file($forUpload1), md5(stream_get_contents($this->manager->readStream($file1))));
+        self::assertEquals(md5_file($forUpload2), md5(stream_get_contents($this->manager->readStream($file2))));
     }
 
     public function testNoManagerForFileRead()
@@ -156,7 +156,7 @@ class DelegatingManagerTest extends TestCase
 
     public function testGetClass()
     {
-        $this->assertEquals($this->manager1->getClass(), $this->manager->getClass());
+        self::assertEquals($this->manager1->getClass(), $this->manager->getClass());
     }
 
     public function testMainManager()
@@ -177,7 +177,7 @@ class DelegatingManagerTest extends TestCase
         );
 
         $actualFile = $manager->upload($forUpload);
-        $this->assertSame($uploadedFile, $actualFile);
+        self::assertSame($uploadedFile, $actualFile);
     }
 
     public function testClear()

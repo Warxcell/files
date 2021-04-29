@@ -23,8 +23,8 @@ class AzureBlobStorageSASParametersTest extends TestCase
 
         $new = $this->parameters->withExpiry($expiry);
 
-        $this->assertNotSame($new, $this->parameters);
-        $this->assertSame($expiry, $new->getExpiry());
+        self::assertNotSame($new, $this->parameters);
+        self::assertSame($expiry, $new->getExpiry());
     }
 
     public function testWithStart()
@@ -33,63 +33,63 @@ class AzureBlobStorageSASParametersTest extends TestCase
 
         $new = $this->parameters->withStart($expiry);
 
-        $this->assertNotSame($new, $this->parameters);
-        $this->assertSame($expiry, $new->getStart());
+        self::assertNotSame($new, $this->parameters);
+        self::assertSame($expiry, $new->getStart());
     }
 
     public function testWithIp()
     {
         $new = $this->parameters->withIp('127.0.0.1');
 
-        $this->assertNotSame($new, $this->parameters);
-        $this->assertSame('127.0.0.1', $new->getIp());
+        self::assertNotSame($new, $this->parameters);
+        self::assertSame('127.0.0.1', $new->getIp());
     }
 
     public function testWithIdentifier()
     {
         $new = $this->parameters->withIdentifier('id');
 
-        $this->assertNotSame($new, $this->parameters);
-        $this->assertSame('id', $new->getIdentifier());
+        self::assertNotSame($new, $this->parameters);
+        self::assertSame('id', $new->getIdentifier());
     }
 
     public function testWithCacheControl()
     {
         $new = $this->parameters->withCacheControl('cache-control');
 
-        $this->assertNotSame($new, $this->parameters);
-        $this->assertSame('cache-control', $new->getCacheControl());
+        self::assertNotSame($new, $this->parameters);
+        self::assertSame('cache-control', $new->getCacheControl());
     }
 
     public function testWithContentDisposition()
     {
         $new = $this->parameters->withContentDisposition('content-disposition');
 
-        $this->assertNotSame($new, $this->parameters);
-        $this->assertSame('content-disposition', $new->getContentDisposition());
+        self::assertNotSame($new, $this->parameters);
+        self::assertSame('content-disposition', $new->getContentDisposition());
     }
 
     public function testWithContentEncoding()
     {
         $new = $this->parameters->withContentEncoding('content-encoding');
 
-        $this->assertNotSame($new, $this->parameters);
-        $this->assertSame('content-encoding', $new->getContentEncoding());
+        self::assertNotSame($new, $this->parameters);
+        self::assertSame('content-encoding', $new->getContentEncoding());
     }
 
     public function testWithContentLanguage()
     {
         $new = $this->parameters->withContentLanguage('content-language');
 
-        $this->assertNotSame($new, $this->parameters);
-        $this->assertSame('content-language', $new->getContentLanguage());
+        self::assertNotSame($new, $this->parameters);
+        self::assertSame('content-language', $new->getContentLanguage());
     }
 
     public function testWithContentType()
     {
         $new = $this->parameters->withContentType('content-type');
 
-        $this->assertNotSame($new, $this->parameters);
-        $this->assertSame('content-type', $new->getContentType());
+        self::assertNotSame($new, $this->parameters);
+        self::assertSame('content-type', $new->getContentType());
     }
 }

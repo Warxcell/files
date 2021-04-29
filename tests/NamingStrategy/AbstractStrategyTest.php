@@ -20,7 +20,7 @@ abstract class AbstractStrategyTest extends TestCase
 
     public function testDirectoryName()
     {
-        $this->assertEquals(
+        self::assertEquals(
             $this->getExpectedDirectoryName(),
             $this->getStrategy()->getDirectoryName($this->getFile())
         );
@@ -28,7 +28,7 @@ abstract class AbstractStrategyTest extends TestCase
 
     public function testFilename()
     {
-        $this->assertEquals(
+        self::assertEquals(
             $this->getExpectedFileName(),
             $this->getStrategy()->getFileName($this->getFile())
         );

@@ -56,9 +56,9 @@ class FileTypeTest extends TypeTestCase
 
         $actual = $form->getData();
 
-        $this->assertTrue($form->isSynchronized());
-        $this->assertInstanceOf(File::class, $actual);
-        $this->assertSame($file, $actual);
+        self::assertTrue($form->isSynchronized());
+        self::assertInstanceOf(File::class, $actual);
+        self::assertSame($file, $actual);
     }
 
     public function testMultipleUpload()
@@ -91,10 +91,10 @@ class FileTypeTest extends TypeTestCase
 
         $actual = $form->getData();
 
-        $this->assertTrue($form->isSynchronized());
-        $this->assertCount(2, $actual);
-        $this->assertSame($file1, $actual[0]);
-        $this->assertSame($file2, $actual[1]);
+        self::assertTrue($form->isSynchronized());
+        self::assertCount(2, $actual);
+        self::assertSame($file1, $actual[0]);
+        self::assertSame($file2, $actual[1]);
     }
 
     public function testInvalidManagerPassed()
@@ -123,6 +123,6 @@ class FileTypeTest extends TypeTestCase
             ]
         );
 
-        $this->assertFalse($form->get('file')->getConfig()->getOption('label'));
+        self::assertFalse($form->get('file')->getConfig()->getOption('label'));
     }
 }

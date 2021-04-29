@@ -48,12 +48,12 @@ class MigrateNamingStrategyCommandTest extends TestCase
             ->will($this->onConsecutiveCalls(true, false));
 
         $commandTester = new CommandTester($this->command);
-        $this->assertSame(0, $commandTester->execute([]));
+        self::assertSame(0, $commandTester->execute([]));
 
         $output = $commandTester->getDisplay();
 
-        $this->assertStringContainsString('File 1 migrated', $output);
-        $this->assertStringContainsString('File 2 not migrated', $output);
-        $this->assertStringContainsString('Migrated: 1. Failures: 1.', $output);
+        self::assertStringContainsString('File 1 migrated', $output);
+        self::assertStringContainsString('File 2 not migrated', $output);
+        self::assertStringContainsString('Migrated: 1. Failures: 1.', $output);
     }
 }

@@ -57,7 +57,7 @@ class FileValidatorTest extends ConstraintValidatorTestCase
                 ]
             )
         );
-        $this->assertNoViolation();
+        self::assertNoViolation();
     }
 
     public function testInvalidSize()
@@ -96,7 +96,7 @@ class FileValidatorTest extends ConstraintValidatorTestCase
                 ]
             )
         );
-        $this->assertNoViolation();
+        self::assertNoViolation();
     }
 
 
@@ -113,7 +113,7 @@ class FileValidatorTest extends ConstraintValidatorTestCase
                 ]
             )
         );
-        $this->assertNoViolation();
+        self::assertNoViolation();
     }
 
     public function testInvalidMimeType()
@@ -166,7 +166,7 @@ class FileValidatorTest extends ConstraintValidatorTestCase
             )
         );
 
-        $this->assertNoViolation();
+        self::assertNoViolation();
     }
 
     public function testInvalidSizeAndMimeType()

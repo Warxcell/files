@@ -35,11 +35,11 @@ class DelegatingPathResolverTest extends TestCase
     {
         $file1 = new File('original_filename.jpg', 125, '1234567', 'image/jpeg');
         $this->pathResolver1->expects($this->once())->method('getPath')->with($file1)->willReturn(File::class);
-        $this->assertSame(File::class, $this->pathResolver->getPath($file1));
+        self::assertSame(File::class, $this->pathResolver->getPath($file1));
 
         $file2 = new File2('original_filename.jpg', 125, '1234567', 'image/jpeg');
         $this->pathResolver2->expects($this->once())->method('getPath')->with($file2)->willReturn(File2::class);
-        $this->assertSame(File2::class, $this->pathResolver->getPath($file2));
+        self::assertSame(File2::class, $this->pathResolver->getPath($file2));
     }
 
     public function testNotManagedFile()

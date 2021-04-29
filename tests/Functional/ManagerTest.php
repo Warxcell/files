@@ -26,11 +26,11 @@ class ManagerTest extends KernelTestCase
         $this->entityManager->persist($file);
         $this->entityManager->flush();
 
-        $this->assertTrue(
+        self::assertTrue(
             $this->flysystem->fileExists('9aa1c5fc/7c938816/6d7ce7fd/46648dd1/9aa1c5fc7c9388166d7ce7fd46648dd1')
         );
 
-        $this->assertSame(
+        self::assertSame(
             '9aa1c5fc7c9388166d7ce7fd46648dd1',
             md5($this->flysystem->read('9aa1c5fc/7c938816/6d7ce7fd/46648dd1/9aa1c5fc7c9388166d7ce7fd46648dd1'))
         );
@@ -45,19 +45,19 @@ class ManagerTest extends KernelTestCase
     {
         $file = $this->testSimpleUpload();
 
-        $this->assertTrue(
+        self::assertTrue(
             $this->flysystem->fileExists('9aa1c5fc/7c938816/6d7ce7fd/46648dd1/9aa1c5fc7c9388166d7ce7fd46648dd1')
         );
 
         $this->entityManager->remove($file);
 
-        $this->assertTrue(
+        self::assertTrue(
             $this->flysystem->fileExists('9aa1c5fc/7c938816/6d7ce7fd/46648dd1/9aa1c5fc7c9388166d7ce7fd46648dd1')
         );
 
         $this->entityManager->flush();
 
-        $this->assertFalse(
+        self::assertFalse(
             $this->flysystem->fileExists('9aa1c5fc/7c938816/6d7ce7fd/46648dd1/9aa1c5fc7c9388166d7ce7fd46648dd1')
         );
     }
@@ -69,7 +69,7 @@ class ManagerTest extends KernelTestCase
 //    {
 //        $file = $this->testSimpleUpload();
 //
-//        $this->assertTrue(
+//        self::assertTrue(
 //            $this->flysystem->fileExists('9aa1c5fc/7c938816/6d7ce7fd/46648dd1/9aa1c5fc7c9388166d7ce7fd46648dd1')
 //        );
 //
@@ -77,19 +77,19 @@ class ManagerTest extends KernelTestCase
 //
 //        $this->entityManager->remove($file);
 //
-//        $this->assertTrue(
+//        self::assertTrue(
 //            $this->flysystem->fileExists('9aa1c5fc/7c938816/6d7ce7fd/46648dd1/9aa1c5fc7c9388166d7ce7fd46648dd1')
 //        );
 //
 //        $this->entityManager->flush();
 //
-//        $this->assertTrue(
+//        self::assertTrue(
 //            $this->flysystem->fileExists('9aa1c5fc/7c938816/6d7ce7fd/46648dd1/9aa1c5fc7c9388166d7ce7fd46648dd1')
 //        );
 //
 //        $this->entityManager->rollback();
 //
-//        $this->assertTrue(
+//        self::assertTrue(
 //            $this->flysystem->fileExists('9aa1c5fc/7c938816/6d7ce7fd/46648dd1/9aa1c5fc7c9388166d7ce7fd46648dd1')
 //        );
 //    }
@@ -101,7 +101,7 @@ class ManagerTest extends KernelTestCase
 //    {
 //        $file = $this->testSimpleUpload();
 //
-//        $this->assertTrue(
+//        self::assertTrue(
 //            $this->flysystem->fileExists('9aa1c5fc/7c938816/6d7ce7fd/46648dd1/9aa1c5fc7c9388166d7ce7fd46648dd1')
 //        );
 //
@@ -109,19 +109,19 @@ class ManagerTest extends KernelTestCase
 //
 //        $this->entityManager->remove($file);
 //
-//        $this->assertTrue(
+//        self::assertTrue(
 //            $this->flysystem->fileExists('9aa1c5fc/7c938816/6d7ce7fd/46648dd1/9aa1c5fc7c9388166d7ce7fd46648dd1')
 //        );
 //
 //        $this->entityManager->flush();
 //
-//        $this->assertTrue(
+//        self::assertTrue(
 //            $this->flysystem->fileExists('9aa1c5fc/7c938816/6d7ce7fd/46648dd1/9aa1c5fc7c9388166d7ce7fd46648dd1')
 //        );
 //
 //        $this->entityManager->commit();
 //
-//        $this->assertFalse(
+//        self::assertFalse(
 //            $this->flysystem->fileExists('9aa1c5fc/7c938816/6d7ce7fd/46648dd1/9aa1c5fc7c9388166d7ce7fd46648dd1')
 //        );
 //    }
@@ -138,7 +138,7 @@ class ManagerTest extends KernelTestCase
         $this->entityManager->persist($file2);
         $this->entityManager->flush();
 
-        $this->assertSame($file, $file2);
+        self::assertSame($file, $file2);
     }
 
     public function testSameFileUploadWithoutFlushInBetween()
@@ -149,13 +149,13 @@ class ManagerTest extends KernelTestCase
         $file2 = $this->manager->upload(new SplFileObject(__DIR__.'/../files/image1.jpg'));
         $this->entityManager->persist($file2);
 
-        $this->assertSame($file, $file2);
+        self::assertSame($file, $file2);
 
         $this->entityManager->flush();
 
         $file3 = $this->manager->upload(new SplFileObject(__DIR__.'/../files/image1.jpg'));
 
-        $this->assertSame($file, $file3);
+        self::assertSame($file, $file3);
     }
 
     protected function setUp(): void

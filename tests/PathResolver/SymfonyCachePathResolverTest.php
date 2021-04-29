@@ -35,9 +35,9 @@ class SymfonyCachePathResolverTest extends TestCase
 
         $this->decoratedPathResolver->expects($this->once())->method('getPath')->with($file)->willReturn('path');
 
-        $this->assertFalse($this->cache->hasItem('1234567'));
-        $this->assertSame('path', $this->pathResolver->getPath($file));
-        $this->assertTrue($this->cache->hasItem('1234567'));
-        $this->assertSame('path', $this->pathResolver->getPath($file));
+        self::assertFalse($this->cache->hasItem('1234567'));
+        self::assertSame('path', $this->pathResolver->getPath($file));
+        self::assertTrue($this->cache->hasItem('1234567'));
+        self::assertSame('path', $this->pathResolver->getPath($file));
     }
 }

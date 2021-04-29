@@ -27,62 +27,62 @@ class DecoratedFileTest extends TestCase
 
     public function testGetId()
     {
-        $this->assertSame(98, $this->decorator->getId());
+        self::assertSame(98, $this->decorator->getId());
     }
 
     public function testGetOriginalFilename()
     {
-        $this->assertSame('filename', $this->decorator->getOriginalFilename());
+        self::assertSame('filename', $this->decorator->getOriginalFilename());
     }
 
     public function testSetOriginalFilename()
     {
         $this->decorator->setOriginalFilename('newName');
-        $this->assertSame('newName', $this->decorator->getOriginalFilename());
+        self::assertSame('newName', $this->decorator->getOriginalFilename());
     }
 
     public function testGetFilesize()
     {
-        $this->assertSame(1234, $this->decorator->getFileSize());
+        self::assertSame(1234, $this->decorator->getFileSize());
     }
 
     public function testSetFilesize()
     {
         $this->decorator->setFileSize(4321);
-        $this->assertSame(4321, $this->decorator->getFileSize());
+        self::assertSame(4321, $this->decorator->getFileSize());
     }
 
     public function testGetMd5Hash()
     {
-        $this->assertSame('md5Hash', $this->decorator->getMd5Hash());
+        self::assertSame('md5Hash', $this->decorator->getMd5Hash());
     }
 
     public function testSetMd5Hash()
     {
         $this->decorator->setMd5Hash('hashmd5');
-        $this->assertSame('hashmd5', $this->decorator->getMd5Hash());
+        self::assertSame('hashmd5', $this->decorator->getMd5Hash());
     }
 
     public function testGetMimeType()
     {
-        $this->assertSame('mimeType', $this->decorator->getMimeType());
+        self::assertSame('mimeType', $this->decorator->getMimeType());
     }
 
     public function testSetMimeType()
     {
         $this->decorator->setMimeType('typeMime');
-        $this->assertSame('typeMime', $this->decorator->getMimeType());
+        self::assertSame('typeMime', $this->decorator->getMimeType());
     }
 
     public function testGetCreatedAt()
     {
-        $this->assertSame($this->createdAt, $this->decorator->getCreatedAt());
+        self::assertSame($this->createdAt, $this->decorator->getCreatedAt());
     }
 
     public function testSetCreatedAt()
     {
         $now = new DateTimeImmutable();
         $this->decorator->setCreatedAt($now);
-        $this->assertSame($now, $this->decorator->getCreatedAt());
+        self::assertSame($now, $this->decorator->getCreatedAt());
     }
 }

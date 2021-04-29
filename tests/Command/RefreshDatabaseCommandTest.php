@@ -57,7 +57,7 @@ class RefreshDatabaseCommandTest extends TestCase
             );
 
         $commandTester = new CommandTester($this->command);
-        $this->assertSame(0, $commandTester->execute([]));
+        self::assertSame(0, $commandTester->execute([]));
     }
 
     public function testManagerNotFound()
@@ -69,7 +69,7 @@ class RefreshDatabaseCommandTest extends TestCase
         $this->expectExceptionMessage('No manager found for '.File::class);
 
         $commandTester = new CommandTester($this->command);
-        $this->assertSame(0, $commandTester->execute([]));
+        self::assertSame(0, $commandTester->execute([]));
     }
 
     public function testExactBatchSize()
@@ -91,7 +91,7 @@ class RefreshDatabaseCommandTest extends TestCase
         $this->repository->expects($this->once())->method('findAllForBatchProcessing')->willReturn($files);
 
         $commandTester = new CommandTester($this->command);
-        $this->assertSame(0, $commandTester->execute([]));
+        self::assertSame(0, $commandTester->execute([]));
     }
 
     public function testExactMinusOneBatchSize()
@@ -113,6 +113,6 @@ class RefreshDatabaseCommandTest extends TestCase
         $this->repository->expects($this->once())->method('findAllForBatchProcessing')->willReturn($files);
 
         $commandTester = new CommandTester($this->command);
-        $this->assertSame(0, $commandTester->execute([]));
+        self::assertSame(0, $commandTester->execute([]));
     }
 }

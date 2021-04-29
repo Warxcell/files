@@ -61,7 +61,7 @@ class AzureBlobStorageSASPathResolverTest extends TestCase
                 }
             }
         );
-        $this->assertSame('url?sas', $sasResolver->getPath($file));
+        self::assertSame('url?sas', $sasResolver->getPath($file));
     }
 
     public function testGetPathNullParams()
@@ -113,6 +113,6 @@ class AzureBlobStorageSASPathResolverTest extends TestCase
                 }
             }
         );
-        $this->assertSame('url?sas', $sasResolver->getPath($file));
+        self::assertSame('url?sas', $sasResolver->getPath($file));
     }
 }

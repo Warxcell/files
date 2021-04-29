@@ -32,7 +32,7 @@ class PathResolverManagerTest extends TestCase
         $uploadedFile = new File('filename', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg');
         $this->decorated->expects($this->once())->method('upload')->with($file)->willReturn($uploadedFile);
         $actualFile = $this->decorator->upload($file);
-        $this->assertSame($uploadedFile, $actualFile);
+        self::assertSame($uploadedFile, $actualFile);
     }
 
     public function testGetPathname()
@@ -41,7 +41,7 @@ class PathResolverManagerTest extends TestCase
         $this->decorated->expects($this->once())->method('getPathname')->with($file)->willReturn('!!!');
 
         $actual = $this->decorator->getPathname($file);
-        $this->assertSame('!!!', $actual);
+        self::assertSame('!!!', $actual);
     }
 
     public function testRead()
@@ -50,7 +50,7 @@ class PathResolverManagerTest extends TestCase
         $this->decorated->expects($this->once())->method('read')->with($file)->willReturn('!!!');
 
         $actual = $this->decorator->read($file);
-        $this->assertSame('!!!', $actual);
+        self::assertSame('!!!', $actual);
     }
 
     public function testReadStream()
@@ -59,7 +59,7 @@ class PathResolverManagerTest extends TestCase
         $this->decorated->expects($this->once())->method('readStream')->with($file)->willReturn('!!!');
 
         $actual = $this->decorator->readStream($file);
-        $this->assertSame('!!!', $actual);
+        self::assertSame('!!!', $actual);
     }
 
     public function testRefresh()
@@ -78,7 +78,7 @@ class PathResolverManagerTest extends TestCase
         $this->decorated->expects($this->once())->method('migrate')->with($file, $namingStrategy)->willReturn(true);
 
         $result = $this->decorator->migrate($file, $namingStrategy);
-        $this->assertTrue($result);
+        self::assertTrue($result);
     }
 
     public function testMove()
@@ -103,7 +103,7 @@ class PathResolverManagerTest extends TestCase
 
         $class = $this->decorator->getClass();
 
-        $this->assertSame('!!!', $class);
+        self::assertSame('!!!', $class);
     }
 
     public function testClear()
@@ -119,6 +119,6 @@ class PathResolverManagerTest extends TestCase
 
         $actual = $this->decorator->getPath($file);
 
-        $this->assertSame('!!!', $actual);
+        self::assertSame('!!!', $actual);
     }
 }

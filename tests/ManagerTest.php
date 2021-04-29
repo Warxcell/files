@@ -46,18 +46,18 @@ class ManagerTest extends TestCase
 
     public function testSimpleUpload()
     {
-        $this->assertEquals(File::class, $this->manager->getClass());
+        self::assertEquals(File::class, $this->manager->getClass());
         /** @var File $file */
         $file = $this->manager->upload(new \SplFileObject(__DIR__.'/files/image1.jpg'));
 
-        $this->assertTrue($file instanceof File);
-        $this->assertEquals('9aa1c5fc7c9388166d7ce7fd46648dd1', $file->getMd5Hash());
-        $this->assertEquals(24053, $file->getFileSize());
-        $this->assertEquals('image1.jpg', $file->getOriginalFilename());
-        $this->assertEquals('image/jpeg', $file->getMimeType());
+        self::assertTrue($file instanceof File);
+        self::assertEquals('9aa1c5fc7c9388166d7ce7fd46648dd1', $file->getMd5Hash());
+        self::assertEquals(24053, $file->getFileSize());
+        self::assertEquals('image1.jpg', $file->getOriginalFilename());
+        self::assertEquals('image/jpeg', $file->getMimeType());
 
         $expectedDateTime = new \DateTimeImmutable();
-        $this->assertTrue(
+        self::assertTrue(
             $expectedDateTime
                 ->diff($file->getCreatedAt())
                 ->format('%s')
@@ -69,22 +69,22 @@ class ManagerTest extends TestCase
     {
         $url = 'file:///'.__DIR__.'/files/image1.jpg';
 
-        $this->assertEquals(File::class, $this->manager->getClass());
+        self::assertEquals(File::class, $this->manager->getClass());
         /** @var File $file */
         $file = $this->manager->upload(new \SplFileObject($url));
         $file->setId(1);
 
-        $this->assertTrue($file instanceof File);
-        $this->assertEquals('9aa1c5fc7c9388166d7ce7fd46648dd1', $file->getMd5Hash());
-        $this->assertEquals(24053, $file->getFileSize());
-        $this->assertEquals('image1.jpg', $file->getOriginalFilename());
-        $this->assertEquals('image/jpeg', $file->getMimeType());
+        self::assertTrue($file instanceof File);
+        self::assertEquals('9aa1c5fc7c9388166d7ce7fd46648dd1', $file->getMd5Hash());
+        self::assertEquals(24053, $file->getFileSize());
+        self::assertEquals('image1.jpg', $file->getOriginalFilename());
+        self::assertEquals('image/jpeg', $file->getMimeType());
 
         $this->manager->moveFile($file);
 
-        $this->assertTrue($this->filesystem->fileExists('1'));
-        $this->assertEquals('9aa1c5fc7c9388166d7ce7fd46648dd1', md5($this->filesystem->read('1')));
-        $this->assertEquals(24053, strlen($this->filesystem->read('1')));
+        self::assertTrue($this->filesystem->fileExists('1'));
+        self::assertEquals('9aa1c5fc7c9388166d7ce7fd46648dd1', md5($this->filesystem->read('1')));
+        self::assertEquals(24053, strlen($this->filesystem->read('1')));
     }
 
     public function testUploadedFileUpload()
@@ -92,11 +92,11 @@ class ManagerTest extends TestCase
         $uploadedFile = new UploadedFile(__DIR__.'/files/image1.jpg', 'image_1_uploaded.jpg', 'image/jpg');
         $file = $this->manager->upload($uploadedFile);
 
-        $this->assertTrue($file instanceof File);
-        $this->assertEquals('9aa1c5fc7c9388166d7ce7fd46648dd1', $file->getMd5Hash());
-        $this->assertEquals(24053, $file->getFileSize());
-        $this->assertEquals('image_1_uploaded.jpg', $file->getOriginalFilename());
-        $this->assertEquals('image/jpeg', $file->getMimeType());
+        self::assertTrue($file instanceof File);
+        self::assertEquals('9aa1c5fc7c9388166d7ce7fd46648dd1', $file->getMd5Hash());
+        self::assertEquals(24053, $file->getFileSize());
+        self::assertEquals('image_1_uploaded.jpg', $file->getOriginalFilename());
+        self::assertEquals('image/jpeg', $file->getMimeType());
     }
 
     public function testAlreadyUploadedFile()
@@ -118,12 +118,12 @@ class ManagerTest extends TestCase
 
         $actual = $manager->upload(new \SplFileObject(__DIR__.'/files/image1.jpg'));
 
-        $this->assertInstanceOf(File::class, $actual);
-        $this->assertSame($file, $actual);
-        $this->assertEquals('9aa1c5fc7c9388166d7ce7fd46648dd1', $file->getMd5Hash());
-        $this->assertEquals(24053, $file->getFileSize());
-        $this->assertEquals('image2.jpg', $file->getOriginalFilename());
-        $this->assertEquals('image/jpeg', $file->getMimeType());
+        self::assertInstanceOf(File::class, $actual);
+        self::assertSame($file, $actual);
+        self::assertEquals('9aa1c5fc7c9388166d7ce7fd46648dd1', $file->getMd5Hash());
+        self::assertEquals(24053, $file->getFileSize());
+        self::assertEquals('image2.jpg', $file->getOriginalFilename());
+        self::assertEquals('image/jpeg', $file->getMimeType());
     }
 
     public function testCreateDirectoryCalled()
@@ -203,7 +203,7 @@ class ManagerTest extends TestCase
 
         $manager->moveFile($file);
 
-        $this->assertTrue($this->filesystem->fileExists('directory/test/directory_test.jpg'));
+        self::assertTrue($this->filesystem->fileExists('directory/test/directory_test.jpg'));
     }
 
 
@@ -232,7 +232,7 @@ class ManagerTest extends TestCase
 
         $manager->moveFile($file);
 
-        $this->assertTrue($this->filesystem->fileExists('directory_test.jpg'));
+        self::assertTrue($this->filesystem->fileExists('directory_test.jpg'));
     }
 
     public function testMoveDeletedFile()
@@ -276,103 +276,103 @@ class ManagerTest extends TestCase
         /** @var File $file */
         $file = $this->manager->upload(new \SplFileObject($forUpload));
 
-        $this->assertTrue($file instanceof File);
+        self::assertTrue($file instanceof File);
 
         $file->setId(1);
 
         $this->manager->moveFile($file);
 
-        $this->assertTrue($this->filesystem->fileExists('1'));
-        $this->assertEquals(md5_file($forUpload), md5($this->filesystem->read('1')));
+        self::assertTrue($this->filesystem->fileExists('1'));
+        self::assertEquals(md5_file($forUpload), md5($this->filesystem->read('1')));
     }
 
     public function testSimpleDelete()
     {
-        $this->assertFalse($this->filesystem->fileExists('2'));
+        self::assertFalse($this->filesystem->fileExists('2'));
 
         /** @var File $file */
         $file = $this->manager->upload(new \SplFileObject(__DIR__.'/files/image1.jpg'));
-        $this->assertTrue($file instanceof File);
+        self::assertTrue($file instanceof File);
         $file->setId(2);
 
         $this->manager->moveFile($file);
-        $this->assertTrue($this->filesystem->fileExists('2'));
+        self::assertTrue($this->filesystem->fileExists('2'));
 
         $this->manager->remove($file);
-        $this->assertFalse($this->filesystem->fileExists('2'));
+        self::assertFalse($this->filesystem->fileExists('2'));
     }
 
     public function testTemporaryFilePathname()
     {
         /** @var File $file */
         $file = $this->manager->upload(new \SplFileObject(__DIR__.'/files/image1.jpg'));
-        $this->assertTrue($file instanceof File);
+        self::assertTrue($file instanceof File);
         $file->setId(3);
 
         $pathname = $this->manager->getPathname($file);
 
-        $this->assertEquals(__DIR__.'/files/image1.jpg', $pathname);
+        self::assertEquals(__DIR__.'/files/image1.jpg', $pathname);
     }
 
     public function testFinalFilePathname()
     {
         /** @var File $file */
         $file = $this->manager->upload(new \SplFileObject(__DIR__.'/files/image1.jpg'));
-        $this->assertTrue($file instanceof File);
+        self::assertTrue($file instanceof File);
         $file->setId(3);
 
         $pathname = $this->manager->getPathname($file);
 
-        $this->assertEquals(__DIR__.'/files/image1.jpg', $pathname);
+        self::assertEquals(__DIR__.'/files/image1.jpg', $pathname);
 
         $this->manager->moveFile($file);
 
         $pathname = $this->manager->getPathname($file);
 
-        $this->assertEquals('3', $pathname);
+        self::assertEquals('3', $pathname);
     }
 
     public function testTemporaryFileRead()
     {
         /** @var File $file */
         $file = $this->manager->upload(new \SplFileObject(__DIR__.'/files/image1.jpg'));
-        $this->assertTrue($file instanceof File);
-        $this->assertEquals(file_get_contents(__DIR__.'/files/image1.jpg'), $this->manager->read($file));
+        self::assertTrue($file instanceof File);
+        self::assertEquals(file_get_contents(__DIR__.'/files/image1.jpg'), $this->manager->read($file));
     }
 
     public function testFinalFileRead()
     {
         /** @var File $file */
         $file = $this->manager->upload(new \SplFileObject(__DIR__.'/files/image1.jpg'));
-        $this->assertTrue($file instanceof File);
+        self::assertTrue($file instanceof File);
         $file->setId(4);
 
         $this->manager->moveFile($file);
-        $this->assertEquals(file_get_contents(__DIR__.'/files/image1.jpg'), $this->manager->read($file));
+        self::assertEquals(file_get_contents(__DIR__.'/files/image1.jpg'), $this->manager->read($file));
     }
 
     public function testTemporaryReadStream()
     {
         /** @var File $file */
         $file = $this->manager->upload(new \SplFileObject(__DIR__.'/files/image1.jpg'));
-        $this->assertTrue($file instanceof File);
+        self::assertTrue($file instanceof File);
 
         $stream = $this->manager->readStream($file);
-        $this->assertIsResource($stream);
-        $this->assertEquals(file_get_contents(__DIR__.'/files/image1.jpg'), stream_get_contents($stream));
+        self::assertIsResource($stream);
+        self::assertEquals(file_get_contents(__DIR__.'/files/image1.jpg'), stream_get_contents($stream));
     }
 
     public function testFinalFileReadStream()
     {
         /** @var File $file */
         $file = $this->manager->upload(new \SplFileObject(__DIR__.'/files/image1.jpg'));
-        $this->assertTrue($file instanceof File);
+        self::assertTrue($file instanceof File);
         $file->setId(5);
 
         $this->manager->moveFile($file);
         $stream = $this->manager->readStream($file);
-        $this->assertIsResource($stream);
-        $this->assertEquals(file_get_contents(__DIR__.'/files/image1.jpg'), stream_get_contents($stream));
+        self::assertIsResource($stream);
+        self::assertEquals(file_get_contents(__DIR__.'/files/image1.jpg'), stream_get_contents($stream));
     }
 
     public function testRefresh()
@@ -382,26 +382,26 @@ class ManagerTest extends TestCase
 
         /** @var File $file */
         $file = $this->manager->upload(new \SplFileObject($forUpload));
-        $this->assertTrue($file instanceof File);
+        self::assertTrue($file instanceof File);
         $file->setId(6);
 
         $this->manager->moveFile($file);
 
-        $this->assertTrue($this->filesystem->fileExists('6'));
-        $this->assertEquals('9aa1c5fc7c9388166d7ce7fd46648dd1', md5($this->filesystem->read('6')));
-        $this->assertEquals('9aa1c5fc7c9388166d7ce7fd46648dd1', $file->getMd5Hash());
-        $this->assertEquals(24053, $file->getFileSize());
-        $this->assertEquals('image1.jpg', $file->getOriginalFilename());
-        $this->assertEquals('image/jpeg', $file->getMimeType());
+        self::assertTrue($this->filesystem->fileExists('6'));
+        self::assertEquals('9aa1c5fc7c9388166d7ce7fd46648dd1', md5($this->filesystem->read('6')));
+        self::assertEquals('9aa1c5fc7c9388166d7ce7fd46648dd1', $file->getMd5Hash());
+        self::assertEquals(24053, $file->getFileSize());
+        self::assertEquals('image1.jpg', $file->getOriginalFilename());
+        self::assertEquals('image/jpeg', $file->getMimeType());
 
         $this->filesystem->writeStream('6', fopen($replacement, 'r'));
 
         $this->manager->refresh($file);
 
-        $this->assertEquals('59aeac36ae75786be1b573baad0e77c0', $file->getMd5Hash());
-        $this->assertEquals(22518, $file->getFileSize());
-        $this->assertEquals('image1.jpg', $file->getOriginalFilename());
-        $this->assertEquals('image/jpeg', $file->getMimeType());
+        self::assertEquals('59aeac36ae75786be1b573baad0e77c0', $file->getMd5Hash());
+        self::assertEquals(22518, $file->getFileSize());
+        self::assertEquals('image1.jpg', $file->getOriginalFilename());
+        self::assertEquals('image/jpeg', $file->getMimeType());
     }
 
     public function testRefreshFileMap()
@@ -414,19 +414,19 @@ class ManagerTest extends TestCase
 
         /** @var File $file */
         $file = $this->manager->upload(new \SplFileObject($tmpFile));
-        $this->assertTrue($file instanceof File);
+        self::assertTrue($file instanceof File);
         $file->setId(6);
 
-        $this->assertEquals('9aa1c5fc7c9388166d7ce7fd46648dd1', $file->getMd5Hash());
-//        $this->assertEquals(24053, $file->getFileSize());
-        $this->assertEquals('image/jpeg', $file->getMimeType());
+        self::assertEquals('9aa1c5fc7c9388166d7ce7fd46648dd1', $file->getMd5Hash());
+//        self::assertEquals(24053, $file->getFileSize());
+        self::assertEquals('image/jpeg', $file->getMimeType());
 
         copy($replacement, $tmpFile);
         $this->manager->refresh($file);
 
-        $this->assertEquals('59aeac36ae75786be1b573baad0e77c0', $file->getMd5Hash());
-//        $this->assertEquals(22518, $file->getFileSize());
-        $this->assertEquals('image/jpeg', $file->getMimeType());
+        self::assertEquals('59aeac36ae75786be1b573baad0e77c0', $file->getMd5Hash());
+//        self::assertEquals(22518, $file->getFileSize());
+        self::assertEquals('image/jpeg', $file->getMimeType());
     }
 
     public function testRefreshDeletedFile()
@@ -444,7 +444,20 @@ class ManagerTest extends TestCase
         $this->manager->refresh($file);
     }
 
-    public function testMigrateStrategy()
+    public function testDeleteDeletedFile(): void
+    {
+        $forUpload = __DIR__.'/files/image1.jpg';
+        $file = $this->manager->upload(new \SplFileObject($forUpload));
+        $this->manager->moveFile($file);
+
+        $this->filesystem->delete($this->manager->getPathname($file));
+
+        $this->manager->remove($file);
+
+        $this->expectNotToPerformAssertions();
+    }
+
+    public function testMigrateStrategy(): void
     {
         $forUpload = __DIR__.'/files/image1.jpg';
 
@@ -469,13 +482,13 @@ class ManagerTest extends TestCase
 
         /** @var File $file */
         $file = $manager->upload(new \SplFileObject($forUpload));
-        $this->assertTrue($file instanceof File);
+        self::assertTrue($file instanceof File);
         $file->setId(7);
 
         $manager->moveFile($file);
 
-        $this->assertTrue($this->filesystem->fileExists('7'));
-        $this->assertFalse($this->filesystem->fileExists('test_migrate_7'));
+        self::assertTrue($this->filesystem->fileExists('7'));
+        self::assertFalse($this->filesystem->fileExists('test_migrate_7'));
 
 
         $manager = new Manager(
@@ -495,13 +508,13 @@ class ManagerTest extends TestCase
             }
         );
 
-        $this->assertTrue($manager->migrate($file, $oldStrategy));
+        self::assertTrue($manager->migrate($file, $oldStrategy));
 
-        $this->assertFalse($this->filesystem->fileExists('7'));
-        $this->assertTrue($this->filesystem->fileExists('test_migrate_7'));
+        self::assertFalse($this->filesystem->fileExists('7'));
+        self::assertTrue($this->filesystem->fileExists('test_migrate_7'));
 
 
-        $this->assertFalse($manager->migrate($file, $oldStrategy));
+        self::assertFalse($manager->migrate($file, $oldStrategy));
     }
 
     public function testClear()
@@ -538,8 +551,8 @@ class ManagerTest extends TestCase
 
         $file = $manager->upload(new \SplFileObject(__DIR__.'/files/image1.jpg'));
 
-        $this->assertSame('image/jpeg', $file->getMimeType());
+        self::assertSame('image/jpeg', $file->getMimeType());
         $manager->refresh($file);
-        $this->assertSame('image/jpeg', $file->getMimeType());
+        self::assertSame('image/jpeg', $file->getMimeType());
     }
 }

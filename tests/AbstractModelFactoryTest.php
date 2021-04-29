@@ -17,10 +17,10 @@ class AbstractModelFactoryTest extends TestCase
 
         $file = $factory->create('name', 12345, 'md5Hash', 'mimeType');
 
-        $this->assertSame('name', $file->getOriginalFilename());
-        $this->assertSame(12345, $file->getFileSize());
-        $this->assertSame('md5Hash', $file->getMd5Hash());
-        $this->assertSame('mimeType', $file->getMimeType());
+        self::assertSame('name', $file->getOriginalFilename());
+        self::assertSame(12345, $file->getFileSize());
+        self::assertSame('md5Hash', $file->getMd5Hash());
+        self::assertSame('mimeType', $file->getMimeType());
     }
 
     public function testInvalidClass()

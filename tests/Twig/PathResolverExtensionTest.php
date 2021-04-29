@@ -24,12 +24,12 @@ class PathResolverExtensionTest extends TestCase
     public function testGetFunctions()
     {
         $twigFunctions = $this->extension->getFunctions();
-        $this->assertCount(1, $twigFunctions);
+        self::assertCount(1, $twigFunctions);
 
-        $this->assertInstanceOf(TwigFunction::class, $twigFunctions[0]);
-        $this->assertSame('file_path', $twigFunctions[0]->getName());
-        $this->assertSame($this->extension, $twigFunctions[0]->getCallable()[0]);
-        $this->assertSame('filePath', $twigFunctions[0]->getCallable()[1]);
+        self::assertInstanceOf(TwigFunction::class, $twigFunctions[0]);
+        self::assertSame('file_path', $twigFunctions[0]->getName());
+        self::assertSame($this->extension, $twigFunctions[0]->getCallable()[0]);
+        self::assertSame('filePath', $twigFunctions[0]->getCallable()[1]);
     }
 
     public function testFilePath()
@@ -37,6 +37,6 @@ class PathResolverExtensionTest extends TestCase
         $file = new File('filename', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg');
         $this->pathResolver->expects($this->once())->method('getPath')->with($file)->willReturn('all good');
 
-        $this->assertSame('all good', $this->extension->filePath($file));
+        self::assertSame('all good', $this->extension->filePath($file));
     }
 }

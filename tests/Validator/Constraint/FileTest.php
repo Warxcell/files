@@ -14,35 +14,35 @@ class FileTest extends TestCase
     {
         $file = new File(['maxSize' => 1000]);
 
-        $this->assertSame(1000, $file->maxSize);
+        self::assertSame(1000, $file->maxSize);
     }
 
     public function testNormalizeKb()
     {
         $file = new File(['maxSize' => '1k']);
 
-        $this->assertSame(1000, $file->maxSize);
+        self::assertSame(1000, $file->maxSize);
     }
 
     public function testNormalizeMb()
     {
         $file = new File(['maxSize' => '1M']);
 
-        $this->assertSame(1000000, $file->maxSize);
+        self::assertSame(1000000, $file->maxSize);
     }
 
     public function testNormalizeKi()
     {
         $file = new File(['maxSize' => '1Ki']);
 
-        $this->assertSame(1024, $file->maxSize);
+        self::assertSame(1024, $file->maxSize);
     }
 
     public function testNormalizeMi()
     {
         $file = new File(['maxSize' => '1Mi']);
 
-        $this->assertSame(1048576, $file->maxSize);
+        self::assertSame(1048576, $file->maxSize);
     }
 
     public function testInvalid()
@@ -58,7 +58,7 @@ class FileTest extends TestCase
     {
         $file = new File(['mimeTypes' => 'image/jpg']);
 
-        $this->assertCount(1, $file->mimeTypes);
-        $this->assertSame('image/jpg', $file->mimeTypes[0]);
+        self::assertCount(1, $file->mimeTypes);
+        self::assertSame('image/jpg', $file->mimeTypes[0]);
     }
 }

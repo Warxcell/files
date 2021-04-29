@@ -58,7 +58,7 @@ class FileFilterPathResolverTest extends KernelTestCase
         assert($pathResolver instanceof FileFilterPathResolver);
 
         $path = $pathResolver->getPath(new FileFilter($this->file, 'thumbnail'));
-        $this->assertSame(
+        self::assertSame(
             'http://localhost/media/cache/resolve/thumbnail/9aa1c5fc/7c938816/6d7ce7fd/46648dd1/9aa1c5fc7c9388166d7ce7fd46648dd1',
             $path
         );
