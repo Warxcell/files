@@ -7,7 +7,7 @@
         <field name="originalFilename"/>
         <field name="fileSize" type="integer"/>
 
-        <field name="md5Hash" length="32">
+        <field name="md5Hash" length="32" unique="true">
             <options>
                 <option name="fixed">true</option>
             </options>
