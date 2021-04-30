@@ -25,11 +25,6 @@ class DecoratedFileTest extends TestCase
         $this->decorator = new VirtualFile($file);
     }
 
-    public function testGetId()
-    {
-        self::assertSame(98, $this->decorator->getId());
-    }
-
     public function testGetOriginalFilename()
     {
         self::assertSame('filename', $this->decorator->getOriginalFilename());

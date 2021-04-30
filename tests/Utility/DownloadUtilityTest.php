@@ -38,7 +38,7 @@ class DownloadUtilityTest extends TestCase
         };
         $flysystem = new Filesystem(new InMemoryFilesystemAdapter());
         $namingStrategy = new NamingStrategy\SplitHashStrategy();
-        $this->manager = new Manager(File::class, $repository, $flysystem, $namingStrategy);
+        $this->manager = new Manager(File::class, $flysystem, $namingStrategy, $repository);
         $this->downloadUtility = new DownloadUtility($this->manager);
     }
 

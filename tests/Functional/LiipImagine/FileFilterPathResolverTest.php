@@ -4,16 +4,17 @@ declare(strict_types=1);
 
 namespace Arxy\FilesBundle\Tests\Functional\LiipImagine;
 
-
 use Arxy\FilesBundle\LiipImagine\FileFilter;
 use Arxy\FilesBundle\LiipImagine\FileFilterPathResolver;
 use Arxy\FilesBundle\ManagerInterface;
 use Arxy\FilesBundle\Model\File;
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;
+use SplFileObject;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Output\NullOutput;
 
 class FileFilterPathResolverTest extends KernelTestCase
@@ -31,7 +32,7 @@ class FileFilterPathResolverTest extends KernelTestCase
                     'doctrine:schema:create',
                 ]
             ),
-            new NullOutput()
+            new ConsoleOutput()
         );
     }
 
@@ -47,7 +48,7 @@ class FileFilterPathResolverTest extends KernelTestCase
         $entityManager = self::$container->get(EntityManagerInterface::class);
         assert($entityManager instanceof EntityManagerInterface);
 
-        $this->file = $manager->upload(new \SplFileObject(__DIR__.'/../../files/image1.jpg'));
+        $this->file = $manager->upload(new SplFileObject(__DIR__.'/../../files/image1.jpg'));
         $entityManager->persist($this->file);
         $entityManager->flush();
     }

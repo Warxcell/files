@@ -7,7 +7,10 @@ namespace Arxy\FilesBundle\EventListener;
 use Arxy\FilesBundle\InvalidArgumentException;
 use Arxy\FilesBundle\ManagerInterface;
 use Arxy\FilesBundle\Model\File;
+use Closure;
 use Doctrine\Common\EventSubscriber;
+use Doctrine\Common\Util\ClassUtils;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\OnClearEventArgs;
 use Doctrine\ORM\Event\OnFlushEventArgs;
@@ -16,11 +19,20 @@ class DoctrineORMListener implements EventSubscriber
 {
     private ManagerInterface $manager;
     private string $class;
+    private Closure $move;
+    private Closure $remove;
 
     public function __construct(ManagerInterface $manager)
     {
         $this->manager = $manager;
         $this->class = $this->manager->getClass();
+
+        $this->move = static function (File $file) use ($manager) {
+            $manager->moveFile($file);
+        };
+        $this->remove = static function (File $file) use ($manager) {
+            $manager->remove($file);
+        };
     }
 
     public function getSubscribedEvents(): array
@@ -32,9 +44,28 @@ class DoctrineORMListener implements EventSubscriber
         ];
     }
 
-    private function supports($entity): bool
+    private function supports(object $entity): bool
     {
         return $entity instanceof $this->class;
+    }
+
+    private function handleEmbeddable(EntityManagerInterface $entityManager, object $entity, Closure $action): void
+    {
+        $classMetadata = $entityManager->getClassMetadata(ClassUtils::getClass($entity));
+
+        foreach ($classMetadata->embeddedClasses as $property => $embeddedClass) {
+            if (is_a($embeddedClass['class'], $this->class, true)) {
+                $refl = new \ReflectionObject($entity);
+                $reflProperty = $refl->getProperty($property);
+                $reflProperty->setAccessible(true);
+                $file = $reflProperty->getValue($entity);
+
+                if ($file === null) {
+                    continue;
+                }
+                $action($file);
+            }
+        }
     }
 
     public function onFlush(OnFlushEventArgs $args)
@@ -49,12 +80,14 @@ class DoctrineORMListener implements EventSubscriber
                     // file doesn't exists in FileMap.
                 }
             }
+            $this->handleEmbeddable($entityManager, $entity, $this->move);
         }
 
         foreach ($unitOfWork->getScheduledEntityDeletions() as $entity) {
             if ($this->supports($entity)) {
                 $this->manager->remove($entity);
             }
+            $this->handleEmbeddable($entityManager, $entity, $this->remove);
         }
     }
 
@@ -69,6 +102,8 @@ class DoctrineORMListener implements EventSubscriber
             } catch (InvalidArgumentException $exception) {
                 // file doesn't exists in FileMap.
             }
+
+            $this->handleEmbeddable($args->getEntityManager(), $entity, $this->move);
         }
     }
 
@@ -80,6 +115,8 @@ class DoctrineORMListener implements EventSubscriber
             assert($entity instanceof File);
             $this->manager->remove($entity);
         }
+
+        $this->handleEmbeddable($args->getEntityManager(), $entity, $this->remove);
     }
 
     public function onClear(OnClearEventArgs $args): void

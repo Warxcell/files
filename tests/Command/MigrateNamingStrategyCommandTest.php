@@ -52,8 +52,8 @@ class MigrateNamingStrategyCommandTest extends TestCase
 
         $output = $commandTester->getDisplay();
 
-        self::assertStringContainsString('File 1 migrated', $output);
-        self::assertStringContainsString('File 2 not migrated', $output);
+        self::assertStringContainsString('File 098f6bcd4621d373cade4e832627b4f6 migrated', $output);
+        self::assertStringContainsString('File 098f6bcd4621d373cade4e832627b4f6 not migrated', $output);
         self::assertStringContainsString('Migrated: 1. Failures: 1.', $output);
     }
 }

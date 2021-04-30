@@ -10,6 +10,15 @@ class InvalidArgumentException extends \InvalidArgumentException
 {
     public const INVALID_TYPE = 0;
     public const FILE_NOT_EXISTS_IN_MAP = 1;
+    public const INVALID_CLASS = 2;
+
+    public static function invalidClass(string $class, string $expected): self
+    {
+        return new self(
+            sprintf('Expected class of type "%s", "%s" given', $expected, $class),
+            self::INVALID_CLASS
+        );
+    }
 
     public static function invalidType(object $value, string $expectedType): self
     {

@@ -48,6 +48,20 @@ services:
         arguments:
             $class: 'Arxy\FilesBundle\Tests\Functional\Entity\File'
 
+    embeddable_manager:
+        class: Arxy\FilesBundle\Manager
+        arguments:
+            $class: 'Arxy\FilesBundle\Entity\EmbeddableFile'
+            $repository: null
+
+    embeddable_listener:
+        class: Arxy\FilesBundle\EventListener\DoctrineORMListener
+        arguments:
+            $manager: '@embeddable_manager'
+        tags:
+            - {name: doctrine.event_listener, event: 'onFlush'}
+            - {name: doctrine.event_listener, event: 'onClear'}
+
     Arxy\FilesBundle\ManagerInterface:
         alias: Arxy\FilesBundle\Manager
         public: true

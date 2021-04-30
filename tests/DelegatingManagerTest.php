@@ -30,7 +30,6 @@ class DelegatingManagerTest extends TestCase
 
         $this->manager1 = new Manager(
             File::class,
-            new FileRepository(),
             $this->filesystem1,
             new class implements NamingStrategy {
                 public function getDirectoryName(\Arxy\FilesBundle\Model\File $file): ?string
@@ -42,12 +41,12 @@ class DelegatingManagerTest extends TestCase
                 {
                     return (string)$file->getId();
                 }
-            }
+            },
+            new FileRepository(),
         );
 
         $this->manager2 = new Manager(
             File2::class,
-            new FileRepository(),
             $this->filesystem2,
             new class implements NamingStrategy {
                 public function getDirectoryName(\Arxy\FilesBundle\Model\File $file): ?string
@@ -59,7 +58,8 @@ class DelegatingManagerTest extends TestCase
                 {
                     return (string)$file->getId();
                 }
-            }
+            },
+            new FileRepository(),
         );
 
         $this->manager = new DelegatingManager(

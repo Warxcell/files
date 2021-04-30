@@ -1,0 +1,20 @@
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                   https://raw.github.com/doctrine/doctrine2/master/doctrine-mapping.xsd">
+
+    <embeddable name="Arxy\FilesBundle\Entity\EmbeddableFile">
+        <field name="originalFilename" nullable="true"/>
+        <field name="fileSize" type="integer" nullable="true"/>
+
+        <field name="md5Hash" length="32" nullable="true">
+            <options>
+                <option name="fixed">true</option>
+            </options>
+        </field>
+
+        <field name="createdAt" type="datetime_immutable" nullable="true"/>
+        <field name="mimeType" nullable="true"/>
+    </embeddable>
+
+</doctrine-mapping>

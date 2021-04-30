@@ -8,13 +8,11 @@ use DateTimeImmutable;
 
 interface File
 {
-    public function getId();
-
-    public function setOriginalFilename(string $filename): void;
+    public function setOriginalFilename(string $originalFilename): void;
 
     public function getOriginalFilename(): string;
 
-    public function setFileSize(int $size): void;
+    public function setFileSize(int $fileSize): void;
 
     public function getFileSize(): int;
 

@@ -14,8 +14,6 @@ abstract class AbstractFile implements File
     protected DateTimeImmutable $createdAt;
     protected string $mimeType;
 
-    abstract public function getId();
-
     public function __construct(string $originalFilename, int $fileSize, string $md5Hash, string $mimeType)
     {
         $this->setOriginalFilename($originalFilename);

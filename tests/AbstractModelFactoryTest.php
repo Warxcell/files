@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Arxy\FilesBundle\Tests;
 
 use Arxy\FilesBundle\AbstractModelFactory;
-use Arxy\FilesBundle\Model\AbstractFile;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
@@ -25,7 +24,9 @@ class AbstractModelFactoryTest extends TestCase
     public function testInvalidClass()
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Class must be sub-class of '.AbstractFile::class);
+        $this->expectExceptionMessage(
+            'Expected class of type "Arxy\FilesBundle\Model\AbstractFile", "stdClass" given'
+        );
 
         new AbstractModelFactory(stdClass::class);
     }

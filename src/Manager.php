@@ -18,9 +18,9 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 final class Manager implements ManagerInterface
 {
     private string $class;
-    private Repository $repository;
     private FilesystemOperator $filesystem;
     private NamingStrategy $namingStrategy;
+    private ?Repository $repository;
     private FileMap $fileMap;
     private MimeTypeDetector $mimeTypeDetector;
     private ModelFactory $modelFactory;
@@ -28,16 +28,16 @@ final class Manager implements ManagerInterface
 
     public function __construct(
         string $class,
-        Repository $repository,
         FilesystemOperator $filesystem,
         NamingStrategy $namingStrategy,
+        Repository $repository = null,
         MimeTypeDetector $mimeTypeDetector = null,
         ModelFactory $modelFactory = null
     ) {
         $this->class = $class;
-        $this->repository = $repository;
         $this->filesystem = $filesystem;
         $this->namingStrategy = $namingStrategy;
+        $this->repository = $repository;
         $this->fileMap = new FileMap();
         $this->mimeTypeDetector = $mimeTypeDetector ?? new FinfoMimeTypeDetector();
         $this->modelFactory = $modelFactory ?? new AbstractModelFactory($class);
@@ -113,7 +113,7 @@ final class Manager implements ManagerInterface
 
         $fileEntity = $this->fileMap->findByHashAndSize($md5, $fileSize);
 
-        if ($fileEntity === null) {
+        if ($fileEntity === null && $this->repository !== null) {
             $fileEntity = $this->repository->findByHashAndSize($md5, $fileSize);
         }
         if ($fileEntity === null) {

@@ -8,11 +8,13 @@ use Arxy\FilesBundle\Manager;
 use Arxy\FilesBundle\ManagerInterface;
 use Arxy\FilesBundle\NamingStrategy;
 use Arxy\FilesBundle\Repository;
+use DateTimeImmutable;
 use League\Flysystem\Filesystem;
 use League\Flysystem\FilesystemOperator;
 use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
 use League\MimeTypeDetection\MimeTypeDetector;
 use PHPUnit\Framework\TestCase;
+use SplFileObject;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class ManagerTest extends TestCase
@@ -28,7 +30,6 @@ class ManagerTest extends TestCase
 
         $this->manager = new Manager(
             File::class,
-            new FileRepository(),
             $this->filesystem,
             new class implements NamingStrategy {
                 public function getDirectoryName(\Arxy\FilesBundle\Model\File $file): ?string
@@ -40,7 +41,8 @@ class ManagerTest extends TestCase
                 {
                     return (string)$file->getId();
                 }
-            }
+            },
+            new FileRepository(),
         );
     }
 
@@ -48,7 +50,7 @@ class ManagerTest extends TestCase
     {
         self::assertEquals(File::class, $this->manager->getClass());
         /** @var File $file */
-        $file = $this->manager->upload(new \SplFileObject(__DIR__.'/files/image1.jpg'));
+        $file = $this->manager->upload(new SplFileObject(__DIR__.'/files/image1.jpg'));
 
         self::assertTrue($file instanceof File);
         self::assertEquals('9aa1c5fc7c9388166d7ce7fd46648dd1', $file->getMd5Hash());
@@ -56,7 +58,7 @@ class ManagerTest extends TestCase
         self::assertEquals('image1.jpg', $file->getOriginalFilename());
         self::assertEquals('image/jpeg', $file->getMimeType());
 
-        $expectedDateTime = new \DateTimeImmutable();
+        $expectedDateTime = new DateTimeImmutable();
         self::assertTrue(
             $expectedDateTime
                 ->diff($file->getCreatedAt())
@@ -71,10 +73,9 @@ class ManagerTest extends TestCase
 
         self::assertEquals(File::class, $this->manager->getClass());
         /** @var File $file */
-        $file = $this->manager->upload(new \SplFileObject($url));
+        $file = $this->manager->upload(new SplFileObject($url));
         $file->setId(1);
 
-        self::assertTrue($file instanceof File);
         self::assertEquals('9aa1c5fc7c9388166d7ce7fd46648dd1', $file->getMd5Hash());
         self::assertEquals(24053, $file->getFileSize());
         self::assertEquals('image1.jpg', $file->getOriginalFilename());
@@ -111,12 +112,12 @@ class ManagerTest extends TestCase
 
         $manager = new Manager(
             File::class,
-            $repository,
             $this->filesystem,
-            $this->createMock(NamingStrategy::class)
+            $this->createMock(NamingStrategy::class),
+            $repository,
         );
 
-        $actual = $manager->upload(new \SplFileObject(__DIR__.'/files/image1.jpg'));
+        $actual = $manager->upload(new SplFileObject(__DIR__.'/files/image1.jpg'));
 
         self::assertInstanceOf(File::class, $actual);
         self::assertSame($file, $actual);
@@ -133,7 +134,6 @@ class ManagerTest extends TestCase
 
         $manager = new Manager(
             File::class,
-            new FileRepository(),
             $filesystem,
             new class implements NamingStrategy {
                 public function getDirectoryName(\Arxy\FilesBundle\Model\File $file): ?string
@@ -145,10 +145,11 @@ class ManagerTest extends TestCase
                 {
                     return 'file';
                 }
-            }
+            },
+            new FileRepository(),
         );
 
-        $upload = $manager->upload(new \SplFileObject(__DIR__.'/files/image1.jpg'));
+        $upload = $manager->upload(new SplFileObject(__DIR__.'/files/image1.jpg'));
         $manager->moveFile($upload);
     }
 
@@ -159,7 +160,6 @@ class ManagerTest extends TestCase
 
         $manager = new Manager(
             File::class,
-            new FileRepository(),
             $filesystem,
             new class implements NamingStrategy {
                 public function getDirectoryName(\Arxy\FilesBundle\Model\File $file): ?string
@@ -171,10 +171,11 @@ class ManagerTest extends TestCase
                 {
                     return 'file';
                 }
-            }
+            },
+            new FileRepository(),
         );
 
-        $upload = $manager->upload(new \SplFileObject(__DIR__.'/files/image1.jpg'));
+        $upload = $manager->upload(new SplFileObject(__DIR__.'/files/image1.jpg'));
         $manager->moveFile($upload);
     }
 
@@ -182,7 +183,6 @@ class ManagerTest extends TestCase
     {
         $manager = new Manager(
             File::class,
-            new FileRepository(),
             $this->filesystem,
             new class implements NamingStrategy {
                 public function getDirectoryName(\Arxy\FilesBundle\Model\File $file): ?string
@@ -194,10 +194,11 @@ class ManagerTest extends TestCase
                 {
                     return 'directory_test.jpg';
                 }
-            }
+            },
+            new FileRepository(),
         );
 
-        $file = $manager->upload(new \SplFileObject(__DIR__.'/files/image1.jpg'));
+        $file = $manager->upload(new SplFileObject(__DIR__.'/files/image1.jpg'));
         assert($file instanceof File);
         $file->setId(1);
 
@@ -211,7 +212,6 @@ class ManagerTest extends TestCase
     {
         $manager = new Manager(
             File::class,
-            new FileRepository(),
             $this->filesystem,
             new class implements NamingStrategy {
                 public function getDirectoryName(\Arxy\FilesBundle\Model\File $file): ?string
@@ -223,10 +223,11 @@ class ManagerTest extends TestCase
                 {
                     return 'directory_test.jpg';
                 }
-            }
+            },
+            new FileRepository(),
         );
 
-        $file = $manager->upload(new \SplFileObject(__DIR__.'/files/image1.jpg'));
+        $file = $manager->upload(new SplFileObject(__DIR__.'/files/image1.jpg'));
         assert($file instanceof File);
         $file->setId(1);
 
@@ -241,7 +242,7 @@ class ManagerTest extends TestCase
         $tmpFile = tempnam(sys_get_temp_dir(), 'arxy_files');
         copy($forUpload, $tmpFile);
 
-        $file = $this->manager->upload(new \SplFileObject($tmpFile));
+        $file = $this->manager->upload(new SplFileObject($tmpFile));
         assert($file instanceof File);
         $file->setId(1);
         unlink($tmpFile);
@@ -274,7 +275,7 @@ class ManagerTest extends TestCase
     {
         $forUpload = __DIR__.'/files/image1.jpg';
         /** @var File $file */
-        $file = $this->manager->upload(new \SplFileObject($forUpload));
+        $file = $this->manager->upload(new SplFileObject($forUpload));
 
         self::assertTrue($file instanceof File);
 
@@ -291,7 +292,7 @@ class ManagerTest extends TestCase
         self::assertFalse($this->filesystem->fileExists('2'));
 
         /** @var File $file */
-        $file = $this->manager->upload(new \SplFileObject(__DIR__.'/files/image1.jpg'));
+        $file = $this->manager->upload(new SplFileObject(__DIR__.'/files/image1.jpg'));
         self::assertTrue($file instanceof File);
         $file->setId(2);
 
@@ -305,7 +306,7 @@ class ManagerTest extends TestCase
     public function testTemporaryFilePathname()
     {
         /** @var File $file */
-        $file = $this->manager->upload(new \SplFileObject(__DIR__.'/files/image1.jpg'));
+        $file = $this->manager->upload(new SplFileObject(__DIR__.'/files/image1.jpg'));
         self::assertTrue($file instanceof File);
         $file->setId(3);
 
@@ -317,7 +318,7 @@ class ManagerTest extends TestCase
     public function testFinalFilePathname()
     {
         /** @var File $file */
-        $file = $this->manager->upload(new \SplFileObject(__DIR__.'/files/image1.jpg'));
+        $file = $this->manager->upload(new SplFileObject(__DIR__.'/files/image1.jpg'));
         self::assertTrue($file instanceof File);
         $file->setId(3);
 
@@ -335,7 +336,7 @@ class ManagerTest extends TestCase
     public function testTemporaryFileRead()
     {
         /** @var File $file */
-        $file = $this->manager->upload(new \SplFileObject(__DIR__.'/files/image1.jpg'));
+        $file = $this->manager->upload(new SplFileObject(__DIR__.'/files/image1.jpg'));
         self::assertTrue($file instanceof File);
         self::assertEquals(file_get_contents(__DIR__.'/files/image1.jpg'), $this->manager->read($file));
     }
@@ -343,7 +344,7 @@ class ManagerTest extends TestCase
     public function testFinalFileRead()
     {
         /** @var File $file */
-        $file = $this->manager->upload(new \SplFileObject(__DIR__.'/files/image1.jpg'));
+        $file = $this->manager->upload(new SplFileObject(__DIR__.'/files/image1.jpg'));
         self::assertTrue($file instanceof File);
         $file->setId(4);
 
@@ -354,7 +355,7 @@ class ManagerTest extends TestCase
     public function testTemporaryReadStream()
     {
         /** @var File $file */
-        $file = $this->manager->upload(new \SplFileObject(__DIR__.'/files/image1.jpg'));
+        $file = $this->manager->upload(new SplFileObject(__DIR__.'/files/image1.jpg'));
         self::assertTrue($file instanceof File);
 
         $stream = $this->manager->readStream($file);
@@ -365,7 +366,7 @@ class ManagerTest extends TestCase
     public function testFinalFileReadStream()
     {
         /** @var File $file */
-        $file = $this->manager->upload(new \SplFileObject(__DIR__.'/files/image1.jpg'));
+        $file = $this->manager->upload(new SplFileObject(__DIR__.'/files/image1.jpg'));
         self::assertTrue($file instanceof File);
         $file->setId(5);
 
@@ -381,7 +382,7 @@ class ManagerTest extends TestCase
         $replacement = __DIR__.'/files/image2.jpg';
 
         /** @var File $file */
-        $file = $this->manager->upload(new \SplFileObject($forUpload));
+        $file = $this->manager->upload(new SplFileObject($forUpload));
         self::assertTrue($file instanceof File);
         $file->setId(6);
 
@@ -413,7 +414,7 @@ class ManagerTest extends TestCase
         copy($forUpload, $tmpFile);
 
         /** @var File $file */
-        $file = $this->manager->upload(new \SplFileObject($tmpFile));
+        $file = $this->manager->upload(new SplFileObject($tmpFile));
         self::assertTrue($file instanceof File);
         $file->setId(6);
 
@@ -435,7 +436,7 @@ class ManagerTest extends TestCase
         $tmpFile = tempnam(sys_get_temp_dir(), 'arxy_files');
         copy($forUpload, $tmpFile);
 
-        $file = $this->manager->upload(new \SplFileObject($tmpFile));
+        $file = $this->manager->upload(new SplFileObject($tmpFile));
 
         unlink($tmpFile);
 
@@ -447,7 +448,7 @@ class ManagerTest extends TestCase
     public function testDeleteDeletedFile(): void
     {
         $forUpload = __DIR__.'/files/image1.jpg';
-        $file = $this->manager->upload(new \SplFileObject($forUpload));
+        $file = $this->manager->upload(new SplFileObject($forUpload));
         $this->manager->moveFile($file);
 
         $this->filesystem->delete($this->manager->getPathname($file));
@@ -475,13 +476,13 @@ class ManagerTest extends TestCase
 
         $manager = new Manager(
             File::class,
-            new FileRepository(),
             $this->filesystem,
-            $oldStrategy
+            $oldStrategy,
+            new FileRepository(),
         );
 
         /** @var File $file */
-        $file = $manager->upload(new \SplFileObject($forUpload));
+        $file = $manager->upload(new SplFileObject($forUpload));
         self::assertTrue($file instanceof File);
         $file->setId(7);
 
@@ -493,7 +494,6 @@ class ManagerTest extends TestCase
 
         $manager = new Manager(
             File::class,
-            new FileRepository(),
             $this->filesystem,
             new class implements NamingStrategy {
                 public function getDirectoryName(\Arxy\FilesBundle\Model\File $file): ?string
@@ -503,9 +503,10 @@ class ManagerTest extends TestCase
 
                 public function getFileName(\Arxy\FilesBundle\Model\File $file): string
                 {
-                    return (string)'test_migrate_'.$file->getId();
+                    return 'test_migrate_'.$file->getId();
                 }
-            }
+            },
+            new FileRepository(),
         );
 
         self::assertTrue($manager->migrate($file, $oldStrategy));
@@ -519,7 +520,7 @@ class ManagerTest extends TestCase
 
     public function testClear()
     {
-        $file = $this->manager->upload(new \SplFileObject(__DIR__.'/files/image1.jpg'));
+        $file = $this->manager->upload(new SplFileObject(__DIR__.'/files/image1.jpg'));
         assert($file instanceof File);
         $file->setId(1);
         $this->manager->clear();
@@ -543,13 +544,13 @@ class ManagerTest extends TestCase
 
         $manager = new Manager(
             File::class,
-            new FileRepository(),
             $this->createMock(FilesystemOperator::class),
             $this->createMock(NamingStrategy::class),
+            new FileRepository(),
             $mimeTypeDetector
         );
 
-        $file = $manager->upload(new \SplFileObject(__DIR__.'/files/image1.jpg'));
+        $file = $manager->upload(new SplFileObject(__DIR__.'/files/image1.jpg'));
 
         self::assertSame('image/jpeg', $file->getMimeType());
         $manager->refresh($file);
