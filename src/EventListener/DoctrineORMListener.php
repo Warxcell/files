@@ -34,15 +34,6 @@ class DoctrineORMListener implements EventSubscriber
         };
     }
 
-    public function getSubscribedEvents(): array
-    {
-        return [
-            'postPersist',
-            'preRemove',
-            'onClear',
-        ];
-    }
-
     private function supports(object $entity): bool
     {
         return $entity instanceof $this->class;
