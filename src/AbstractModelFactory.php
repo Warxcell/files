@@ -6,6 +6,7 @@ namespace Arxy\FilesBundle;
 
 use Arxy\FilesBundle\Model\AbstractFile;
 use Arxy\FilesBundle\Model\File;
+use SplFileInfo;
 
 class AbstractModelFactory implements ModelFactory
 {
@@ -19,8 +20,13 @@ class AbstractModelFactory implements ModelFactory
         $this->class = $class;
     }
 
-    public function create(string $originalFilename, int $fileSize, string $md5Hash, string $mimeType): File
-    {
+    public function create(
+        SplFileInfo $file,
+        string $originalFilename,
+        int $fileSize,
+        string $md5Hash,
+        string $mimeType
+    ): File {
         return new $this->class($originalFilename, $fileSize, $md5Hash, $mimeType);
     }
 }

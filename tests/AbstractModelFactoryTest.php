@@ -14,8 +14,7 @@ class AbstractModelFactoryTest extends TestCase
     public function testCreate()
     {
         $factory = new AbstractModelFactory(File::class);
-
-        $file = $factory->create('name', 12345, 'md5Hash', 'mimeType');
+        $file = $factory->create(new \SplFileInfo(__DIR__.'/files/image1.jpg'), 'name', 12345, 'md5Hash', 'mimeType');
 
         self::assertSame('name', $file->getOriginalFilename());
         self::assertSame(12345, $file->getFileSize());

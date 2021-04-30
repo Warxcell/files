@@ -118,6 +118,7 @@ final class Manager implements ManagerInterface
         }
         if ($fileEntity === null) {
             $fileEntity = $this->modelFactory->create(
+                $file,
                 $originalFilename,
                 $fileSize,
                 $md5,
