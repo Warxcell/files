@@ -11,7 +11,6 @@ use Closure;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\OnClearEventArgs;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 
@@ -89,34 +88,6 @@ class DoctrineORMListener implements EventSubscriber
             }
             $this->handleEmbeddable($entityManager, $entity, $this->remove);
         }
-    }
-
-    public function postPersist(LifecycleEventArgs $args): void
-    {
-        $entity = $args->getObject();
-
-        if ($this->supports($entity)) {
-            assert($entity instanceof File);
-            try {
-                $this->manager->moveFile($entity);
-            } catch (InvalidArgumentException $exception) {
-                // file doesn't exists in FileMap.
-            }
-
-            $this->handleEmbeddable($args->getEntityManager(), $entity, $this->move);
-        }
-    }
-
-    public function preRemove(LifecycleEventArgs $args): void
-    {
-        $entity = $args->getObject();
-
-        if ($this->supports($entity)) {
-            assert($entity instanceof File);
-            $this->manager->remove($entity);
-        }
-
-        $this->handleEmbeddable($args->getEntityManager(), $entity, $this->remove);
     }
 
     public function onClear(OnClearEventArgs $args): void
