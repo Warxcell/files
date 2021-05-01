@@ -24,10 +24,6 @@ class ArxyFilesExtension extends Extension
 
         $totalManagers = count($config['managers']);
 
-        if ($totalManagers === 0) {
-            return;
-        }
-
         if ($config['form']) {
             $formDefinition = new Definition(FileType::class);
             $formDefinition->setAutowired(true);
@@ -38,6 +34,10 @@ class ArxyFilesExtension extends Extension
             $filesExtension = new Definition(FilesExtension::class);
             $filesExtension->setAutowired(true);
             $container->setDefinition(FilesExtension::class, $filesExtension);
+        }
+
+        if ($totalManagers === 0) {
+            return;
         }
 
         $autowired = $totalManagers === 1;
