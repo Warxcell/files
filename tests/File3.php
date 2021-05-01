@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Arxy\FilesBundle\Tests;
 
-use Arxy\FilesBundle\Model\AbstractFile;
+use Arxy\FilesBundle\Entity\File as AbstractFile;
 
 class File3 extends AbstractFile
 {
