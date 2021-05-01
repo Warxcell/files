@@ -8,5 +8,4 @@ use Arxy\FilesBundle\Model\DecoratedFile;
 
 class VirtualFile extends DecoratedFile
 {
-
 }

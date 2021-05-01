@@ -34,7 +34,7 @@ class ManagerTest extends KernelTestCase
 
         $this->manager = self::$container->get(ManagerInterface::class);
         $this->embeddableManager = self::$container->get('embeddable_manager');
-        $this->flysystem = self::$container->get(FilesystemOperator::class);
+        $this->flysystem = self::$container->get('in_memory');
     }
 
     private function buildDb($kernel)

@@ -6,6 +6,7 @@ namespace Arxy\FilesBundle\Tests\Functional;
 
 use Arxy\FilesBundle\ArxyFilesBundle;
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
+use League\FlysystemBundle\FlysystemBundle;
 use Liip\ImagineBundle\LiipImagineBundle;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Component\Config\Loader\LoaderInterface;
@@ -25,6 +26,7 @@ class Kernel extends BaseKernel
             new DoctrineBundle(),
             new ArxyFilesBundle(),
             new LiipImagineBundle(),
+            new FlysystemBundle(),
         ];
     }
 

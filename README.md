@@ -63,6 +63,27 @@ class File extends \Arxy\FilesBundle\Entity\File
 
 ```yaml
 services:
+    Arxy\FilesBundle\NamingStrategy\SplitHashStrategy: ~
+    
+flysystem:
+    storages:
+        in_memory:
+            adapter: 'memory'
+
+arxy_files:
+    managers:
+        public:
+            driver: orm
+            class: 'App\Entity\File'
+            flysystem: 'in_memory'
+            naming_strategy: 'Arxy\FilesBundle\NamingStrategy\SplitHashStrategy'
+            repository: 'App\Repository\FileRepository'
+```
+
+Or using plain services:
+
+```yaml
+services:
     files_local_adapter:
         class: League\Flysystem\Local\LocalFilesystemAdapter
         arguments:
@@ -89,7 +110,7 @@ services:
 
     Arxy\FilesBundle\Manager:
         arguments:
-            $class: "App\\Entity\\File"
+            $class: 'App\Entity\File'
 
     Arxy\FilesBundle\ManagerInterface:
         alias: Arxy\FilesBundle\Manager

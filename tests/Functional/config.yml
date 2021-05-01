@@ -21,67 +21,41 @@ doctrine:
                 is_bundle: false
                 prefix: Arxy\FilesBundle\Tests\Functional\Entity
 
+flysystem:
+    storages:
+        in_memory:
+            adapter: 'memory'
+
+arxy_files:
+    managers:
+        public:
+            driver: orm
+            class: 'Arxy\FilesBundle\Tests\Functional\Entity\File'
+            flysystem: 'in_memory'
+            naming_strategy: 'Arxy\FilesBundle\NamingStrategy\SplitHashStrategy'
+            repository: 'Arxy\FilesBundle\Tests\Functional\Repository\FileRepository'
+        embeddable_manager:
+            driver: orm
+            class: 'Arxy\FilesBundle\Entity\EmbeddableFile'
+            flysystem: 'in_memory'
+            naming_strategy: 'Arxy\FilesBundle\NamingStrategy\SplitHashStrategy'
+
 services:
     _defaults:
+        public: true
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
 
     Arxy\FilesBundle\Tests\Functional\Repository\FileRepository: ~
-
-    League\Flysystem\InMemory\InMemoryFilesystemAdapter: ~
-
-    League\Flysystem\FilesystemAdapter: '@League\Flysystem\InMemory\InMemoryFilesystemAdapter'
-
-    League\Flysystem\Filesystem: ~
-
-    League\Flysystem\FilesystemOperator: '@League\Flysystem\Filesystem'
-
-    Arxy\FilesBundle\Twig\FilesExtension: ~
-
     Arxy\FilesBundle\NamingStrategy\SplitHashStrategy: ~
-
-    Arxy\FilesBundle\NamingStrategy: '@Arxy\FilesBundle\NamingStrategy\SplitHashStrategy'
-
-    Arxy\FilesBundle\Repository: '@Arxy\FilesBundle\Tests\Functional\Repository\FileRepository'
-
-    Arxy\FilesBundle\Manager:
-        arguments:
-            $class: 'Arxy\FilesBundle\Tests\Functional\Entity\File'
-
-    embeddable_manager:
-        class: Arxy\FilesBundle\Manager
-        arguments:
-            $class: 'Arxy\FilesBundle\Entity\EmbeddableFile'
-            $repository: null
-
-    embeddable_listener:
-        class: Arxy\FilesBundle\EventListener\DoctrineORMListener
-        arguments:
-            $manager: '@embeddable_manager'
-        tags:
-            - {name: doctrine.event_listener, event: 'onFlush'}
-            - {name: doctrine.event_listener, event: 'onClear'}
-
-    Arxy\FilesBundle\ManagerInterface:
-        alias: Arxy\FilesBundle\Manager
-        public: true
-
-    Arxy\FilesBundle\EventListener\DoctrineORMListener:
-        tags:
-            - {name: doctrine.event_listener, event: 'onFlush'}
-            - {name: doctrine.event_listener, event: 'onClear'}
-
-    Arxy\FilesBundle\Form\Type\FileType: ~
-
-    Arxy\FilesBundle\LiipImagine\FileFilterPathResolver:
-        public: true
+    Arxy\FilesBundle\LiipImagine\FileFilterPathResolver: ~
 
 liip_imagine:
     driver: "gd"
     loaders:
         default:
             flysystem:
-                filesystem_service: League\Flysystem\Filesystem
+                filesystem_service: 'in_memory'
     data_loader: default
     resolvers:
         default:

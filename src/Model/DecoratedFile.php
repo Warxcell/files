@@ -15,6 +15,11 @@ abstract class DecoratedFile implements File
         $this->decorated = $decorated;
     }
 
+    public function getDecorated(): File
+    {
+        return $this->decorated;
+    }
+
     public function getOriginalFilename(): string
     {
         return $this->decorated->getOriginalFilename();

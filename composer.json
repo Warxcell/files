@@ -32,7 +32,8 @@
         "symfony/symfony": "^4.4 | ^5.2",
         "doctrine/doctrine-bundle": "^2.3",
         "liip/imagine-bundle": "^2.6",
-        "vimeo/psalm": "^4.7"
+        "vimeo/psalm": "^4.7",
+        "league/flysystem-bundle": "^2.0"
     },
     "suggest": {
         "symfony/validator": "Validate files against constraints",
