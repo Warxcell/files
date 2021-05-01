@@ -64,7 +64,7 @@ class File extends \Arxy\FilesBundle\Entity\File
 ```yaml
 services:
     Arxy\FilesBundle\NamingStrategy\SplitHashStrategy: ~
-    
+
 flysystem:
     storages:
         in_memory:
@@ -135,13 +135,18 @@ $filesystem = new \League\Flysystem\Filesystem($adapter);
 
 $namingStrategy = new \Arxy\FilesBundle\NamingStrategy\IdToPathStrategy();
 
-$fileManager = new \Arxy\FilesBundle\Manager(\App\Entity\File::class, DoctrineManagerRegistry, $filesystem, $namingStrategy);
+$repository = new Repository();
+
+$fileManager = new \Arxy\FilesBundle\Manager(\App\Entity\File::class, $filesystem, $namingStrategy, $repository);
 ```
 
 ## Upload file
 
 ```php
 $file = new \SplFileInfo($pathname);
+$fileEntity = $fileManager->upload($file);
+
+$file = $request->files->get('file');
 $fileEntity = $fileManager->upload($file);
 ```
 
@@ -189,7 +194,7 @@ $fileHandle = $fileManager->readStream($file);
 This bundle also contains form and constraint for uploading and validating files. You can write your own naming strategy
 how files are created on Filesystem. You can even write your own FileSystem backend for Flysystem and use it here.
 
-Currently only Doctrine ORM is supported as persistence layer. Feel free to submit PRs for others.
+Currently, only Doctrine ORM is supported as persistence layer. Feel free to submit PRs for others.
 
 ## Serving files from controller
 
@@ -280,8 +285,7 @@ class FileController extends AbstractController
 
 ### Serving
 
-Serving depends from how you want to serve it. You might want to use LiipImagineBundle as mention above, or CDN
-solution.
+You might want to use LiipImagineBundle or CDN solution, or even controller.
 
 #### Directly
 
