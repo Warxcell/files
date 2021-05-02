@@ -7,7 +7,7 @@ namespace Arxy\FilesBundle\NamingStrategy;
 use Arxy\FilesBundle\Model\File;
 use Arxy\FilesBundle\NamingStrategy;
 
-class DirectoryPrefixStrategy implements NamingStrategy
+final class DirectoryPrefixStrategy implements NamingStrategy
 {
     private NamingStrategy $originalStrategy;
     private string $prefix;

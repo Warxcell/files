@@ -7,7 +7,7 @@ namespace Arxy\FilesBundle\NamingStrategy;
 use Arxy\FilesBundle\Model\File;
 use Arxy\FilesBundle\NamingStrategy;
 
-class DateStrategy implements NamingStrategy
+final class DateStrategy implements NamingStrategy
 {
     private const DEFAULT_FORMAT = 'Y'.DIRECTORY_SEPARATOR.'m'.DIRECTORY_SEPARATOR.'d';
     private string $format;

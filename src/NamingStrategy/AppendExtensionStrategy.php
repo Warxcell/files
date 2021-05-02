@@ -7,7 +7,7 @@ namespace Arxy\FilesBundle\NamingStrategy;
 use Arxy\FilesBundle\Model\File;
 use Arxy\FilesBundle\NamingStrategy;
 
-class AppendExtensionStrategy implements NamingStrategy
+final class AppendExtensionStrategy implements NamingStrategy
 {
     private NamingStrategy $originalStrategy;
 

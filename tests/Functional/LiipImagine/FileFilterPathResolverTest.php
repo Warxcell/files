@@ -6,51 +6,32 @@ namespace Arxy\FilesBundle\Tests\Functional\LiipImagine;
 
 use Arxy\FilesBundle\LiipImagine\FileFilter;
 use Arxy\FilesBundle\LiipImagine\FileFilterPathResolver;
-use Arxy\FilesBundle\ManagerInterface;
 use Arxy\FilesBundle\Model\File;
-use Doctrine\ORM\EntityManagerInterface;
+use Arxy\FilesBundle\Tests\Functional\AbstractFunctionalTest;
 use InvalidArgumentException;
+use Liip\ImagineBundle\LiipImagineBundle;
 use SplFileObject;
-use Symfony\Bundle\FrameworkBundle\Console\Application;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
-use Symfony\Component\Console\Input\ArrayInput;
-use Symfony\Component\Console\Output\ConsoleOutput;
-use Symfony\Component\Console\Output\NullOutput;
 
-class FileFilterPathResolverTest extends KernelTestCase
+class FileFilterPathResolverTest extends AbstractFunctionalTest
 {
     private File $file;
 
-    private function buildDb($kernel)
+    protected static function getConfig(): string
     {
-        $application = new Application($kernel);
-        $application->setAutoExit(false);
+        return __DIR__.'/config.yml';
+    }
 
-        $application->run(
-            new ArrayInput(
-                [
-                    'doctrine:schema:create',
-                ]
-            ),
-            new ConsoleOutput()
-        );
+    protected static function getBundles(): array
+    {
+        return [new LiipImagineBundle()];
     }
 
     public function setUp(): void
     {
         parent::setUp();
-
-        $kernel = self::bootKernel();
-        $this->buildDb($kernel);
-
-        $manager = self::$container->get(ManagerInterface::class);
-        assert($manager instanceof ManagerInterface);
-        $entityManager = self::$container->get(EntityManagerInterface::class);
-        assert($entityManager instanceof EntityManagerInterface);
-
-        $this->file = $manager->upload(new SplFileObject(__DIR__.'/../../files/image1.jpg'));
-        $entityManager->persist($this->file);
-        $entityManager->flush();
+        $this->file = $this->manager->upload(new SplFileObject(__DIR__.'/../../files/image1.jpg'));
+        $this->entityManager->persist($this->file);
+        $this->entityManager->flush();
     }
 
     public function testFilter()

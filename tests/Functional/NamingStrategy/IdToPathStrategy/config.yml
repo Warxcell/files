@@ -4,13 +4,6 @@ arxy_files:
             driver: orm
             class: 'Arxy\FilesBundle\Tests\Functional\Entity\File'
             flysystem: 'in_memory'
-            naming_strategy: 'Arxy\FilesBundle\NamingStrategy\SplitHashStrategy'
-            repository: 'Arxy\FilesBundle\Tests\Functional\Repository\FileRepository'
-        embeddable_manager:
-            driver: orm
-            class: 'Arxy\FilesBundle\Entity\EmbeddableFile'
-            flysystem: 'in_memory'
-            naming_strategy: 'Arxy\FilesBundle\NamingStrategy\SplitHashStrategy'
 
 services:
     _defaults:
@@ -19,4 +12,5 @@ services:
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
 
     Arxy\FilesBundle\Tests\Functional\Repository\FileRepository: ~
-    Arxy\FilesBundle\NamingStrategy\SplitHashStrategy: ~
+    Arxy\FilesBundle\NamingStrategy\IdToPathStrategy: ~
+    Arxy\FilesBundle\NamingStrategy: '@Arxy\FilesBundle\NamingStrategy\IdToPathStrategy'

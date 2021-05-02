@@ -8,7 +8,7 @@ use Arxy\FilesBundle\Model\File;
 use Arxy\FilesBundle\NamingStrategy;
 use InvalidArgumentException;
 
-class SplitHashStrategy implements NamingStrategy
+final class SplitHashStrategy implements NamingStrategy
 {
     private int $splitLength;
 

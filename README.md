@@ -791,3 +791,4 @@ class File extends \Arxy\FilesBundle\Entity\File
 ## Known issues
 
 - If file entity is deleted within transaction and transaction is rolled back - file will be deleted.
+- Currently, files are deleted on `preRemove` event, since if `postRemove` is used in combination with `IdToPathStrategy` - that results in bug, because Doctrine nulls the `id` after deletion.

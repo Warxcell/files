@@ -65,7 +65,7 @@ class ArxyFilesExtension extends Extension
         }
 
         if ($totalManagers === 1) {
-            $container->setAlias(ManagerInterface::class, reset($config['managers'])['reference']);
+            $container->setAlias(ManagerInterface::class, array_key_first($config['managers']));
         } else {
             $container->setDefinition(
                 'arxy_files.delegating_manager',
@@ -88,8 +88,9 @@ class ArxyFilesExtension extends Extension
             case 'orm':
                 $definition = new Definition(DoctrineORMListener::class);
                 $definition->setArgument('$manager', new Reference($serviceId));
-                $definition->addTag('doctrine.event_listener', ['event' => 'onFlush']);
-                $definition->addTag('doctrine.event_listener', ['event' => 'onClear']);
+                $definition->addTag('doctrine.event_listener', ['event' => 'postPersist', 'lazy' => true]);
+                $definition->addTag('doctrine.event_listener', ['event' => 'preRemove', 'lazy' => true]);
+                $definition->addTag('doctrine.event_listener', ['event' => 'onClear', 'lazy' => true]);
 
                 return $definition;
             default:

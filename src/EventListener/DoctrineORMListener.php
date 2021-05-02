@@ -10,8 +10,8 @@ use Arxy\FilesBundle\Model\File;
 use Closure;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\OnClearEventArgs;
-use Doctrine\ORM\Event\OnFlushEventArgs;
 
 class DoctrineORMListener
 {
@@ -25,11 +25,11 @@ class DoctrineORMListener
         $this->manager = $manager;
         $this->class = $this->manager->getClass();
 
-        $this->move = static function (File $file) use ($manager) {
-            $manager->moveFile($file);
+        $this->move = function (File $file): void {
+            $this->manager->moveFile($file);
         };
-        $this->remove = static function (File $file) use ($manager) {
-            $manager->remove($file);
+        $this->remove = function (File $file): void {
+            $this->manager->remove($file);
         };
     }
 
@@ -43,41 +43,45 @@ class DoctrineORMListener
         $classMetadata = $entityManager->getClassMetadata(ClassUtils::getClass($entity));
 
         foreach ($classMetadata->embeddedClasses as $property => $embeddedClass) {
-            if (is_a($embeddedClass['class'], $this->class, true)) {
-                $refl = new \ReflectionObject($entity);
-                $reflProperty = $refl->getProperty($property);
-                $reflProperty->setAccessible(true);
-                $file = $reflProperty->getValue($entity);
-
-                if ($file === null) {
-                    continue;
-                }
-                $action($file);
+            if (!is_a($embeddedClass['class'], $this->class, true)) {
+                continue;
             }
+
+            $refl = new \ReflectionObject($entity);
+            $reflProperty = $refl->getProperty($property);
+            $reflProperty->setAccessible(true);
+            $file = $reflProperty->getValue($entity);
+
+            if ($file === null) {
+                continue;
+            }
+            $action($file);
         }
     }
 
-    public function onFlush(OnFlushEventArgs $args)
+    public function postPersist(LifecycleEventArgs $eventArgs)
     {
-        $entityManager = $args->getEntityManager();
-        $unitOfWork = $entityManager->getUnitOfWork();
-        foreach ($unitOfWork->getScheduledEntityInsertions() as $entity) {
-            if ($this->supports($entity)) {
-                try {
-                    $this->manager->moveFile($entity);
-                } catch (InvalidArgumentException $exception) {
-                    // file doesn't exists in FileMap.
-                }
+        $entity = $eventArgs->getEntity();
+        $entityManager = $eventArgs->getEntityManager();
+        if ($this->supports($entity)) {
+            try {
+                ($this->move)($entity);
+            } catch (InvalidArgumentException $exception) {
+                // file doesn't exists in FileMap.
             }
-            $this->handleEmbeddable($entityManager, $entity, $this->move);
         }
+        $this->handleEmbeddable($entityManager, $entity, $this->move);
+    }
 
-        foreach ($unitOfWork->getScheduledEntityDeletions() as $entity) {
-            if ($this->supports($entity)) {
-                $this->manager->remove($entity);
-            }
-            $this->handleEmbeddable($entityManager, $entity, $this->remove);
+    public function preRemove(LifecycleEventArgs $eventArgs)
+    {
+        $entity = $eventArgs->getEntity();
+        $entityManager = $eventArgs->getEntityManager();
+
+        if ($this->supports($entity)) {
+            ($this->remove)($entity);
         }
+        $this->handleEmbeddable($entityManager, $entity, $this->remove);
     }
 
     public function onClear(OnClearEventArgs $args): void

@@ -1,0 +1,34 @@
+arxy_files:
+    managers:
+        public:
+            driver: orm
+            class: 'Arxy\FilesBundle\Tests\Functional\Entity\File'
+            flysystem: 'in_memory'
+
+services:
+    _defaults:
+        public: true
+        autowire: true      # Automatically injects dependencies in your services.
+        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+
+    Arxy\FilesBundle\Tests\Functional\Repository\FileRepository: ~
+    Arxy\FilesBundle\NamingStrategy\SplitHashStrategy: ~
+    Arxy\FilesBundle\NamingStrategy: '@Arxy\FilesBundle\NamingStrategy\SplitHashStrategy'
+    Arxy\FilesBundle\LiipImagine\FileFilterPathResolver: ~
+
+liip_imagine:
+    driver: "gd"
+    loaders:
+        default:
+            flysystem:
+                filesystem_service: 'in_memory'
+    data_loader: default
+    resolvers:
+        default:
+            web_path: ~
+    filter_sets:
+        thumbnail:
+            quality: 75
+            filters:
+                thumbnail: {size: [120, 90], mode: outbound}
+                background: {size: [124, 94], position: center, color: '#000000'}
