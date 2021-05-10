@@ -91,7 +91,8 @@ final class Manager implements ManagerInterface
         if (!$file->getRealPath()) {
             $remoteFile = $file->openFile();
 
-            $tempFilename = tempnam(sys_get_temp_dir(), 'file_manager');
+            $tmpDir = ini_get('upload_tmp_dir') ?: sys_get_temp_dir();
+            $tempFilename = tempnam($tmpDir, 'file_manager');
             $file = new SplFileObject($tempFilename, 'r+');
             while ($content = $remoteFile->fread(self::CHUNK_SIZE)) {
                 $file->fwrite($content);
