@@ -112,10 +112,13 @@ final class Manager implements ManagerInterface
         $fileSize = $file->getSize();
         $md5 = md5_file($file->getPathname());
 
-        $fileEntity = $this->fileMap->findByHashAndSize($md5, $fileSize);
+        $fileEntity = null;
+        if ($this->repository !== null) {
+            $fileEntity = $this->fileMap->findByHashAndSize($md5, $fileSize);
 
-        if ($fileEntity === null && $this->repository !== null) {
-            $fileEntity = $this->repository->findByHashAndSize($md5, $fileSize);
+            if ($fileEntity === null) {
+                $fileEntity = $this->repository->findByHashAndSize($md5, $fileSize);
+            }
         }
         if ($fileEntity === null) {
             $fileEntity = $this->modelFactory->create(

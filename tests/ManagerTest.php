@@ -127,6 +127,22 @@ class ManagerTest extends TestCase
         self::assertEquals('image/jpeg', $file->getMimeType());
     }
 
+    public function testAlreadyUploadedFileWithoutRepository()
+    {
+        $manager = new Manager(
+            File::class,
+            $this->filesystem,
+            $this->createMock(NamingStrategy::class),
+        );
+
+        $file1 = $manager->upload(new SplFileObject(__DIR__.'/files/image1.jpg'));
+        $file2 = $manager->upload(new SplFileObject(__DIR__.'/files/image1.jpg'));
+
+        self::assertInstanceOf(File::class, $file1);
+        self::assertInstanceOf(File::class, $file2);
+        self::assertNotSame($file1, $file2);
+    }
+
     public function testCreateDirectoryCalled()
     {
         $filesystem = $this->createMock(FilesystemOperator::class);
