@@ -65,7 +65,9 @@ final class Manager implements ManagerInterface
             throw new RuntimeException('Failed to open '.$splFileInfo->getPathname());
         }
         $this->filesystem->writeStream($path, $stream);
-        fclose($stream);
+        if (is_resource($stream)) {
+            fclose($stream);
+        }
     }
 
     /**
