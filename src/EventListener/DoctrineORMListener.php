@@ -84,6 +84,11 @@ class DoctrineORMListener
         $this->handleEmbeddable($entityManager, $entity, $this->remove);
     }
 
+    public function postRemove(LifecycleEventArgs $eventArgs)
+    {
+        $this->preRemove($eventArgs);
+    }
+
     public function onClear(OnClearEventArgs $args): void
     {
         $this->manager->clear();
