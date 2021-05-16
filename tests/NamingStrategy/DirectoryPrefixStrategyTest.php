@@ -62,6 +62,6 @@ class DirectoryPrefixStrategyTest extends AbstractStrategyTest
             'cache/'
         );
 
-        self::assertNull($strategy->getDirectoryName($this->getFile()));
+        self::assertSame('cache/', $strategy->getDirectoryName($this->getFile()));
     }
 }

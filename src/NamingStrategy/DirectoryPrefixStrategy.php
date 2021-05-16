@@ -22,7 +22,7 @@ final class DirectoryPrefixStrategy implements NamingStrategy
     {
         $directory = $this->originalStrategy->getDirectoryName($file);
         if ($directory === null) {
-            return null;
+            return $this->prefix.DIRECTORY_SEPARATOR;
         }
 
         return rtrim($this->prefix.DIRECTORY_SEPARATOR.$directory, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
