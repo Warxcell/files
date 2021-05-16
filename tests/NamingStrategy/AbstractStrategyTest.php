@@ -12,7 +12,7 @@ abstract class AbstractStrategyTest extends TestCase
 {
     abstract public function getStrategy(): NamingStrategy;
 
-    abstract public function getExpectedDirectoryName(): string;
+    abstract public function getExpectedDirectoryName(): ?string;
 
     abstract public function getExpectedFileName(): string;
 

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Arxy\FilesBundle;
 
-use Arxy\FilesBundle\Entity\EmbeddableFile;
 use Arxy\FilesBundle\Model\AbstractFile;
 use Arxy\FilesBundle\Model\File;
 use SplFileInfo;
