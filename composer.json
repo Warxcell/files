@@ -33,13 +33,15 @@
         "doctrine/doctrine-bundle": "^2.3",
         "liip/imagine-bundle": "^2.6",
         "vimeo/psalm": "^4.7",
-        "league/flysystem-bundle": "^2.0"
+        "league/flysystem-bundle": "^2.0",
+        "symfony/uid": "*"
     },
     "suggest": {
         "symfony/validator": "Validate files against constraints",
         "symfony/form": "Integrate file upload with forms",
         "doctrine/orm": "Use Doctrine ORM as persistence layer",
-        "twig/twig": "Use Arxy\\Files\\Twig\\FilesExtension::formatBytes to get formatted KiB/MiB/GB instead. Also for form template"
+        "twig/twig": "Use Arxy\\Files\\Twig\\FilesExtension::formatBytes to get formatted KiB/MiB/GB instead. Also for form template",
+        "symfony/uid": "Required to use UuidV5Strategy Naming Strategy"
     },
     "autoload": {
         "psr-4": {

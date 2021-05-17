@@ -451,6 +451,46 @@ You will receive following json as response:
 }
 ```
 
+## Naming Strategies:
+
+Naming strategy is responsible to converting File object to filepath. Several built-in strategies exists:
+
+### DateStrategy
+
+Use file's createdAt property. Default format: Y/m/d/md5hash. Example: 2021/05/17/59aeac36ae75786be1b573baad0e77c0
+
+### IdToPathStrategy
+
+Use file's method `getId` and splits it by characters. Expect instanceof `Arxy\FilesBundle\Model\IdentifiableFile`
+Example: ID=123456 will result in filepath: `1/2/3/4/5/6/123456`
+
+### SplitHashStrategy
+
+Use file's md5hash and split it into chucks. Example: `098f6bcd4621d373cade4e832627b4f6` will result
+in `098f6bcd/4621d373/cade4e83/2627b4f6/098f6bcd4621d373cade4e832627b4f6`
+
+### UuidV5Strategy
+
+Uses UUID V5 to generate hash for file. It consists of namespace (configurable) and value (Uses md5Hash of file).
+
+### AppendExtensionStrategy
+
+Decorator which adds extension of file (.jpg, .pdf, etc).
+
+### DirectoryPrefixStrategy
+
+Decorator which prefixes the generated directory of another naming strategy.
+
+### NullDirectoryStrategy
+
+Decorator which always return null directory.
+
+### PersistentPathStrategy
+
+Use persisted pathname in file. Useful if you want to generate completely random path for each file. (For example UUID
+v4). Expects instanceof `Arxy\FilesBundle\Model\PathAwareFile`. It's your responsibility to handle the path itself. You
+can do that with custom `Arxy\FilesBundle\ModelFactory` (recommended) or specific data layer (ORM, prePersist event).
+
 ## Migrating between naming strategy.
 
 First configure the new naming strategy, but keep the old one as service. Then register the command for migration:
@@ -791,4 +831,5 @@ class File extends \Arxy\FilesBundle\Entity\File
 ## Known issues
 
 - If file entity is deleted within transaction and transaction is rolled back - file will be deleted.
-- Currently, files are deleted on `preRemove` event, since if `postRemove` is used in combination with `IdToPathStrategy` - that results in bug, because Doctrine nulls the `id` after deletion.
+- Currently, files are deleted on `preRemove` event, since if `postRemove` is used in combination
+  with `IdToPathStrategy` - that results in bug, because Doctrine nulls the `id` after deletion.
