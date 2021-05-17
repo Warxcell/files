@@ -12,25 +12,38 @@ abstract class AbstractStrategyTest extends TestCase
 {
     abstract public function getStrategy(): NamingStrategy;
 
-    abstract public function getExpectedDirectoryName(): ?string;
+    /** @return NamingStrategyTestCase[] */
+    abstract public function getTestCases(): iterable;
 
-    abstract public function getExpectedFileName(): string;
+    final public function directoryTestData(): iterable
+    {
+        foreach ($this->getTestCases() as $testCase) {
+            yield [$testCase->getFile(), $testCase->getExpectedDirectoryName()];
+        }
+    }
 
-    abstract public function getFile(): File;
+    final public function filenameTestData(): iterable
+    {
+        foreach ($this->getTestCases() as $testCase) {
+            yield [$testCase->getFile(), $testCase->getExpectedFilename()];
+        }
+    }
 
-    final public function testDirectoryName()
+    /** @dataProvider directoryTestData */
+    final public function testDirectoryName(File $file, ?string $expected)
     {
         self::assertEquals(
-            $this->getExpectedDirectoryName(),
-            $this->getStrategy()->getDirectoryName($this->getFile())
+            $expected,
+            $this->getStrategy()->getDirectoryName($file)
         );
     }
 
-    final public function testFilename()
+    /** @dataProvider filenameTestData */
+    final public function testFilename(File $file, string $expected)
     {
         self::assertEquals(
-            $this->getExpectedFileName(),
-            $this->getStrategy()->getFileName($this->getFile())
+            $expected,
+            $this->getStrategy()->getFileName($file)
         );
     }
 }

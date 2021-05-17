@@ -27,17 +27,12 @@ class DirectoryPrefixStrategyTest extends AbstractStrategyTest
         );
     }
 
-    public function getExpectedDirectoryName(): string
+    public function getTestCases(): iterable
     {
-        return 'cache/1/2/3/';
+        yield new NamingStrategyTestCase($this->getFile(), 'cache/1/2/3/', '123');
     }
 
-    public function getExpectedFileName(): string
-    {
-        return '123';
-    }
-
-    public function getFile(): \Arxy\FilesBundle\Model\File
+    private function getFile(): \Arxy\FilesBundle\Model\File
     {
         $file = new File('original_filename.jpg', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg');
         $file->setId(12345);

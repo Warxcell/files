@@ -14,21 +14,10 @@ class DateStrategyTest extends AbstractStrategyTest
         return new NamingStrategy\DateStrategy();
     }
 
-    public function getExpectedDirectoryName(): string
-    {
-        return '2021/03/19/';
-    }
-
-    public function getExpectedFileName(): string
-    {
-        return '098f6bcd4621d373cade4e832627b4f6';
-    }
-
-    public function getFile(): \Arxy\FilesBundle\Model\File
+    public function getTestCases(): iterable
     {
         $file = new File('filename', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg');
         $file->setCreatedAt(new \DateTimeImmutable('2021-03-19 22:10:00'));
-
-        return $file;
+        yield new NamingStrategyTestCase($file, '2021/03/19/', '098f6bcd4621d373cade4e832627b4f6');
     }
 }

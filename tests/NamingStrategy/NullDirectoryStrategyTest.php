@@ -26,18 +26,12 @@ class NullDirectoryStrategyTest extends AbstractStrategyTest
         );
     }
 
-    public function getExpectedDirectoryName(): ?string
+    public function getTestCases(): iterable
     {
-        return null;
-    }
-
-    public function getExpectedFileName(): string
-    {
-        return '123';
-    }
-
-    public function getFile(): \Arxy\FilesBundle\Model\File
-    {
-        return new File('original_filename.jpg', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg');
+        yield new NamingStrategyTestCase(
+            new File('original_filename.jpg', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg'),
+            null,
+            '123'
+        );
     }
 }

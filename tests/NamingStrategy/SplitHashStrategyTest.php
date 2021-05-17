@@ -14,19 +14,12 @@ class SplitHashStrategyTest extends AbstractStrategyTest
         return new NamingStrategy\SplitHashStrategy();
     }
 
-    public function getExpectedDirectoryName(): string
+    public function getTestCases(): iterable
     {
-        return '098f6bcd/4621d373/cade4e83/2627b4f6/';
-    }
-
-    public function getExpectedFileName(): string
-    {
-        return '098f6bcd4621d373cade4e832627b4f6';
-    }
-
-    public function getFile(): \Arxy\FilesBundle\Model\File
-    {
-        return new File('original_filename.jpg', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg');
+        yield new NamingStrategyTestCase(
+            new File('original_filename.jpg', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg'),
+            '098f6bcd/4621d373/cade4e83/2627b4f6/', '098f6bcd4621d373cade4e832627b4f6'
+        );
     }
 
     public function testIncorrectSplitLength()
