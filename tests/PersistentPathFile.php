@@ -37,4 +37,9 @@ class PersistentPathFile extends AbstractFile implements PathAwareFile
     {
         return $this->pathname;
     }
+
+    public function setPathname(string $pathname): void
+    {
+        $this->pathname = $pathname;
+    }
 }

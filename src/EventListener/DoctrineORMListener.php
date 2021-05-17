@@ -8,55 +8,26 @@ use Arxy\FilesBundle\InvalidArgumentException;
 use Arxy\FilesBundle\ManagerInterface;
 use Arxy\FilesBundle\Model\File;
 use Closure;
-use Doctrine\Common\Util\ClassUtils;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\OnClearEventArgs;
 
-class DoctrineORMListener
+class DoctrineORMListener extends AbstractDoctrineORMListener
 {
     private ManagerInterface $manager;
-    private string $class;
     private Closure $move;
     private Closure $remove;
 
     public function __construct(ManagerInterface $manager)
     {
+        parent::__construct($manager->getClass());
         $this->manager = $manager;
-        $this->class = $this->manager->getClass();
 
-        $this->move = function (File $file): void {
-            $this->manager->moveFile($file);
+        $this->move = static function (File $file) use ($manager): void {
+            $manager->moveFile($file);
         };
-        $this->remove = function (File $file): void {
-            $this->manager->remove($file);
+        $this->remove = static function (File $file) use ($manager): void {
+            $manager->remove($file);
         };
-    }
-
-    private function supports(object $entity): bool
-    {
-        return $entity instanceof $this->class;
-    }
-
-    private function handleEmbeddable(EntityManagerInterface $entityManager, object $entity, Closure $action): void
-    {
-        $classMetadata = $entityManager->getClassMetadata(ClassUtils::getClass($entity));
-
-        foreach ($classMetadata->embeddedClasses as $property => $embeddedClass) {
-            if (!is_a($embeddedClass['class'], $this->class, true)) {
-                continue;
-            }
-
-            $refl = new \ReflectionObject($entity);
-            $reflProperty = $refl->getProperty($property);
-            $reflProperty->setAccessible(true);
-            $file = $reflProperty->getValue($entity);
-
-            if ($file === null) {
-                continue;
-            }
-            $action($file);
-        }
     }
 
     public function postPersist(LifecycleEventArgs $eventArgs)
@@ -70,7 +41,7 @@ class DoctrineORMListener
                 // file doesn't exists in FileMap.
             }
         }
-        $this->handleEmbeddable($entityManager, $entity, $this->move);
+        $this->handleEmbeddable($entityManager, $entity, $this->class, $this->move);
     }
 
     public function preRemove(LifecycleEventArgs $eventArgs)
@@ -81,7 +52,7 @@ class DoctrineORMListener
         if ($this->supports($entity)) {
             ($this->remove)($entity);
         }
-        $this->handleEmbeddable($entityManager, $entity, $this->remove);
+        $this->handleEmbeddable($entityManager, $entity, $this->class, $this->remove);
     }
 
     public function postRemove(LifecycleEventArgs $eventArgs)

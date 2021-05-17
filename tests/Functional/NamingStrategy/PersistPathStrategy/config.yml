@@ -1,0 +1,24 @@
+arxy_files:
+    managers:
+        public:
+            driver: orm
+            class: 'Arxy\FilesBundle\Tests\Functional\Entity\PersistentPathFile'
+            flysystem: 'in_memory'
+
+services:
+    _defaults:
+        public: true
+        autowire: true      # Automatically injects dependencies in your services.
+        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+
+    Arxy\FilesBundle\Tests\Functional\Repository\FileRepository: ~
+    Arxy\FilesBundle\NamingStrategy\PersistentPathStrategy: ~
+    Arxy\FilesBundle\NamingStrategy: '@Arxy\FilesBundle\NamingStrategy\PersistentPathStrategy'
+
+    Arxy\FilesBundle\NamingStrategy\SplitHashStrategy: ~
+
+    Arxy\FilesBundle\EventListener\PathAwareDoctrineORMListener:
+        arguments:
+            $namingStrategy: '@Arxy\FilesBundle\NamingStrategy\SplitHashStrategy'
+        tags:
+            - {name: doctrine.event_listener, event: prePersist, lazy: true}
