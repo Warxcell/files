@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Arxy\FilesBundle\Tests\NamingStrategy;
 
 use Arxy\FilesBundle\NamingStrategy;
+use Arxy\FilesBundle\Tests\File;
 use Symfony\Component\Uid\UuidV4;
 
 class UuidV5StrategyTest extends AbstractStrategyTest
@@ -19,16 +20,18 @@ class UuidV5StrategyTest extends AbstractStrategyTest
     public function getTestCases(): iterable
     {
         yield new NamingStrategyTestCase(
-            new \Arxy\FilesBundle\Tests\File(
+            new File(
                 'original_filename.jpg',
                 125,
                 '098f6bcd4621d373cade4e832627b4f6',
                 'image/jpeg'
-            ), null, 'c297b526-7801-566f-95fd-7fc409eb4670'
+            ),
+            null,
+            'c297b526-7801-566f-95fd-7fc409eb4670'
         );
 
         yield new NamingStrategyTestCase(
-            new \Arxy\FilesBundle\Tests\File(
+            new File(
                 'original_filename.jpg',
                 125,
                 '198f6bcd4621d373cade4e832627b4f6',

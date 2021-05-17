@@ -35,8 +35,8 @@ class AzureBlobStoragePathResolverTest extends TestCase
 
         $pathResolver = new PathResolver\AzureBlobStoragePathResolver(
             $this->blobRestProxy,
-            'azure-container'
-            , $this->manager,
+            'azure-container',
+            $this->manager,
         );
         self::assertSame('all good', $pathResolver->getPath($file));
     }

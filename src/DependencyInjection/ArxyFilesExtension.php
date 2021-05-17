@@ -70,9 +70,10 @@ class ArxyFilesExtension extends Extension
             $container->setDefinition(
                 'arxy_files.delegating_manager',
                 new Definition(
-                    DelegatingManager::class, [
+                    DelegatingManager::class,
+                    [
                         '$managers' => array_map(
-                            fn($config) => $config['reference'],
+                            fn ($config) => $config['reference'],
                             $config['managers']
                         ),
                     ]

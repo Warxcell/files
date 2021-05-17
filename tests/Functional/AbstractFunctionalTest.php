@@ -78,7 +78,5 @@ abstract class AbstractFunctionalTest extends KernelTestCase
         $this->manager = null;
 
         $this->flysystem = null;
-
-
     }
 }

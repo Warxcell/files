@@ -18,7 +18,8 @@ class SplitHashStrategyTest extends AbstractStrategyTest
     {
         yield new NamingStrategyTestCase(
             new File('original_filename.jpg', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg'),
-            '098f6bcd/4621d373/cade4e83/2627b4f6/', '098f6bcd4621d373cade4e832627b4f6'
+            '098f6bcd/4621d373/cade4e83/2627b4f6/',
+            '098f6bcd4621d373cade4e832627b4f6'
         );
     }
 
