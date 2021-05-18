@@ -8,6 +8,7 @@ use Arxy\FilesBundle\ManagerInterface;
 use Arxy\FilesBundle\Tests\Functional\Entity\File;
 use Arxy\FilesBundle\Tests\Functional\Entity\News;
 use SplFileObject;
+use SplTempFileObject;
 
 class ManagerTest extends AbstractFunctionalTest
 {
@@ -55,6 +56,26 @@ class ManagerTest extends AbstractFunctionalTest
         );
 
         return $file;
+    }
+
+    public function testTempFileUpload()
+    {
+        $content = 'this is temporary file upload test';
+        $tmpFile = new SplTempFileObject(0);
+        $bytes = $tmpFile->fwrite($content);
+        $file = $this->manager->upload($tmpFile);
+
+        $this->entityManager->persist($file);
+        $this->entityManager->flush();
+
+        self::assertTrue(
+            $this->flysystem->fileExists('fa0ac560/d8862aad/fbe18ed1/9dc8663d/fa0ac560d8862aadfbe18ed19dc8663d')
+        );
+
+        self::assertSame(
+            'fa0ac560d8862aadfbe18ed19dc8663d',
+            md5($this->flysystem->read('fa0ac560/d8862aad/fbe18ed1/9dc8663d/fa0ac560d8862aadfbe18ed19dc8663d'))
+        );
     }
 
     public function testSimpleUploadRelation(): News

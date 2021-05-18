@@ -91,7 +91,12 @@ final class Manager implements ManagerInterface
     public function upload(SplFileInfo $file): File
     {
         if (!$file->getRealPath()) {
-            $remoteFile = $file->openFile();
+            if ($file instanceof SplFileObject) {
+                $remoteFile = $file;
+                $remoteFile->rewind();
+            } else {
+                $remoteFile = $file->openFile();
+            }
 
             $tmpDir = ini_get('upload_tmp_dir') ?: sys_get_temp_dir();
             $tempFilename = tempnam($tmpDir, 'file_manager');
