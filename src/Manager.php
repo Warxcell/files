@@ -38,7 +38,7 @@ final class Manager implements ManagerInterface
         Repository $repository = null,
         MimeTypeDetector $mimeTypeDetector = null,
         ModelFactory $modelFactory = null,
-        ?EventDispatcherInterface $eventDispatcher = null
+        EventDispatcherInterface $eventDispatcher = null
     ) {
         if (!is_subclass_of($class, File::class)) {
             throw new InvalidArgumentException('Class must be subclass of '.File::class);

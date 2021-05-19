@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Arxy\FilesBundle\Preview;
 
-interface  DimensionInterface
+interface DimensionInterface
 {
     public function getWidth(): int;
 

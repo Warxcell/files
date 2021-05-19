@@ -75,7 +75,7 @@ class ArxyFilesExtension extends Extension
                     DelegatingManager::class,
                     [
                         '$managers' => array_map(
-                            fn($config) => $config['reference'],
+                            fn ($config) => $config['reference'],
                             $config['managers']
                         ),
                     ]

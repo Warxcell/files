@@ -65,7 +65,7 @@ class ManagerTest extends TestCase
 
         $dispatcher->expects(self::once())->method('dispatch')->with(
             self::callback(
-                static fn(FileUploaded $fileUploaded): bool => $fileUploaded->getFile(
+                static fn (FileUploaded $fileUploaded): bool => $fileUploaded->getFile(
                     ) instanceof File && $fileUploaded->getManager() === $manager
             )
         );
@@ -91,13 +91,13 @@ class ManagerTest extends TestCase
         $dispatcher->expects(self::exactly(2))->method('dispatch')->withConsecutive(
             [
                 self::callback(
-                    static fn(FileUploaded $fileUploaded): bool => $fileUploaded->getFile(
+                    static fn (FileUploaded $fileUploaded): bool => $fileUploaded->getFile(
                         ) instanceof File && $fileUploaded->getManager() === $manager
                 ),
             ],
             [
                 self::callback(
-                    static fn(PreRemove $preRemove): bool => $preRemove->getFile(
+                    static fn (PreRemove $preRemove): bool => $preRemove->getFile(
                         ) instanceof File && $preRemove->getManager() === $manager
                 ),
             ]
