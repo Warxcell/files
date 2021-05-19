@@ -17,6 +17,9 @@ class SymfonyCachePathResolver implements PathResolver
     /** @var int|DateInterval|null */
     private $expiresAfter;
 
+    /**
+     * @param int|DateInterval|null $expiresAfter
+     */
     public function __construct(PathResolver $pathResolver, CacheInterface $cache, $expiresAfter = null)
     {
         $this->pathResolver = $pathResolver;

@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace Arxy\FilesBundle\Form\EventListener;
 
 use Arxy\FilesBundle\ManagerInterface;
+use Arxy\FilesBundle\Model\File;
+use SplFileInfo;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class FileUploadListener implements EventSubscriberInterface
 {
@@ -28,11 +29,15 @@ class FileUploadListener implements EventSubscriberInterface
         ];
     }
 
+    /**
+     * @param SplFileInfo|SplFileInfo[] $data
+     * @return File|File[]
+     */
     private function transform($data)
     {
         if ($this->multiple) {
             return array_map(
-                fn (UploadedFile $file) => $this->fileManager->upload($file),
+                fn (SplFileInfo $file): File => $this->fileManager->upload($file),
                 $data
             );
         } else {
@@ -40,9 +45,9 @@ class FileUploadListener implements EventSubscriberInterface
         }
     }
 
-    public function submit(FormEvent $event)
+    public function submit(FormEvent $event): void
     {
-        /** @var UploadedFile|UploadedFile[] $uploadedFile */
+        /** @var SplFileInfo|SplFileInfo[] $uploadedFile */
         $uploadedFile = $event->getForm()->get('file')->getData();
 
         if (!empty($uploadedFile)) {

@@ -11,7 +11,6 @@ use Closure;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\LifecycleEventArgs;
-use Doctrine\ORM\Event\OnClearEventArgs;
 
 final class DoctrineORMListener
 {
@@ -33,12 +32,12 @@ final class DoctrineORMListener
         };
     }
 
-    final protected function supports(object $entity): bool
+    protected function supports(object $entity): bool
     {
         return $entity instanceof $this->class;
     }
 
-    final protected function handleEmbeddable(
+    protected function handleEmbeddable(
         EntityManagerInterface $entityManager,
         object $entity,
         Closure $action
@@ -62,7 +61,7 @@ final class DoctrineORMListener
         }
     }
 
-    public function postPersist(LifecycleEventArgs $eventArgs)
+    public function postPersist(LifecycleEventArgs $eventArgs): void
     {
         $entity = $eventArgs->getEntity();
         $entityManager = $eventArgs->getEntityManager();
@@ -76,7 +75,7 @@ final class DoctrineORMListener
         $this->handleEmbeddable($entityManager, $entity, $this->move);
     }
 
-    public function preRemove(LifecycleEventArgs $eventArgs)
+    public function preRemove(LifecycleEventArgs $eventArgs): void
     {
         $entity = $eventArgs->getEntity();
         $entityManager = $eventArgs->getEntityManager();
@@ -87,12 +86,12 @@ final class DoctrineORMListener
         $this->handleEmbeddable($entityManager, $entity, $this->remove);
     }
 
-    public function postRemove(LifecycleEventArgs $eventArgs)
+    public function postRemove(LifecycleEventArgs $eventArgs): void
     {
         $this->preRemove($eventArgs);
     }
 
-    public function onClear(OnClearEventArgs $args): void
+    public function onClear(): void
     {
         $this->manager->clear();
     }

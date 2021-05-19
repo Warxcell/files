@@ -19,7 +19,7 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class ArxyFilesExtension extends Extension
 {
-    public function load(array $configs, ContainerBuilder $container)
+    public function load(array $configs, ContainerBuilder $container): void
     {
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
@@ -75,7 +75,7 @@ class ArxyFilesExtension extends Extension
                     DelegatingManager::class,
                     [
                         '$managers' => array_map(
-                            fn ($config) => $config['reference'],
+                            static fn (array $config): Reference => $config['reference'],
                             $config['managers']
                         ),
                     ]

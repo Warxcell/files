@@ -20,6 +20,9 @@ class File extends Constraint
     public array $mimeTypes = [];
     public string $mimeTypesMessage = 'The mime type of the file is invalid ({{ type }}). Allowed mime types are {{ types }}.';
 
+    /**
+     * @param mixed $payload
+     */
     public function __construct(array $options = null, array $groups = null, $payload = null)
     {
         if (isset($options['maxSize']) && is_string($options['maxSize'])) {

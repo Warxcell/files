@@ -23,7 +23,7 @@ class PreviewGeneratorListener implements EventSubscriberInterface
         ];
     }
 
-    public function generatePreview(FileUploaded $fileUploaded)
+    public function generatePreview(FileUploaded $fileUploaded): void
     {
         $entity = $fileUploaded->getFile();
 

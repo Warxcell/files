@@ -18,7 +18,7 @@ class PathAwareDoctrineListener implements EventSubscriberInterface
         $this->namingStrategy = $namingStrategy;
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             FileUploaded::class => 'onUpload',
@@ -30,7 +30,7 @@ class PathAwareDoctrineListener implements EventSubscriberInterface
         return ($this->namingStrategy->getDirectoryName($file) ?? "").$this->namingStrategy->getFileName($file);
     }
 
-    public function onUpload(FileUploaded $event)
+    public function onUpload(FileUploaded $event): void
     {
         $entity = $event->getFile();
 
