@@ -45,7 +45,8 @@
         "twig/twig": "Use Arxy\\Files\\Twig\\FilesExtension::formatBytes to get formatted KiB/MiB/GB instead. Also for form template",
         "symfony/uid": "Required to use UuidV5Strategy Naming Strategy",
         "imagine/imagine": "Use ImagePreviewGenerator",
-        "symfony/messenger": "Generate Previews async"
+        "symfony/messenger": "Generate Previews async.",
+        "symfony/event-dispatcher": "Usage of events."
     },
     "autoload": {
         "psr-4": {

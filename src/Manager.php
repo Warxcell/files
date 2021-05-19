@@ -4,12 +4,16 @@ declare(strict_types=1);
 
 namespace Arxy\FilesBundle;
 
+use Arxy\FilesBundle\Event\FileUploaded;
+use Arxy\FilesBundle\Event\PreRemove;
 use Arxy\FilesBundle\Model\File;
+use Doctrine\Common\Util\Debug;
 use InvalidArgumentException;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
 use League\MimeTypeDetection\FinfoMimeTypeDetector;
 use League\MimeTypeDetection\MimeTypeDetector;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use RuntimeException;
 use SplFileInfo;
 use SplFileObject;
@@ -24,6 +28,7 @@ final class Manager implements ManagerInterface
     private FileMap $fileMap;
     private MimeTypeDetector $mimeTypeDetector;
     private ModelFactory $modelFactory;
+    private ?EventDispatcherInterface $eventDispatcher;
     private const CHUNK_SIZE = 1024 * 1024;
 
     public function __construct(
@@ -32,8 +37,13 @@ final class Manager implements ManagerInterface
         NamingStrategy $namingStrategy,
         Repository $repository = null,
         MimeTypeDetector $mimeTypeDetector = null,
-        ModelFactory $modelFactory = null
+        ModelFactory $modelFactory = null,
+        ?EventDispatcherInterface $eventDispatcher = null
     ) {
+        if (!is_subclass_of($class, File::class)) {
+            throw new InvalidArgumentException('Class must be subclass of '.File::class);
+        }
+
         $this->class = $class;
         $this->filesystem = $filesystem;
         $this->namingStrategy = $namingStrategy;
@@ -41,6 +51,7 @@ final class Manager implements ManagerInterface
         $this->fileMap = new FileMap();
         $this->mimeTypeDetector = $mimeTypeDetector ?? new FinfoMimeTypeDetector();
         $this->modelFactory = $modelFactory ?? new AbstractModelFactory($class);
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -75,6 +86,10 @@ final class Manager implements ManagerInterface
      */
     public function remove(File $file): void
     {
+        if ($this->eventDispatcher !== null) {
+            $this->eventDispatcher->dispatch(new PreRemove($this, $file));
+        }
+
         $this->filesystem->delete($this->getPathname($file));
     }
 
@@ -136,6 +151,10 @@ final class Manager implements ManagerInterface
                 $this->getMimeTypeByFile($file)
             );
             $this->fileMap->put($fileEntity, $file);
+
+            if ($this->eventDispatcher !== null) {
+                $this->eventDispatcher->dispatch(new FileUploaded($this, $fileEntity));
+            }
         }
 
         return $fileEntity;

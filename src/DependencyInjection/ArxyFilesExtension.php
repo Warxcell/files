@@ -10,7 +10,9 @@ use Arxy\FilesBundle\Form\Type\FileType;
 use Arxy\FilesBundle\Manager;
 use Arxy\FilesBundle\ManagerInterface;
 use Arxy\FilesBundle\Twig\FilesExtension;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Reference;
@@ -73,7 +75,7 @@ class ArxyFilesExtension extends Extension
                     DelegatingManager::class,
                     [
                         '$managers' => array_map(
-                            fn ($config) => $config['reference'],
+                            fn($config) => $config['reference'],
                             $config['managers']
                         ),
                     ]
@@ -110,19 +112,38 @@ class ArxyFilesExtension extends Extension
         $definition = new Definition(Manager::class, ['$class' => $class]);
         if ($flysystem !== null) {
             $definition->setArgument('$filesystem', new Reference($flysystem));
+        } else {
+            $definition->setArgument('$filesystem', null);
         }
+
         if ($namingStrategy !== null) {
             $definition->setArgument('$namingStrategy', new Reference($namingStrategy));
+        } else {
+            $definition->setArgument('$repository', null);
         }
+
         if ($repository !== null) {
             $definition->setArgument('$repository', new Reference($repository));
+        } else {
+            $definition->setArgument('$repository', null);
         }
+
         if ($mimeTypeDetector !== null) {
             $definition->setArgument('$mimeTypeDetector', new Reference($mimeTypeDetector));
+        } else {
+            $definition->setArgument('$mimeTypeDetector', null);
         }
+
         if ($modelFactory !== null) {
             $definition->setArgument('$modelFactory', new Reference($modelFactory));
+        } else {
+            $definition->setArgument('$modelFactory', null);
         }
+
+        $definition->setArgument(
+            '$eventDispatcher',
+            new Reference(EventDispatcherInterface::class, ContainerInterface::NULL_ON_INVALID_REFERENCE)
+        );
 
         return $definition;
     }

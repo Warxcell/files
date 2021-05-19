@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Arxy\FilesBundle\Preview;
 
-use Doctrine\ORM\Event\LifecycleEventArgs;
+use Arxy\FilesBundle\Event\FileUploaded;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-class PreviewGeneratorORMListener
+class PreviewGeneratorListener implements EventSubscriberInterface
 {
     private PreviewGenerator $previewGenerator;
 
@@ -15,9 +16,16 @@ class PreviewGeneratorORMListener
         $this->previewGenerator = $previewGenerator;
     }
 
-    public function prePersist(LifecycleEventArgs $eventArgs)
+    public static function getSubscribedEvents(): array
     {
-        $entity = $eventArgs->getEntity();
+        return [
+            FileUploaded::class => 'generatePreview',
+        ];
+    }
+
+    public function generatePreview(FileUploaded $fileUploaded)
+    {
+        $entity = $fileUploaded->getFile();
 
         if ($entity instanceof PreviewableFile) {
             try {

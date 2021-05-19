@@ -4,6 +4,12 @@ arxy_files:
             driver: orm
             class: 'Arxy\FilesBundle\Tests\Functional\Entity\PersistentPathFile'
             flysystem: 'in_memory'
+            naming_strategy: 'Arxy\FilesBundle\NamingStrategy\PersistentPathStrategy'
+        embeddable:
+            driver: orm
+            class: 'Arxy\FilesBundle\Tests\Functional\Entity\EmbeddableFilePersistentPath'
+            flysystem: 'in_memory'
+            naming_strategy: 'Arxy\FilesBundle\NamingStrategy\PersistentPathStrategy'
 
 services:
     _defaults:
@@ -17,8 +23,6 @@ services:
 
     Arxy\FilesBundle\NamingStrategy\SplitHashStrategy: ~
 
-    Arxy\FilesBundle\EventListener\PathAwareDoctrineORMListener:
+    Arxy\FilesBundle\EventListener\PathAwareDoctrineListener:
         arguments:
             $namingStrategy: '@Arxy\FilesBundle\NamingStrategy\SplitHashStrategy'
-        tags:
-            - {name: doctrine.event_listener, event: prePersist, lazy: true}

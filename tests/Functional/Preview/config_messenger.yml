@@ -11,6 +11,4 @@ services:
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
 
     Arxy\FilesBundle\Preview\GeneratePreviewMessageHandler: ~
-    Arxy\FilesBundle\Preview\PreviewGeneratorMessengerORMListener:
-        tags:
-            - {name: doctrine.event_listener, event: prePersist, lazy: true}
+    Arxy\FilesBundle\Preview\PreviewGeneratorMessengerListener: ~

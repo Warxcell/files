@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Arxy\FilesBundle\Tests;
 
+use Arxy\FilesBundle\Event\FileUploaded;
+use Arxy\FilesBundle\Event\PreRemove;
 use Arxy\FilesBundle\Manager;
 use Arxy\FilesBundle\ManagerInterface;
 use Arxy\FilesBundle\NamingStrategy;
@@ -14,6 +16,7 @@ use League\Flysystem\FilesystemOperator;
 use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
 use League\MimeTypeDetection\MimeTypeDetector;
 use PHPUnit\Framework\TestCase;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use SplFileObject;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
@@ -44,6 +47,65 @@ class ManagerTest extends TestCase
             },
             new FileRepository(),
         );
+    }
+
+    public function testUploadEvent()
+    {
+        $dispatcher = $this->createMock(EventDispatcherInterface::class);
+
+        $manager = new Manager(
+            File::class,
+            $this->createMock(FilesystemOperator::class),
+            $this->createMock(NamingStrategy::class),
+            null,
+            null,
+            null,
+            $dispatcher
+        );
+
+        $dispatcher->expects(self::once())->method('dispatch')->with(
+            self::callback(
+                static fn(FileUploaded $fileUploaded): bool => $fileUploaded->getFile(
+                    ) instanceof File && $fileUploaded->getManager() === $manager
+            )
+        );
+
+        /** @var File $file */
+        $file = $manager->upload(new SplFileObject(__DIR__.'/files/image1.jpg'));
+    }
+
+    public function testPreRemove()
+    {
+        $dispatcher = $this->createMock(EventDispatcherInterface::class);
+
+        $manager = new Manager(
+            File::class,
+            $this->createMock(FilesystemOperator::class),
+            $this->createMock(NamingStrategy::class),
+            null,
+            null,
+            null,
+            $dispatcher
+        );
+
+        $dispatcher->expects(self::exactly(2))->method('dispatch')->withConsecutive(
+            [
+                self::callback(
+                    static fn(FileUploaded $fileUploaded): bool => $fileUploaded->getFile(
+                        ) instanceof File && $fileUploaded->getManager() === $manager
+                ),
+            ],
+            [
+                self::callback(
+                    static fn(PreRemove $preRemove): bool => $preRemove->getFile(
+                        ) instanceof File && $preRemove->getManager() === $manager
+                ),
+            ]
+        );
+
+        /** @var File $file */
+        $file = $manager->upload(new SplFileObject(__DIR__.'/files/image1.jpg'));
+        $manager->remove($file);
     }
 
     public function testSimpleUpload()

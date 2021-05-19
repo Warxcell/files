@@ -19,6 +19,13 @@ abstract class AbstractStrategyTest extends AbstractFunctionalTest
         $this->namingStrategy = self::$container->get(NamingStrategy::class);
     }
 
+    final public function doesFileExists(File $file): bool
+    {
+        $filepath = ($this->namingStrategy->getDirectoryName($file) ?? "").$this->namingStrategy->getFileName($file);
+
+        return $this->flysystem->fileExists($filepath);
+    }
+
     final public function testFileAfterCreation(): File
     {
         $file = $this->manager->upload(new SplFileObject(__DIR__.'/../../files/image1.jpg'));
@@ -27,8 +34,7 @@ abstract class AbstractStrategyTest extends AbstractFunctionalTest
         $this->entityManager->flush();
         $this->entityManager->clear();
 
-        $filepath = ($this->namingStrategy->getDirectoryName($file) ?? "").$this->namingStrategy->getFileName($file);
-        $this->assertTrue($this->flysystem->fileExists($filepath));
+        self::assertTrue($this->doesFileExists($file));
 
         return $file;
     }
@@ -45,6 +51,6 @@ abstract class AbstractStrategyTest extends AbstractFunctionalTest
 //        $this->assertTrue($this->flysystem->fileExists($filepath));
 
         $this->entityManager->flush();
-        $this->assertFalse($this->flysystem->fileExists($filepath));
+        self::assertFalse($this->flysystem->fileExists($filepath));
     }
 }
