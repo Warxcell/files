@@ -1,0 +1,12 @@
+imports:
+    - {resource: "config.yml"}
+
+services:
+    _defaults:
+        public: true
+        autowire: true      # Automatically injects dependencies in your services.
+        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+
+    Arxy\FilesBundle\Preview\PreviewGeneratorORMListener:
+        tags:
+            - {name: doctrine.event_listener, event: prePersist, lazy: true}

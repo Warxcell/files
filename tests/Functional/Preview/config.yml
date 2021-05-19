@@ -1,0 +1,39 @@
+arxy_files:
+    managers:
+        public:
+            driver: orm
+            class: 'Arxy\FilesBundle\Tests\Functional\Entity\FileWithPreview'
+            flysystem: 'in_memory'
+            naming_strategy: 'Arxy\FilesBundle\NamingStrategy\SplitHashStrategy'
+        preview:
+            driver: orm
+            class: 'Arxy\FilesBundle\Tests\Functional\Entity\Preview'
+            flysystem: 'in_memory'
+            naming_strategy: 'Arxy\FilesBundle\NamingStrategy\SplitHashStrategy'
+
+services:
+    _defaults:
+        public: true
+        autowire: true      # Automatically injects dependencies in your services.
+        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+
+    Arxy\FilesBundle\Tests\Functional\Repository\FileRepository: ~
+    Arxy\FilesBundle\NamingStrategy\SplitHashStrategy: ~
+    Arxy\FilesBundle\NamingStrategy: '@Arxy\FilesBundle\NamingStrategy\SplitHashStrategy'
+
+    Imagine\Gd\Imagine: ~
+
+    Arxy\FilesBundle\Preview\ImagePreviewGenerator:
+        $manager: '@public'
+        $imagine: '@Imagine\Gd\Imagine'
+
+    Arxy\FilesBundle\Preview\Dimension:
+        $width: 250
+        $height: 250
+
+    Arxy\FilesBundle\Preview\DimensionInterface: '@Arxy\FilesBundle\Preview\Dimension'
+
+    Arxy\FilesBundle\Preview\PreviewGenerator:
+        $manager: '@preview'
+        $generators:
+            - '@Arxy\FilesBundle\Preview\ImagePreviewGenerator'

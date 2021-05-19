@@ -64,7 +64,7 @@ class ArxyFilesExtension extends Extension
             $managerConfig['reference'] = new Reference($serviceId);
         }
 
-        if ($totalManagers === 1) {
+        if ($autowired) {
             $container->setAlias(ManagerInterface::class, array_key_first($config['managers']));
         } else {
             $container->setDefinition(
