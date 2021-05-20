@@ -906,7 +906,7 @@ Two events are currently available:
 # PostUpload
 
 `Arxy\FilesBundle\Events\PostUpload` event is called right after File object is created. It is NOT called if existing
-file is found and re-used.
+file is found and re-used. At this moment file is located on local FS.
 
 # PreMove
 
