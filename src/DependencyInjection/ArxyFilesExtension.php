@@ -119,7 +119,7 @@ class ArxyFilesExtension extends Extension
         if ($namingStrategy !== null) {
             $definition->setArgument('$namingStrategy', new Reference($namingStrategy));
         } else {
-            $definition->setArgument('$repository', null);
+            $definition->setArgument('$namingStrategy', null);
         }
 
         if ($repository !== null) {
