@@ -33,11 +33,7 @@ class ImagePreviewGenerator implements PreviewGeneratorInterface
 
     private function getFormat(File $file): string
     {
-        if ($this->format !== null) {
-            return $this->format;
-        }
-
-        return str_replace('image/', '', $file->getMimeType());
+        return $this->format ?? str_replace('image/', '', $file->getMimeType());
     }
 
     public function supports(File $file): bool

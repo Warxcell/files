@@ -31,6 +31,7 @@ final class Manager implements ManagerInterface
     private ModelFactory $modelFactory;
     private ?EventDispatcherInterface $eventDispatcher;
     private const CHUNK_SIZE = 1024 * 1024;
+    private string $temporaryDirectory;
 
     public function __construct(
         string $class,
@@ -39,7 +40,8 @@ final class Manager implements ManagerInterface
         Repository $repository = null,
         MimeTypeDetector $mimeTypeDetector = null,
         ModelFactory $modelFactory = null,
-        EventDispatcherInterface $eventDispatcher = null
+        EventDispatcherInterface $eventDispatcher = null,
+        string $temporaryDirectory = null
     ) {
         if (!is_subclass_of($class, File::class)) {
             throw new InvalidArgumentException('Class must be subclass of '.File::class);
@@ -53,6 +55,7 @@ final class Manager implements ManagerInterface
         $this->mimeTypeDetector = $mimeTypeDetector ?? new FinfoMimeTypeDetector();
         $this->modelFactory = $modelFactory ?? new AbstractModelFactory($class);
         $this->eventDispatcher = $eventDispatcher;
+        $this->temporaryDirectory = $temporaryDirectory ?? ini_get('upload_tmp_dir') ?: sys_get_temp_dir();
     }
 
     /**
@@ -122,8 +125,7 @@ final class Manager implements ManagerInterface
                 $remoteFile = $file->openFile();
             }
 
-            $tmpDir = ini_get('upload_tmp_dir') ?: sys_get_temp_dir();
-            $tempFilename = tempnam($tmpDir, 'file_manager');
+            $tempFilename = tempnam($this->temporaryDirectory, 'file_manager');
             $file = new SplFileObject($tempFilename, 'r+');
             while ($content = $remoteFile->fread(self::CHUNK_SIZE)) {
                 $file->fwrite($content);
