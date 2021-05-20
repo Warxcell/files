@@ -22,6 +22,8 @@ Versions 2.X.X uses FlySystem ^2.0
 
 ## Configuring
 
+Create the object which will holds the file
+
 ```php
 <?php
 
@@ -58,6 +60,52 @@ class File extends \Arxy\FilesBundle\Entity\File
     {
         $this->id = $id;
     }
+}
+```
+
+In case you want to use embeddable instead of Entity for file object:
+
+```php
+<?php
+
+namespace App\Entity;
+
+use Arxy\FilesBundle\Model\File;use Doctrine\ORM\Mapping as ORM;
+use Arxy\FilesBundle\Entity\EmbeddableFile;
+
+/**
+ * @ORM\Entity()
+ * @ORM\Table()
+ */
+class News
+{
+    /** @ORM\Embedded(class=EmbeddableFile::class) */
+    private ?EmbeddableFile $image = null;
+    
+    public function getImage(): ?File {
+        return $this->image;
+    }
+    
+    public function setImage(?File $file) {
+        $this->image = $file;
+    }
+}
+```
+
+Create the repository.
+
+```php
+<?php
+
+namespace App\Repository;
+
+use Arxy\FilesBundle\Repository;
+use Doctrine\ORM\EntityRepository;
+use \Arxy\FilesBundle\Repository\ORM;
+
+class FileRepository extends EntityRepository implements Repository
+{
+   use ORM;
 }
 ```
 
@@ -133,9 +181,9 @@ or using pure PHP
 $adapter = new \League\Flysystem\Local\LocalFilesystemAdapter;
 $filesystem = new \League\Flysystem\Filesystem($adapter);
 
-$namingStrategy = new \Arxy\FilesBundle\NamingStrategy\IdToPathStrategy();
+$namingStrategy = new \Arxy\FilesBundle\NamingStrategy\SplitHashStrategy();
 
-$repository = new Repository();
+$repository = new FileRepository();
 
 $fileManager = new \Arxy\FilesBundle\Manager(\App\Entity\File::class, $filesystem, $namingStrategy, $repository);
 ```
@@ -148,6 +196,22 @@ $fileEntity = $fileManager->upload($file);
 
 $file = $request->files->get('file');
 $fileEntity = $fileManager->upload($file);
+
+$entityManager->persist($fileEntity);
+$entityManager->flush();
+```
+
+In case of embeddable:
+```php
+
+$file = new \SplFileInfo($pathname);
+$embeddableFile = $fileManager->upload($file);
+
+$news = new \App\Entity\News();
+$news->setImage($embeddableFile);
+
+$entityManager->persist($news);
+$entityManager->flush();
 ```
 
 Please note that file is not actually moved to its final location until file is persisted into db, which is done by
@@ -488,8 +552,13 @@ Decorator which always return null directory.
 ### PersistentPathStrategy
 
 Use persisted pathname in file. Useful if you want to generate completely random path for each file. (For example UUID
-v4). Expects instanceof `Arxy\FilesBundle\Model\PathAwareFile`. It's your responsibility to handle the path itself. You
-can do that with custom `Arxy\FilesBundle\ModelFactory` (recommended) or specific data layer (ORM, prePersist event).
+v4) or you just want the path to the file persisted for some reason. Expects instanceof 
+`Arxy\FilesBundle\Model\PathAwareFile`. It's your responsibility to handle the path itself. You  can do that with custom
+`Arxy\FilesBundle\ModelFactory` (recommended) or use built in Event Listener, which will set 
+the pathname on upload (`Arxy\FilesBundle\EventListener\PathAwareListener`)
+
+### UUID V4 Strategy:
+Generates random path.
 
 ## Migrating between naming strategy.
 
@@ -827,6 +896,57 @@ class File extends \Arxy\FilesBundle\Entity\File
     }
 }
 ```
+
+## Events
+
+Two events are currently available:
+
+# PostUpload
+
+`Arxy\FilesBundle\Events\PostUpload` event is called right after File Entity is created. It is NOT called if existing
+file is found and re-used.
+
+# PreRemove
+
+`Arxy\FilesBundle\Events\PreRemove` event is called right before file is deleted from filesystem.
+
+## Preview
+
+There is a sub-system for preview generation for files: It generates preview and saves it as another file. 
+There are 2 ways to enable it:
+1. Synchronous generation:
+`Arxy\FilesBundle\Preview\PreviewGeneratorListener`
+
+2. Asynchronous generation using <a href="https://symfony.com/doc/current/messenger.html">Symfony Messenger</a>:
+`Arxy\FilesBundle\Preview\GeneratePreviewMessageHandler`
+`Arxy\FilesBundle\Preview\PreviewGeneratorMessengerListener`
+
+And then register common services:
+
+```yaml
+Imagine\Gd\Imagine: ~
+
+Arxy\FilesBundle\Preview\ImagePreviewGenerator:
+    $manager: '@public' <-- manager of files.
+    $imagine: '@Imagine\Gd\Imagine'
+
+Arxy\FilesBundle\Preview\Dimension:
+    $width: 250 <- width of generated thumbnail
+    $height: 250 <- height of generated thumbnail
+
+Arxy\FilesBundle\Preview\DimensionInterface: '@Arxy\FilesBundle\Preview\Dimension'
+
+Arxy\FilesBundle\Preview\PreviewGenerator:
+    $manager: '@preview' <- manager of previews
+    $generators:
+        - '@Arxy\FilesBundle\Preview\ImagePreviewGenerator'
+```
+
+
+Currently, only image preview generator exists. You can add your own image preview generator. Just implement the 
+`Arxy\FilesBundle\Preview\PreviewGeneratorInterface`.
+
+
 
 ## Known issues
 

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Arxy\FilesBundle\Tests;
 
-use Arxy\FilesBundle\Event\FileUploaded;
+use Arxy\FilesBundle\Event\PostUpload;
 use Arxy\FilesBundle\Event\PreRemove;
 use Arxy\FilesBundle\Manager;
 use Arxy\FilesBundle\ManagerInterface;
@@ -65,7 +65,7 @@ class ManagerTest extends TestCase
 
         $dispatcher->expects(self::once())->method('dispatch')->with(
             self::callback(
-                static fn (FileUploaded $fileUploaded): bool => $fileUploaded->getFile(
+                static fn (PostUpload $fileUploaded): bool => $fileUploaded->getFile(
                     ) instanceof File && $fileUploaded->getManager() === $manager
             )
         );
@@ -91,7 +91,7 @@ class ManagerTest extends TestCase
         $dispatcher->expects(self::exactly(2))->method('dispatch')->withConsecutive(
             [
                 self::callback(
-                    static fn (FileUploaded $fileUploaded): bool => $fileUploaded->getFile(
+                    static fn (PostUpload $fileUploaded): bool => $fileUploaded->getFile(
                         ) instanceof File && $fileUploaded->getManager() === $manager
                 ),
             ],

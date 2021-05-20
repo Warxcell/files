@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Arxy\FilesBundle\EventListener;
 
-use Arxy\FilesBundle\Event\FileUploaded;
+use Arxy\FilesBundle\Event\PostUpload;
 use Arxy\FilesBundle\Model\PathAwareFile;
 use Arxy\FilesBundle\NamingStrategy;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-class PathAwareDoctrineListener implements EventSubscriberInterface
+class PathAwareListener implements EventSubscriberInterface
 {
     private NamingStrategy $namingStrategy;
 
@@ -21,7 +21,7 @@ class PathAwareDoctrineListener implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            FileUploaded::class => 'onUpload',
+            PostUpload::class => 'onUpload',
         ];
     }
 
@@ -30,7 +30,7 @@ class PathAwareDoctrineListener implements EventSubscriberInterface
         return ($this->namingStrategy->getDirectoryName($file) ?? "").$this->namingStrategy->getFileName($file);
     }
 
-    public function onUpload(FileUploaded $event): void
+    public function onUpload(PostUpload $event): void
     {
         $entity = $event->getFile();
 

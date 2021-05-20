@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Arxy\FilesBundle;
 
-use Arxy\FilesBundle\Event\FileUploaded;
+use Arxy\FilesBundle\Event\PostUpload;
 use Arxy\FilesBundle\Event\PreRemove;
 use Arxy\FilesBundle\Model\File;
 use Doctrine\Common\Util\Debug;
@@ -153,7 +153,7 @@ final class Manager implements ManagerInterface
             $this->fileMap->put($fileEntity, $file);
 
             if ($this->eventDispatcher !== null) {
-                $this->eventDispatcher->dispatch(new FileUploaded($this, $fileEntity));
+                $this->eventDispatcher->dispatch(new PostUpload($this, $fileEntity));
             }
         }
 

@@ -23,6 +23,6 @@ services:
 
     Arxy\FilesBundle\NamingStrategy\SplitHashStrategy: ~
 
-    Arxy\FilesBundle\EventListener\PathAwareDoctrineListener:
+    Arxy\FilesBundle\EventListener\PathAwareListener:
         arguments:
             $namingStrategy: '@Arxy\FilesBundle\NamingStrategy\SplitHashStrategy'

@@ -4,6 +4,6 @@ declare(strict_types=1);
 
 namespace Arxy\FilesBundle\Event;
 
-class FileUploaded extends AbstractFileEvent
+class PostUpload extends AbstractFileEvent
 {
 }

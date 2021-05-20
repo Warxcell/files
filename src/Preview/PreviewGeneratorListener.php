@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Arxy\FilesBundle\Preview;
 
-use Arxy\FilesBundle\Event\FileUploaded;
+use Arxy\FilesBundle\Event\PostUpload;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class PreviewGeneratorListener implements EventSubscriberInterface
@@ -19,11 +19,11 @@ class PreviewGeneratorListener implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            FileUploaded::class => 'generatePreview',
+            PostUpload::class => 'generatePreview',
         ];
     }
 
-    public function generatePreview(FileUploaded $fileUploaded): void
+    public function generatePreview(PostUpload $fileUploaded): void
     {
         $entity = $fileUploaded->getFile();
 
