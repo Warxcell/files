@@ -9,7 +9,12 @@ use Arxy\FilesBundle\EventListener\DoctrineORMListener;
 use Arxy\FilesBundle\Form\Type\FileType;
 use Arxy\FilesBundle\Manager;
 use Arxy\FilesBundle\ManagerInterface;
+use Arxy\FilesBundle\ModelFactory;
+use Arxy\FilesBundle\NamingStrategy;
+use Arxy\FilesBundle\Repository;
 use Arxy\FilesBundle\Twig\FilesExtension;
+use League\Flysystem\FilesystemOperator;
+use League\MimeTypeDetection\MimeTypeDetector;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -47,13 +52,12 @@ class ArxyFilesExtension extends Extension
         foreach ($config['managers'] as $serviceId => &$managerConfig) {
             $definition = $this->createManagerDefinition(
                 $managerConfig['class'],
-                $managerConfig['flysystem'],
-                $managerConfig['naming_strategy'],
-                $managerConfig['repository'],
-                $managerConfig['mime_type_detector'],
-                $managerConfig['model_factory']
+                $managerConfig['flysystem'] ?? ($autowired ? FilesystemOperator::class : null),
+                $managerConfig['naming_strategy'] ?? ($autowired ? NamingStrategy::class : null),
+                $managerConfig['repository'] ?? ($autowired ? Repository::class : null),
+                $managerConfig['mime_type_detector'] ?? ($autowired ? MimeTypeDetector::class : null),
+                $managerConfig['model_factory'] ?? ($autowired ? ModelFactory::class : null)
             );
-            $definition->setAutowired($autowired);
             $container->setDefinition($serviceId, $definition);
 
             $container->setDefinition(
@@ -75,7 +79,7 @@ class ArxyFilesExtension extends Extension
                     DelegatingManager::class,
                     [
                         '$managers' => array_map(
-                            static fn (array $config): Reference => $config['reference'],
+                            static fn(array $config): Reference => $config['reference'],
                             $config['managers']
                         ),
                     ]
@@ -85,7 +89,7 @@ class ArxyFilesExtension extends Extension
         }
     }
 
-    private function createListenerDefinition(string $driver, string $serviceId): Definition
+    private function createListenerDefinition(string $driver, string $serviceId, bool $preRemove = false): Definition
     {
         switch ($driver) {
             case 'orm':
@@ -110,35 +114,21 @@ class ArxyFilesExtension extends Extension
         ?string $modelFactory
     ): Definition {
         $definition = new Definition(Manager::class, ['$class' => $class]);
-        if ($flysystem !== null) {
-            $definition->setArgument('$filesystem', new Reference($flysystem));
-        } else {
-            $definition->setArgument('$filesystem', null);
-        }
+        $definition->setArgument('$filesystem', $flysystem ? new Reference($flysystem) : null);
+        $definition->setArgument('$namingStrategy', $namingStrategy ? new Reference($namingStrategy) : null);
+        $definition->setArgument(
+            '$repository',
+            $repository ? new Reference($repository, ContainerInterface::NULL_ON_INVALID_REFERENCE) : null
+        );
+        $definition->setArgument(
+            '$mimeTypeDetector',
+            $mimeTypeDetector ? new Reference($mimeTypeDetector, ContainerInterface::NULL_ON_INVALID_REFERENCE) : null
+        );
+        $definition->setArgument(
+            '$modelFactory',
+            $modelFactory ? new Reference($modelFactory, ContainerInterface::NULL_ON_INVALID_REFERENCE) : null
+        );
 
-        if ($namingStrategy !== null) {
-            $definition->setArgument('$namingStrategy', new Reference($namingStrategy));
-        } else {
-            $definition->setArgument('$namingStrategy', null);
-        }
-
-        if ($repository !== null) {
-            $definition->setArgument('$repository', new Reference($repository));
-        } else {
-            $definition->setArgument('$repository', null);
-        }
-
-        if ($mimeTypeDetector !== null) {
-            $definition->setArgument('$mimeTypeDetector', new Reference($mimeTypeDetector));
-        } else {
-            $definition->setArgument('$mimeTypeDetector', null);
-        }
-
-        if ($modelFactory !== null) {
-            $definition->setArgument('$modelFactory', new Reference($modelFactory));
-        } else {
-            $definition->setArgument('$modelFactory', null);
-        }
 
         $definition->setArgument(
             '$eventDispatcher',
