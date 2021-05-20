@@ -202,6 +202,7 @@ $entityManager->flush();
 ```
 
 In case of embeddable:
+
 ```php
 
 $file = new \SplFileInfo($pathname);
@@ -552,12 +553,13 @@ Decorator which always return null directory.
 ### PersistentPathStrategy
 
 Use persisted pathname in file. Useful if you want to generate completely random path for each file. (For example UUID
-v4) or you just want the path to the file persisted for some reason. Expects instanceof 
-`Arxy\FilesBundle\Model\PathAwareFile`. It's your responsibility to handle the path itself. You  can do that with custom
-`Arxy\FilesBundle\ModelFactory` (recommended) or use built in Event Listener, which will set 
-the pathname on upload (`Arxy\FilesBundle\EventListener\PathAwareListener`)
+v4) or you just want the path to the file persisted for some reason. Expects instanceof
+`Arxy\FilesBundle\Model\PathAwareFile`. It's your responsibility to handle the path itself. You can do that with custom
+`Arxy\FilesBundle\ModelFactory` (recommended) or use built in Event Listener, which will set the pathname on
+upload (`Arxy\FilesBundle\EventListener\PathAwareListener`)
 
 ### UUID V4 Strategy:
+
 Generates random path.
 
 ## Migrating between naming strategy.
@@ -903,8 +905,19 @@ Two events are currently available:
 
 # PostUpload
 
-`Arxy\FilesBundle\Events\PostUpload` event is called right after File Entity is created. It is NOT called if existing
+`Arxy\FilesBundle\Events\PostUpload` event is called right after File object is created. It is NOT called if existing
 file is found and re-used.
+
+# PreMove
+
+`Arxy\FilesBundle\Events\PreMove` event is called right before File object is moved into its final location. At this
+moment file is still located locally. so `ManagerInterface::getPathname()` returns local filepath.
+
+# PostMove
+
+`Arxy\FilesBundle\Events\PostMove` event is called right after File object is moved into its final location. At this
+moment file is located in FlySystem. so `ManagerInterface::getPathname()` returns filepath generated from naming
+strategy.
 
 # PreRemove
 
@@ -912,14 +925,15 @@ file is found and re-used.
 
 ## Preview
 
-There is a sub-system for preview generation for files: It generates preview and saves it as another file. 
-There are 2 ways to enable it:
+There is a sub-system for preview generation for files: It generates preview and saves it as another file. There are 2
+ways to enable it:
+
 1. Synchronous generation:
-`Arxy\FilesBundle\Preview\PreviewGeneratorListener`
+   `Arxy\FilesBundle\Preview\PreviewGeneratorListener`
 
 2. Asynchronous generation using <a href="https://symfony.com/doc/current/messenger.html">Symfony Messenger</a>:
-`Arxy\FilesBundle\Preview\GeneratePreviewMessageHandler`
-`Arxy\FilesBundle\Preview\PreviewGeneratorMessengerListener`
+   `Arxy\FilesBundle\Preview\GeneratePreviewMessageHandler`
+   `Arxy\FilesBundle\Preview\PreviewGeneratorMessengerListener`
 
 And then register common services:
 
@@ -942,11 +956,8 @@ Arxy\FilesBundle\Preview\PreviewGenerator:
         - '@Arxy\FilesBundle\Preview\ImagePreviewGenerator'
 ```
 
-
-Currently, only image preview generator exists. You can add your own image preview generator. Just implement the 
+Currently, only image preview generator exists. You can add your own image preview generator. Just implement the
 `Arxy\FilesBundle\Preview\PreviewGeneratorInterface`.
-
-
 
 ## Known issues
 

@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Arxy\FilesBundle\Tests;
 
+use Arxy\FilesBundle\Event\PostMove;
 use Arxy\FilesBundle\Event\PostUpload;
+use Arxy\FilesBundle\Event\PreMove;
 use Arxy\FilesBundle\Event\PreRemove;
 use Arxy\FilesBundle\Manager;
 use Arxy\FilesBundle\ManagerInterface;
@@ -65,13 +67,53 @@ class ManagerTest extends TestCase
 
         $dispatcher->expects(self::once())->method('dispatch')->with(
             self::callback(
-                static fn (PostUpload $fileUploaded): bool => $fileUploaded->getFile(
+                static fn(PostUpload $fileUploaded): bool => $fileUploaded->getFile(
                     ) instanceof File && $fileUploaded->getManager() === $manager
             )
         );
 
         /** @var File $file */
         $file = $manager->upload(new SplFileObject(__DIR__.'/files/image1.jpg'));
+    }
+
+    public function testMoveEvents()
+    {
+        $dispatcher = $this->createMock(EventDispatcherInterface::class);
+
+        $manager = new Manager(
+            File::class,
+            $this->createMock(FilesystemOperator::class),
+            $this->createMock(NamingStrategy::class),
+            null,
+            null,
+            null,
+            $dispatcher
+        );
+
+        $dispatcher->expects(self::exactly(3))->method('dispatch')->withConsecutive(
+            [
+                self::callback(
+                    static fn(PostUpload $fileUploaded): bool => $fileUploaded->getFile(
+                        ) instanceof File && $fileUploaded->getManager() === $manager
+                ),
+            ],
+            [
+                self::callback(
+                    static fn(PreMove $preRemove): bool => $preRemove->getFile(
+                        ) instanceof File && $preRemove->getManager() === $manager
+                ),
+            ],
+            [
+                self::callback(
+                    static fn(PostMove $preRemove): bool => $preRemove->getFile(
+                        ) instanceof File && $preRemove->getManager() === $manager
+                ),
+            ]
+        );
+
+        /** @var File $file */
+        $file = $manager->upload(new SplFileObject(__DIR__.'/files/image1.jpg'));
+        $manager->moveFile($file);
     }
 
     public function testPreRemove()
@@ -91,13 +133,13 @@ class ManagerTest extends TestCase
         $dispatcher->expects(self::exactly(2))->method('dispatch')->withConsecutive(
             [
                 self::callback(
-                    static fn (PostUpload $fileUploaded): bool => $fileUploaded->getFile(
+                    static fn(PostUpload $fileUploaded): bool => $fileUploaded->getFile(
                         ) instanceof File && $fileUploaded->getManager() === $manager
                 ),
             ],
             [
                 self::callback(
-                    static fn (PreRemove $preRemove): bool => $preRemove->getFile(
+                    static fn(PreRemove $preRemove): bool => $preRemove->getFile(
                         ) instanceof File && $preRemove->getManager() === $manager
                 ),
             ]

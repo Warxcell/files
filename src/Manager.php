@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace Arxy\FilesBundle;
 
+use Arxy\FilesBundle\Event\PostMove;
 use Arxy\FilesBundle\Event\PostUpload;
+use Arxy\FilesBundle\Event\PreMove;
 use Arxy\FilesBundle\Event\PreRemove;
 use Arxy\FilesBundle\Model\File;
-use Doctrine\Common\Util\Debug;
 use InvalidArgumentException;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
@@ -60,6 +61,10 @@ final class Manager implements ManagerInterface
      */
     public function moveFile(File $file): void
     {
+        if ($this->eventDispatcher !== null) {
+            $this->eventDispatcher->dispatch(new PreMove($this, $file));
+        }
+
         $splFileInfo = $this->fileMap->get($file);
 
         $this->fileMap->remove($file);
@@ -78,6 +83,10 @@ final class Manager implements ManagerInterface
         $this->filesystem->writeStream($path, $stream);
         if (is_resource($stream)) {
             fclose($stream);
+        }
+
+        if ($this->eventDispatcher !== null) {
+            $this->eventDispatcher->dispatch(new PostMove($this, $file));
         }
     }
 
