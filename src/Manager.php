@@ -10,6 +10,7 @@ use Arxy\FilesBundle\Event\PostUpload;
 use Arxy\FilesBundle\Event\PreMove;
 use Arxy\FilesBundle\Event\PreRemove;
 use Arxy\FilesBundle\Model\File;
+use Arxy\FilesBundle\Model\MutableFile;
 use InvalidArgumentException;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
@@ -262,7 +263,7 @@ final class Manager implements ManagerInterface
     /**
      * @throws FilesystemException
      */
-    public function refresh(File $file): void
+    public function refresh(MutableFile $file): void
     {
         $file->setMimeType($this->mimeType($file));
         $file->setFileSize($this->fileSize($file));

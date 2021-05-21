@@ -6,7 +6,7 @@ namespace Arxy\FilesBundle\Model;
 
 use DateTimeImmutable;
 
-abstract class AbstractFile implements File
+abstract class AbstractFile implements File, MutableFile
 {
     protected string $originalFilename;
     protected int $fileSize;

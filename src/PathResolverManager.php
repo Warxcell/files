@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Arxy\FilesBundle;
 
 use Arxy\FilesBundle\Model\File;
+use Arxy\FilesBundle\Model\MutableFile;
 use SplFileInfo;
 
 final class PathResolverManager implements ManagerInterface, PathResolver
@@ -38,7 +39,7 @@ final class PathResolverManager implements ManagerInterface, PathResolver
         return $this->manager->readStream($file);
     }
 
-    public function refresh(File $file): void
+    public function refresh(MutableFile $file): void
     {
         $this->manager->refresh($file);
     }

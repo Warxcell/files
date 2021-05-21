@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Arxy\FilesBundle;
 
 use Arxy\FilesBundle\Model\File;
+use Arxy\FilesBundle\Model\MutableFile;
 use SplFileInfo;
 
 interface ManagerInterface
@@ -32,7 +33,7 @@ interface ManagerInterface
     /**
      * Refreshes mimeType, size and md5 hash from underlying file.
      */
-    public function refresh(File $file): void;
+    public function refresh(MutableFile $file): void;
 
     /**
      * Rename underlying from $oldStrategy to configured one.

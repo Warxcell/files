@@ -6,6 +6,7 @@ namespace Arxy\FilesBundle;
 
 use Arxy\FilesBundle\Model\DecoratedFile;
 use Arxy\FilesBundle\Model\File;
+use Arxy\FilesBundle\Model\MutableFile;
 use LogicException;
 use SplFileInfo;
 
@@ -75,9 +76,10 @@ final class DelegatingManager implements ManagerInterface
         return $this->getManagerFor($file)->readStream($file);
     }
 
-    public function refresh(File $file): void
+    public function refresh(MutableFile $file): void
     {
         $file = $this->getFile($file);
+        assert($file instanceof MutableFile);
         $this->getManagerFor($file)->refresh($file);
     }
 

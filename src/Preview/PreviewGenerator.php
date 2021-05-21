@@ -6,6 +6,7 @@ namespace Arxy\FilesBundle\Preview;
 
 use Arxy\FilesBundle\ManagerInterface;
 use Arxy\FilesBundle\Model\File;
+use Arxy\FilesBundle\Model\MutableFile;
 use SplFileInfo;
 
 class PreviewGenerator
@@ -45,9 +46,11 @@ class PreviewGenerator
     {
         $preview = $this->manager->upload($this->generatePreview($file));
 
-        $filename = pathinfo($file->getOriginalFilename(), PATHINFO_FILENAME);
-        $extension = pathinfo($file->getOriginalFilename(), PATHINFO_EXTENSION);
-        $preview->setOriginalFilename(sprintf('%s_preview.%s', $filename, $extension));
+        if ($preview instanceof MutableFile) {
+            $filename = pathinfo($file->getOriginalFilename(), PATHINFO_FILENAME);
+            $extension = pathinfo($file->getOriginalFilename(), PATHINFO_EXTENSION);
+            $preview->setOriginalFilename(sprintf('%s_preview.%s', $filename, $extension));
+        }
 
         return $preview;
     }
