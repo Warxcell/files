@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Arxy\FilesBundle;
 
 use Arxy\FilesBundle\Event\PostMove;
+use Arxy\FilesBundle\Event\PostRefresh;
 use Arxy\FilesBundle\Event\PostUpload;
 use Arxy\FilesBundle\Event\PreMove;
 use Arxy\FilesBundle\Event\PreRemove;
@@ -266,6 +267,10 @@ final class Manager implements ManagerInterface
         $file->setMimeType($this->mimeType($file));
         $file->setFileSize($this->fileSize($file));
         $file->setMd5Hash($this->md5Hash($file));
+
+        if ($this->eventDispatcher !== null) {
+            $this->eventDispatcher->dispatch(new PostRefresh($this, $file));
+        }
     }
 
     /**

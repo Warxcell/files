@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Arxy\FilesBundle\Tests;
 
 use Arxy\FilesBundle\Event\PostMove;
+use Arxy\FilesBundle\Event\PostRefresh;
 use Arxy\FilesBundle\Event\PostUpload;
 use Arxy\FilesBundle\Event\PreMove;
 use Arxy\FilesBundle\Event\PreRemove;
@@ -148,6 +149,40 @@ class ManagerTest extends TestCase
         /** @var File $file */
         $file = $manager->upload(new SplFileObject(__DIR__.'/files/image1.jpg'));
         $manager->remove($file);
+    }
+
+    public function testPostRefresh()
+    {
+        $dispatcher = $this->createMock(EventDispatcherInterface::class);
+
+        $manager = new Manager(
+            File::class,
+            $this->createMock(FilesystemOperator::class),
+            $this->createMock(NamingStrategy::class),
+            null,
+            null,
+            null,
+            $dispatcher
+        );
+
+        $dispatcher->expects(self::exactly(2))->method('dispatch')->withConsecutive(
+            [
+                self::callback(
+                    static fn(PostUpload $fileUploaded): bool => $fileUploaded->getFile(
+                        ) instanceof File && $fileUploaded->getManager() === $manager
+                ),
+            ],
+            [
+                self::callback(
+                    static fn(PostRefresh $preRemove): bool => $preRemove->getFile(
+                        ) instanceof File && $preRemove->getManager() === $manager
+                ),
+            ]
+        );
+
+        /** @var File $file */
+        $file = $manager->upload(new SplFileObject(__DIR__.'/files/image1.jpg'));
+        $manager->refresh($file);
     }
 
     public function testSimpleUpload()
