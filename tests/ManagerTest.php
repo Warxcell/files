@@ -11,9 +11,11 @@ use Arxy\FilesBundle\Event\PreMove;
 use Arxy\FilesBundle\Event\PreRemove;
 use Arxy\FilesBundle\Manager;
 use Arxy\FilesBundle\ManagerInterface;
+use Arxy\FilesBundle\Model\MutableFile;
 use Arxy\FilesBundle\NamingStrategy;
 use Arxy\FilesBundle\Repository;
 use DateTimeImmutable;
+use InvalidArgumentException;
 use League\Flysystem\Filesystem;
 use League\Flysystem\FilesystemOperator;
 use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
@@ -183,6 +185,18 @@ class ManagerTest extends TestCase
         /** @var File $file */
         $file = $manager->upload(new SplFileObject(__DIR__.'/files/image1.jpg'));
         $manager->refresh($file);
+    }
+
+    public function testInvalidClassPassed()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Class must be subclass of '.\Arxy\FilesBundle\Model\File::class);
+
+        new Manager(
+            \stdClass::class,
+            $this->createMock(FilesystemOperator::class),
+            $this->createMock(NamingStrategy::class)
+        );
     }
 
     public function testSimpleUpload()
@@ -410,7 +424,7 @@ class ManagerTest extends TestCase
     public function testWrongFileMove()
     {
         $file = new File('filename', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg');
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectErrorMessage('File '.spl_object_id($file).' not found in map');
 
         $this->manager->moveFile($file);
@@ -420,7 +434,7 @@ class ManagerTest extends TestCase
     {
         $file = new StringableFile('filename', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg');
         $file->setId(25);
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectErrorMessage('File 25 not found in map');
 
         $this->manager->moveFile($file);
@@ -593,9 +607,10 @@ class ManagerTest extends TestCase
 
         $file = $this->manager->upload(new SplFileObject($tmpFile));
 
+        assert($file instanceof MutableFile);
         unlink($tmpFile);
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Failed to detect mimeType for '.$tmpFile);
         $this->manager->refresh($file);
     }
@@ -680,7 +695,7 @@ class ManagerTest extends TestCase
         $file->setId(1);
         $this->manager->clear();
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('File '.spl_object_id($file).' not found in map');
 
         $this->manager->moveFile($file);
