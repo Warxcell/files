@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace Arxy\FilesBundle\Entity;
 
-use Arxy\FilesBundle\Model\AbstractFile;
 use Arxy\FilesBundle\Model\IdentifiableFile;
 use DateTimeImmutable;
 
-abstract class MutableFile extends AbstractFile implements IdentifiableFile, \Arxy\FilesBundle\Model\MutableFile
+abstract class MutableFile extends File implements IdentifiableFile, \Arxy\FilesBundle\Model\MutableFile
 {
     abstract public function getId();
 
