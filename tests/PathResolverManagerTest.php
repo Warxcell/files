@@ -29,7 +29,7 @@ class PathResolverManagerTest extends TestCase
     {
         $file = new \SplFileObject(__DIR__.'/files/image1.jpg');
         $uploadedFile = new File('filename', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg');
-        $this->decorated->expects($this->once())->method('upload')->with($file)->willReturn($uploadedFile);
+        $this->decorated->expects(self::once())->method('upload')->with($file)->willReturn($uploadedFile);
         $actualFile = $this->decorator->upload($file);
         self::assertSame($uploadedFile, $actualFile);
     }
@@ -37,7 +37,7 @@ class PathResolverManagerTest extends TestCase
     public function testGetPathname()
     {
         $file = new File('filename', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg');
-        $this->decorated->expects($this->once())->method('getPathname')->with($file)->willReturn('!!!');
+        $this->decorated->expects(self::once())->method('getPathname')->with($file)->willReturn('!!!');
 
         $actual = $this->decorator->getPathname($file);
         self::assertSame('!!!', $actual);
@@ -46,7 +46,7 @@ class PathResolverManagerTest extends TestCase
     public function testRead()
     {
         $file = new File('filename', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg');
-        $this->decorated->expects($this->once())->method('read')->with($file)->willReturn('!!!');
+        $this->decorated->expects(self::once())->method('read')->with($file)->willReturn('!!!');
 
         $actual = $this->decorator->read($file);
         self::assertSame('!!!', $actual);
@@ -55,7 +55,7 @@ class PathResolverManagerTest extends TestCase
     public function testReadStream()
     {
         $file = new File('filename', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg');
-        $this->decorated->expects($this->once())->method('readStream')->with($file)->willReturn('!!!');
+        $this->decorated->expects(self::once())->method('readStream')->with($file)->willReturn('!!!');
 
         $actual = $this->decorator->readStream($file);
         self::assertSame('!!!', $actual);
@@ -64,7 +64,7 @@ class PathResolverManagerTest extends TestCase
     public function testMove()
     {
         $file = new File('filename', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg');
-        $this->decorated->expects($this->once())->method('moveFile')->with($file);
+        $this->decorated->expects(self::once())->method('moveFile')->with($file);
 
         $this->decorator->moveFile($file);
     }
@@ -72,14 +72,30 @@ class PathResolverManagerTest extends TestCase
     public function testRemove()
     {
         $file = new File('filename', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg');
-        $this->decorated->expects($this->once())->method('remove')->with($file);
+        $this->decorated->expects(self::once())->method('remove')->with($file);
 
         $this->decorator->remove($file);
     }
 
+    public function testWrite()
+    {
+        $file = new File('filename', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg');
+        $this->decorated->expects(self::once())->method('write')->with($file, 'test');
+
+        $this->decorator->write($file, 'test');
+    }
+
+    public function testWriteStream()
+    {
+        $stream = fopen('data://text/plain,'.'test', 'r');
+        $file = new File('filename', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg');
+        $this->decorated->expects(self::once())->method('writeStream')->with($file, $stream);
+        $this->decorator->writeStream($file, $stream);
+    }
+
     public function testGetClass()
     {
-        $this->decorated->expects($this->once())->method('getClass')->willReturn('!!!');
+        $this->decorated->expects(self::once())->method('getClass')->willReturn('!!!');
 
         $class = $this->decorator->getClass();
 
@@ -88,14 +104,14 @@ class PathResolverManagerTest extends TestCase
 
     public function testClear()
     {
-        $this->decorated->expects($this->once())->method('clear');
+        $this->decorated->expects(self::once())->method('clear');
         $this->decorator->clear();
     }
 
     public function testGetPath()
     {
         $file = new File('filename', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg');
-        $this->pathResolver->expects($this->once())->method('getPath')->with($file)->willReturn('!!!');
+        $this->pathResolver->expects(self::once())->method('getPath')->with($file)->willReturn('!!!');
 
         $actual = $this->decorator->getPath($file);
 

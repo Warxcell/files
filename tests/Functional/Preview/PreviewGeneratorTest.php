@@ -45,6 +45,40 @@ class PreviewGeneratorTest extends AbstractFunctionalTest
         self::assertSame('image1_preview.jpg', $file->getPreview()->getOriginalFilename());
     }
 
+    public function testPreviewWrite()
+    {
+        $file = $this->manager->upload(new SplFileInfo(__DIR__.'/../../files/image1.jpg'));
+        assert($file instanceof FileWithPreview);
+
+        $this->entityManager->persist($file);
+        $this->entityManager->flush();
+
+        $preview1 = $file->getPreview();
+        self::assertNotNull($preview1);
+
+        $this->manager->write($file, file_get_contents(__DIR__.'/../../files/image2.jpg'));
+
+        self::assertNotSame($preview1, $file->getPreview());
+    }
+
+    public function testPreviewWriteStream()
+    {
+        $file = $this->manager->upload(new SplFileInfo(__DIR__.'/../../files/image1.jpg'));
+        assert($file instanceof FileWithPreview);
+
+        $this->entityManager->persist($file);
+        $this->entityManager->flush();
+
+        $preview1 = $file->getPreview();
+        self::assertNotNull($preview1);
+
+        $stream = fopen(__DIR__.'/../../files/image2.jpg', 'r');
+
+        $this->manager->writeStream($file, $stream);
+
+        self::assertNotSame($preview1, $file->getPreview());
+    }
+
     public function testNotSupportedFile()
     {
         $file = $this->manager->upload(new SplFileInfo(__DIR__.'/../../files/lorem-ipsum.pdf'));

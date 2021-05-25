@@ -4,12 +4,12 @@ arxy_files:
             driver: orm
             class: 'Arxy\FilesBundle\Tests\Functional\Entity\FileWithPreview'
             flysystem: 'in_memory'
-            naming_strategy: 'Arxy\FilesBundle\NamingStrategy\SplitHashStrategy'
+            naming_strategy: 'Arxy\FilesBundle\NamingStrategy\PersistentPathStrategy'
         preview:
             driver: orm
             class: 'Arxy\FilesBundle\Tests\Functional\Entity\Preview'
             flysystem: 'in_memory'
-            naming_strategy: 'Arxy\FilesBundle\NamingStrategy\SplitHashStrategy'
+            naming_strategy: 'Arxy\FilesBundle\NamingStrategy\PersistentPathStrategy'
 
 services:
     _defaults:
@@ -18,8 +18,12 @@ services:
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
 
     Arxy\FilesBundle\Tests\Functional\Repository\FileRepository: ~
-    Arxy\FilesBundle\NamingStrategy\SplitHashStrategy: ~
-    Arxy\FilesBundle\NamingStrategy: '@Arxy\FilesBundle\NamingStrategy\SplitHashStrategy'
+    Arxy\FilesBundle\NamingStrategy\PersistentPathStrategy: ~
+    Arxy\FilesBundle\NamingStrategy: '@Arxy\FilesBundle\NamingStrategy\PersistentPathStrategy'
+
+    Arxy\FilesBundle\NamingStrategy\UuidV4Strategy: ~
+    Arxy\FilesBundle\EventListener\PathAwareListener:
+        $namingStrategy: '@Arxy\FilesBundle\NamingStrategy\UuidV4Strategy'
 
     Imagine\Gd\Imagine: ~
 

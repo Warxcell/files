@@ -5,13 +5,14 @@ declare(strict_types=1);
 namespace Arxy\FilesBundle\Tests\Functional\Entity;
 
 use Arxy\FilesBundle\Entity\File as BaseFile;
+use Arxy\FilesBundle\Model\PathAwareFile;
 use Arxy\FilesBundle\Preview\PreviewableFile;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity()
  */
-class FileWithPreview extends BaseFile implements PreviewableFile
+class FileWithPreview extends BaseFile implements PreviewableFile, PathAwareFile
 {
     /**
      * @ORM\Id()
@@ -24,6 +25,11 @@ class FileWithPreview extends BaseFile implements PreviewableFile
      * @ORM\OneToOne(targetEntity=Preview::class, cascade={"PERSIST"})
      */
     private ?Preview $preview = null;
+
+    /**
+     * @ORM\Column(type="string")
+     */
+    private string $pathname;
 
     public function getId(): ?int
     {
@@ -39,5 +45,15 @@ class FileWithPreview extends BaseFile implements PreviewableFile
     {
         assert($file instanceof Preview);
         $this->preview = $file;
+    }
+
+    public function getPathname(): string
+    {
+        return $this->pathname;
+    }
+
+    public function setPathname(string $pathname): void
+    {
+        $this->pathname = $pathname;
     }
 }
