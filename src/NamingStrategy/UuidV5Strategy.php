@@ -7,7 +7,6 @@ namespace Arxy\FilesBundle\NamingStrategy;
 use Arxy\FilesBundle\Model\File;
 use Arxy\FilesBundle\NamingStrategy;
 use Symfony\Component\Uid\Uuid;
-use Symfony\Component\Uid\UuidV5;
 
 final class UuidV5Strategy implements NamingStrategy
 {
@@ -25,6 +24,6 @@ final class UuidV5Strategy implements NamingStrategy
 
     public function getFileName(File $file): string
     {
-        return (string)UuidV5::v5($this->namespace, $file->getMd5Hash());
+        return (string)Uuid::v5($this->namespace, $file->getMd5Hash());
     }
 }
