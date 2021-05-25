@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace Arxy\FilesBundle;
 
 use Arxy\FilesBundle\Event\PostMove;
-use Arxy\FilesBundle\Event\PostRefresh;
+use Arxy\FilesBundle\Event\PostUpdate;
 use Arxy\FilesBundle\Event\PostUpload;
 use Arxy\FilesBundle\Event\PreMove;
 use Arxy\FilesBundle\Event\PreRemove;
+use Arxy\FilesBundle\Event\PreUpdate;
 use Arxy\FilesBundle\Model\File;
 use Arxy\FilesBundle\Model\MutableFile;
 use InvalidArgumentException;
@@ -216,6 +217,64 @@ final class Manager implements ManagerInterface
         } else {
             return $this->filesystem->readStream($pathname);
         }
+    }
+
+    /**
+     * @throws FilesystemException
+     */
+    public function write(MutableFile $file, string $contents): void
+    {
+        if ($this->eventDispatcher !== null) {
+            $this->eventDispatcher->dispatch(new PreUpdate($this, $file));
+        }
+
+        $pathname = $this->getPathname($file);
+        if ($this->fileMap->has($file)) {
+            file_put_contents($pathname, $contents);
+            clearstatcache(true, $pathname);
+        } else {
+            $this->filesystem->write($pathname, $contents);
+        }
+        $this->refresh($file);
+
+        if ($this->eventDispatcher !== null) {
+            $this->eventDispatcher->dispatch(new PostUpdate($this, $file));
+        }
+    }
+
+    /**
+     * @throws FilesystemException
+     */
+    public function writeStream(MutableFile $file, $resource): void
+    {
+        if ($this->eventDispatcher !== null) {
+            $this->eventDispatcher->dispatch(new PreUpdate($this, $file));
+        }
+
+        $pathname = $this->getPathname($file);
+        if ($this->fileMap->has($file)) {
+            $stream = fopen($pathname, 'w+b');
+            stream_copy_to_stream($resource, $stream);
+            fclose($stream);
+            clearstatcache(true, $pathname);
+        } else {
+            $this->filesystem->writeStream($pathname, $resource);
+        }
+        $this->refresh($file);
+
+        if ($this->eventDispatcher !== null) {
+            $this->eventDispatcher->dispatch(new PostUpdate($this, $file));
+        }
+    }
+
+    /**
+     * @throws FilesystemException
+     */
+    private function refresh(MutableFile $file): void
+    {
+        $file->setMimeType($this->mimeType($file));
+        $file->setFileSize($this->fileSize($file));
+        $file->setMd5Hash($this->md5Hash($file));
     }
 
     /**

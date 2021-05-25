@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Arxy\FilesBundle;
 
 use Arxy\FilesBundle\Model\File;
+use Arxy\FilesBundle\Model\MutableFile;
 use SplFileInfo;
 
 interface ManagerInterface
@@ -28,6 +29,10 @@ interface ManagerInterface
      * @return resource
      */
     public function readStream(File $file);
+
+    public function write(MutableFile $file, string $contents): void;
+
+    public function writeStream(MutableFile $file, $resource): void;
 
     /**
      * Move underlying file to it's final location.

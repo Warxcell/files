@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types=1);
 
 namespace Arxy\FilesBundle;
 
@@ -12,8 +13,11 @@ class Migrator implements MigratorInterface
     private NamingStrategy $old;
     private NamingStrategy $new;
 
-    public function __construct(FilesystemOperator $filesystem, NamingStrategy $oldNamingStrategy, NamingStrategy $newNamingStrategy)
-    {
+    public function __construct(
+        FilesystemOperator $filesystem,
+        NamingStrategy $oldNamingStrategy,
+        NamingStrategy $newNamingStrategy
+    ) {
         $this->filesystem = $filesystem;
         $this->old = $oldNamingStrategy;
         $this->new = $newNamingStrategy;

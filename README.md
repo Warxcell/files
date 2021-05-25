@@ -906,8 +906,6 @@ class File extends \Arxy\FilesBundle\Entity\File
 
 ## Events
 
-Two events are currently available:
-
 # PostUpload
 
 `Arxy\FilesBundle\Events\PostUpload` event is called right after File object is created. It is NOT called if existing
@@ -923,6 +921,14 @@ moment file is still located locally. so `ManagerInterface::getPathname()` retur
 `Arxy\FilesBundle\Events\PostMove` event is called right after File object is moved into its final location. At this
 moment file is located in FlySystem. so `ManagerInterface::getPathname()` returns filepath generated from naming
 strategy.
+
+# PreUpdate
+
+`Arxy\FilesBundle\Events\PreUpdate` event is called right before File object is updated through write, writeStream.
+
+# PostUpdate
+
+`Arxy\FilesBundle\Events\PostUpdate` event is called right after File object is updated through write, writeStream.
 
 # PreRemove
 

@@ -6,9 +6,11 @@ namespace Arxy\FilesBundle\Tests;
 
 use Arxy\FilesBundle\Event\PostMove;
 use Arxy\FilesBundle\Event\PostRefresh;
+use Arxy\FilesBundle\Event\PostUpdate;
 use Arxy\FilesBundle\Event\PostUpload;
 use Arxy\FilesBundle\Event\PreMove;
 use Arxy\FilesBundle\Event\PreRemove;
+use Arxy\FilesBundle\Event\PreUpdate;
 use Arxy\FilesBundle\Manager;
 use Arxy\FilesBundle\ManagerInterface;
 use Arxy\FilesBundle\Model\MutableFile;
@@ -20,7 +22,6 @@ use InvalidArgumentException;
 use League\Flysystem\Filesystem;
 use League\Flysystem\FilesystemOperator;
 use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
-use League\MimeTypeDetection\MimeTypeDetector;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use SplFileObject;
@@ -71,7 +72,7 @@ class ManagerTest extends TestCase
 
         $dispatcher->expects(self::once())->method('dispatch')->with(
             self::callback(
-                static fn (PostUpload $fileUploaded): bool => $fileUploaded->getFile(
+                static fn(PostUpload $fileUploaded): bool => $fileUploaded->getFile(
                     ) instanceof File && $fileUploaded->getManager() === $manager
             )
         );
@@ -97,19 +98,19 @@ class ManagerTest extends TestCase
         $dispatcher->expects(self::exactly(3))->method('dispatch')->withConsecutive(
             [
                 self::callback(
-                    static fn (PostUpload $fileUploaded): bool => $fileUploaded->getFile(
+                    static fn(PostUpload $fileUploaded): bool => $fileUploaded->getFile(
                         ) instanceof File && $fileUploaded->getManager() === $manager
                 ),
             ],
             [
                 self::callback(
-                    static fn (PreMove $preRemove): bool => $preRemove->getFile(
+                    static fn(PreMove $preRemove): bool => $preRemove->getFile(
                         ) instanceof File && $preRemove->getManager() === $manager
                 ),
             ],
             [
                 self::callback(
-                    static fn (PostMove $preRemove): bool => $preRemove->getFile(
+                    static fn(PostMove $preRemove): bool => $preRemove->getFile(
                         ) instanceof File && $preRemove->getManager() === $manager
                 ),
             ]
@@ -137,7 +138,7 @@ class ManagerTest extends TestCase
         $dispatcher->expects(self::exactly(0))->method('dispatch')->withConsecutive(
             [
                 self::callback(
-                    static fn (PostUpload $fileUploaded): bool => $fileUploaded->getFile(
+                    static fn(PostUpload $fileUploaded): bool => $fileUploaded->getFile(
                         ) instanceof File && $fileUploaded->getManager() === $manager
                 ),
             ]
@@ -167,13 +168,13 @@ class ManagerTest extends TestCase
         $dispatcher->expects(self::exactly(2))->method('dispatch')->withConsecutive(
             [
                 self::callback(
-                    static fn (PostUpload $fileUploaded): bool => $fileUploaded->getFile(
+                    static fn(PostUpload $fileUploaded): bool => $fileUploaded->getFile(
                         ) instanceof File && $fileUploaded->getManager() === $manager
                 ),
             ],
             [
                 self::callback(
-                    static fn (PreRemove $preRemove): bool => $preRemove->getFile(
+                    static fn(PreRemove $preRemove): bool => $preRemove->getFile(
                         ) instanceof File && $preRemove->getManager() === $manager
                 ),
             ]
@@ -255,7 +256,7 @@ class ManagerTest extends TestCase
         $file = new File('image2.jpg', 24053, '9aa1c5fc7c9388166d7ce7fd46648dd1', 'image/jpeg');
 
         $repository = $this->createMock(Repository::class);
-        $repository->expects($this->once())->method('findByHashAndSize')->with(
+        $repository->expects(self::once())->method('findByHashAndSize')->with(
             '9aa1c5fc7c9388166d7ce7fd46648dd1',
             24053
         )->willReturn($file);
@@ -553,6 +554,152 @@ class ManagerTest extends TestCase
         $this->manager->remove($file);
 
         $this->expectNotToPerformAssertions();
+    }
+
+    public function testWrite()
+    {
+        $forUpload = __DIR__.'/files/image1.jpg';
+        $file = $this->manager->upload(new SplFileObject($forUpload));
+        $this->manager->moveFile($file);
+
+        self::assertEquals('9aa1c5fc7c9388166d7ce7fd46648dd1', $file->getMd5Hash());
+        self::assertEquals(24053, $file->getFileSize());
+        self::assertEquals('image/jpeg', $file->getMimeType());
+
+        assert($file instanceof MutableFile);
+        $this->manager->write($file, file_get_contents(__DIR__.'/files/image2.jpg'));
+
+        self::assertEquals('59aeac36ae75786be1b573baad0e77c0', $file->getMd5Hash());
+        self::assertEquals(22518, $file->getFileSize());
+        self::assertEquals('image/jpeg', $file->getMimeType());
+    }
+
+    public function testWriteStream()
+    {
+        $forUpload = __DIR__.'/files/image1.jpg';
+        $file = $this->manager->upload(new SplFileObject($forUpload));
+        $this->manager->moveFile($file);
+
+        self::assertEquals('9aa1c5fc7c9388166d7ce7fd46648dd1', $file->getMd5Hash());
+        self::assertEquals(24053, $file->getFileSize());
+        self::assertEquals('image/jpeg', $file->getMimeType());
+
+        assert($file instanceof MutableFile);
+        $this->manager->writeStream($file, fopen(__DIR__.'/files/image2.jpg', 'r'));
+
+        self::assertEquals('59aeac36ae75786be1b573baad0e77c0', $file->getMd5Hash());
+        self::assertEquals(22518, $file->getFileSize());
+        self::assertEquals('image/jpeg', $file->getMimeType());
+    }
+
+    public function testWriteTemporaryFile()
+    {
+        $tmp = tempnam(sys_get_temp_dir(), 'files');
+        $forUpload = __DIR__.'/files/image1.jpg';
+
+        copy($forUpload, $tmp);
+        $file = $this->manager->upload(new SplFileObject($tmp));
+
+        self::assertEquals('9aa1c5fc7c9388166d7ce7fd46648dd1', $file->getMd5Hash());
+        self::assertEquals(24053, $file->getFileSize());
+        self::assertEquals('image/jpeg', $file->getMimeType());
+
+        assert($file instanceof MutableFile);
+        $this->manager->write($file, file_get_contents(__DIR__.'/files/image2.jpg'));
+
+        self::assertEquals('59aeac36ae75786be1b573baad0e77c0', $file->getMd5Hash());
+        self::assertEquals(22518, $file->getFileSize());
+        self::assertEquals('image/jpeg', $file->getMimeType());
+    }
+
+    public function testWriteStreamTemporaryFile()
+    {
+        $tmp = tempnam(sys_get_temp_dir(), 'files');
+        $forUpload = __DIR__.'/files/image1.jpg';
+
+        copy($forUpload, $tmp);
+        $file = $this->manager->upload(new SplFileObject($tmp));
+
+        self::assertEquals('9aa1c5fc7c9388166d7ce7fd46648dd1', $file->getMd5Hash());
+        self::assertEquals(24053, $file->getFileSize());
+        self::assertEquals('image/jpeg', $file->getMimeType());
+
+        assert($file instanceof MutableFile);
+        $this->manager->writeStream($file, fopen(__DIR__.'/files/image2.jpg', 'r'));
+
+        self::assertEquals('59aeac36ae75786be1b573baad0e77c0', $file->getMd5Hash());
+        self::assertEquals(22518, $file->getFileSize());
+        self::assertEquals('image/jpeg', $file->getMimeType());
+    }
+
+    public function testWriteEvents()
+    {
+        $dispatcher = $this->createMock(EventDispatcherInterface::class);
+
+        $manager = new Manager(
+            File::class,
+            $this->createMock(FilesystemOperator::class),
+            $this->createMock(NamingStrategy::class),
+            null,
+            null,
+            null,
+            $dispatcher
+        );
+        /** @var File $file */
+        $file = $manager->upload(new SplFileObject(__DIR__.'/files/image1.jpg'));
+        $manager->moveFile($file);
+
+        $dispatcher->expects(self::exactly(2))->method('dispatch')->withConsecutive(
+            [
+                self::callback(
+                    static fn(PreUpdate $preRemove): bool => $preRemove->getFile() === $file && $preRemove->getManager(
+                        ) === $manager
+                ),
+            ],
+            [
+                self::callback(
+                    static fn(PostUpdate $postUpdate): bool => $postUpdate->getFile(
+                        ) === $file && $postUpdate->getManager() === $manager
+                ),
+            ]
+        );
+        $manager->write($file, 'test');
+    }
+
+    public function testWriteStreamEvents()
+    {
+        $dispatcher = $this->createMock(EventDispatcherInterface::class);
+
+        $manager = new Manager(
+            File::class,
+            $this->createMock(FilesystemOperator::class),
+            $this->createMock(NamingStrategy::class),
+            null,
+            null,
+            null,
+            $dispatcher
+        );
+        /** @var File $file */
+        $file = $manager->upload(new SplFileObject(__DIR__.'/files/image1.jpg'));
+        $manager->moveFile($file);
+
+        $dispatcher->expects(self::exactly(2))->method('dispatch')->withConsecutive(
+            [
+                self::callback(
+                    static fn(PreUpdate $preRemove): bool => $preRemove->getFile() === $file && $preRemove->getManager(
+                        ) === $manager
+                ),
+            ],
+            [
+                self::callback(
+                    static fn(PostUpdate $postUpdate): bool => $postUpdate->getFile(
+                        ) === $file && $postUpdate->getManager() === $manager
+                ),
+            ]
+        );
+
+        $stream = fopen('data://text/plain,'.'test', 'r');
+        $manager->writeStream($file, $stream);
     }
 
     public function testClear()

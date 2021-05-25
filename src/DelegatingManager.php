@@ -76,6 +76,20 @@ final class DelegatingManager implements ManagerInterface
         return $this->getManagerFor($file)->readStream($file);
     }
 
+    public function write(MutableFile $file, string $contents): void
+    {
+        $file = $this->getFile($file);
+        assert($file instanceof MutableFile);
+        $this->getManagerFor($file)->write($file, $contents);
+    }
+
+    public function writeStream(MutableFile $file, $resource): void
+    {
+        $file = $this->getFile($file);
+        assert($file instanceof MutableFile);
+        $this->getManagerFor($file)->writeStream($file, $resource);
+    }
+
     public function moveFile(File $file): void
     {
         $file = $this->getFile($file);

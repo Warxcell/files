@@ -39,6 +39,16 @@ final class PathResolverManager implements ManagerInterface, PathResolver
         return $this->manager->readStream($file);
     }
 
+    public function write(MutableFile $file, string $contents): void
+    {
+        $this->manager->write($file, $contents);
+    }
+
+    public function writeStream(MutableFile $file, $resource): void
+    {
+        $this->manager->writeStream($file, $resource);
+    }
+
     public function moveFile(File $file): void
     {
         $this->manager->moveFile($file);
