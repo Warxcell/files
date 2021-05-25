@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace Arxy\FilesBundle\Tests\Functional\Entity;
 
 use Arxy\FilesBundle\Entity\File as BaseFile;
-use Arxy\FilesBundle\Model\PathAwareFile;
+use Arxy\FilesBundle\Model\MutablePathAware;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity()
  */
-class PersistentPathFile extends BaseFile implements PathAwareFile
+class PersistentPathFile extends BaseFile implements MutablePathAware
 {
     /**
      * @ORM\Id()

@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Arxy\FilesBundle\Tests;
 
 use Arxy\FilesBundle\Entity\File as AbstractFile;
-use Arxy\FilesBundle\Model\PathAwareFile;
+use Arxy\FilesBundle\Model\MutablePathAware;
 
-class PersistentPathFile extends AbstractFile implements PathAwareFile
+class PersistentPathFile extends AbstractFile implements MutablePathAware
 {
     private ?int $id = null;
     private string $pathname;

@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace Arxy\FilesBundle\Tests\Functional\Entity;
 
 use Arxy\FilesBundle\Entity\File as BaseFile;
-use Arxy\FilesBundle\Model\PathAwareFile;
+use Arxy\FilesBundle\Model\MutablePathAware;
 use Arxy\FilesBundle\Preview\PreviewableFile;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity()
  */
-class FileWithPreview extends BaseFile implements PreviewableFile, PathAwareFile
+class FileWithPreview extends BaseFile implements PreviewableFile, MutablePathAware
 {
     /**
      * @ORM\Id()

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Arxy\FilesBundle\EventListener;
 
 use Arxy\FilesBundle\Event\PostUpload;
+use Arxy\FilesBundle\Model\MutablePathAware;
 use Arxy\FilesBundle\Model\PathAwareFile;
 use Arxy\FilesBundle\NamingStrategy;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -34,7 +35,7 @@ class PathAwareListener implements EventSubscriberInterface
     {
         $entity = $event->getFile();
 
-        if ($entity instanceof PathAwareFile) {
+        if ($entity instanceof MutablePathAware) {
             $entity->setPathname($this->getPathname($entity));
         }
     }

@@ -92,6 +92,25 @@ class DelegatingManagerTest extends TestCase
         );
     }
 
+    public function testWrite()
+    {
+        $file1 = new File('original_filename.jpg', 125, '1234567', 'image/jpeg');
+
+        $this->manager1->expects(self::once())->method('write')->with($file1, 'test');
+
+        $this->manager->write($file1, 'test');
+    }
+
+    public function testWriteStream()
+    {
+        $file1 = new File('original_filename.jpg', 125, '1234567', 'image/jpeg');
+        $stream = fopen('data://text/plain,test', 'r');
+
+        $this->manager1->expects(self::once())->method('writeStream')->with($file1, $stream);
+
+        $this->manager->writeStream($file1, $stream);
+    }
+
     public function testNoManagerForFileRead()
     {
         $this->expectException(LogicException::class);
