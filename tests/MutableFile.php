@@ -7,7 +7,7 @@ namespace Arxy\FilesBundle\Tests;
 use Arxy\FilesBundle\Entity\File as AbstractFile;
 use DateTimeImmutable;
 
-class File extends AbstractFile implements \Arxy\FilesBundle\Model\MutableFile
+class MutableFile extends AbstractFile implements \Arxy\FilesBundle\Model\MutableFile
 {
     private ?int $id = null;
 

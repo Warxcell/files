@@ -79,7 +79,7 @@ class PathResolverManagerTest extends TestCase
 
     public function testWrite()
     {
-        $file = new File('filename', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg');
+        $file = new MutableFile('filename', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg');
         $this->decorated->expects(self::once())->method('write')->with($file, 'test');
 
         $this->decorator->write($file, 'test');
@@ -88,7 +88,7 @@ class PathResolverManagerTest extends TestCase
     public function testWriteStream()
     {
         $stream = fopen('data://text/plain,'.'test', 'r');
-        $file = new File('filename', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg');
+        $file = new MutableFile('filename', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg');
         $this->decorated->expects(self::once())->method('writeStream')->with($file, $stream);
         $this->decorator->writeStream($file, $stream);
     }

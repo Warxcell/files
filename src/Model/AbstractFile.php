@@ -6,7 +6,7 @@ namespace Arxy\FilesBundle\Model;
 
 use DateTimeImmutable;
 
-abstract class AbstractFile implements File, MutableFile
+abstract class AbstractFile implements File
 {
     protected string $originalFilename;
     protected int $fileSize;
@@ -16,11 +16,11 @@ abstract class AbstractFile implements File, MutableFile
 
     public function __construct(string $originalFilename, int $fileSize, string $md5Hash, string $mimeType)
     {
-        $this->setOriginalFilename($originalFilename);
-        $this->setFileSize($fileSize);
-        $this->setMd5Hash($md5Hash);
-        $this->setMimeType($mimeType);
-        $this->setCreatedAt(new DateTimeImmutable());
+        $this->originalFilename = $originalFilename;
+        $this->fileSize = $fileSize;
+        $this->md5Hash = $md5Hash;
+        $this->mimeType = $mimeType;
+        $this->createdAt = new DateTimeImmutable();
     }
 
     public function getOriginalFilename(): string
@@ -28,19 +28,9 @@ abstract class AbstractFile implements File, MutableFile
         return $this->originalFilename;
     }
 
-    public function setOriginalFilename(string $originalFilename): void
-    {
-        $this->originalFilename = $originalFilename;
-    }
-
     public function getFileSize(): int
     {
         return $this->fileSize;
-    }
-
-    public function setFileSize(int $fileSize): void
-    {
-        $this->fileSize = $fileSize;
     }
 
     public function getMd5Hash(): string
@@ -48,28 +38,13 @@ abstract class AbstractFile implements File, MutableFile
         return $this->md5Hash;
     }
 
-    public function setMd5Hash(string $md5Hash): void
-    {
-        $this->md5Hash = $md5Hash;
-    }
-
     public function getCreatedAt(): DateTimeImmutable
     {
         return $this->createdAt;
     }
 
-    public function setCreatedAt(DateTimeImmutable $createdAt): void
-    {
-        $this->createdAt = $createdAt;
-    }
-
     public function getMimeType(): string
     {
         return $this->mimeType;
-    }
-
-    public function setMimeType(string $mimeType): void
-    {
-        $this->mimeType = $mimeType;
     }
 }

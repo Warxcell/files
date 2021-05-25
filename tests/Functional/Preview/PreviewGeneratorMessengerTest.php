@@ -42,7 +42,7 @@ class PreviewGeneratorMessengerTest extends AbstractFunctionalTest
 //        self::assertSame($expectedFilesize, strlen($previewManager->read($file->getPreview())));
 //        self::assertSame($expectedFilesize, $file->getPreview()->getFileSize());
 
-        self::assertSame('image1_preview.jpg', $file->getPreview()->getOriginalFilename());
+//        self::assertSame('image1_preview.jpg', $file->getPreview()->getOriginalFilename());
     }
 
     public function testPreviewWrite()
