@@ -568,7 +568,7 @@ Register Migrator service and command:
 
 ```yaml
 services:
-    Arxy\FilesBundle\Command\Migrator:
+    Arxy\FilesBundle\Migrator:
         arguments:
             $filesystem: '@League\Flysystem\FilesystemOperator'
             $oldNamingStrategy: '@old_naming_strategy'
@@ -576,7 +576,7 @@ services:
 
     Arxy\FilesBundle\Command\MigrateNamingStrategyCommand:
         arguments:
-            $migrator: '@migrator'
+            $migrator: '@Arxy\FilesBundle\Migrator'
             $repository: '@repository' 
 ```
 
