@@ -33,7 +33,7 @@ class SymfonyCachePathResolver implements PathResolver
 
         return $this->cache->get(
             $key,
-            function (ItemInterface $item) use ($file) {
+            function (ItemInterface $item) use ($file): string {
                 $item->expiresAfter($this->expiresAfter);
 
                 return $this->pathResolver->getPath($file);
