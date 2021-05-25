@@ -25,7 +25,11 @@ final class DoctrineORMListener
         $this->manager = $manager;
 
         $this->move = static function (File $file) use ($manager): void {
-            $manager->moveFile($file);
+            try {
+                $manager->moveFile($file);
+            } catch (InvalidArgumentException $exception) {
+                // file doesn't exists in FileMap.
+            }
         };
         $this->remove = static function (File $file) use ($manager): void {
             $manager->remove($file);
@@ -66,11 +70,7 @@ final class DoctrineORMListener
         $entity = $eventArgs->getEntity();
         $entityManager = $eventArgs->getEntityManager();
         if ($this->supports($entity)) {
-            try {
-                ($this->move)($entity);
-            } catch (InvalidArgumentException $exception) {
-                // file doesn't exists in FileMap.
-            }
+            ($this->move)($entity);
         }
         $this->handleEmbeddable($entityManager, $entity, $this->move);
     }
