@@ -6,7 +6,7 @@ namespace Arxy\FilesBundle\Tests\Command;
 
 use Arxy\FilesBundle\Command\MigrateNamingStrategyCommand;
 use Arxy\FilesBundle\ManagerInterface;
-use Arxy\FilesBundle\NamingStrategy;
+use Arxy\FilesBundle\MigratorInterface;
 use Arxy\FilesBundle\Repository;
 use Arxy\FilesBundle\Tests\File;
 use PHPUnit\Framework\TestCase;
@@ -14,9 +14,8 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 class MigrateNamingStrategyCommandTest extends TestCase
 {
-    private ManagerInterface $manager;
     private Repository $repository;
-    private NamingStrategy $namingStrategy;
+    private MigratorInterface $migrator;
     private MigrateNamingStrategyCommand $command;
 
     protected function setUp(): void
@@ -25,9 +24,9 @@ class MigrateNamingStrategyCommandTest extends TestCase
 
         $this->manager = $this->createMock(ManagerInterface::class);
         $this->repository = $this->createMock(Repository::class);
-        $this->namingStrategy = $this->createMock(NamingStrategy::class);
+        $this->migrator = $this->createMock(MigratorInterface::class);
 
-        $this->command = new MigrateNamingStrategyCommand($this->manager, $this->repository, $this->namingStrategy);
+        $this->command = new MigrateNamingStrategyCommand($this->migrator, $this->repository);
     }
 
     public function testExecute()
@@ -39,11 +38,11 @@ class MigrateNamingStrategyCommandTest extends TestCase
         $file2->setId(2);
         $this->repository->expects($this->once())->method('findAllForBatchProcessing')->willReturn([$file1, $file2]);
 
-        $this->manager
+        $this->migrator
             ->expects($this->exactly(2))
             ->method('migrate')->withConsecutive(
-                [$this->identicalTo($file1), $this->identicalTo($this->namingStrategy)],
-                [$this->identicalTo($file2), $this->identicalTo($this->namingStrategy)]
+                [$this->identicalTo($file1)],
+                [$this->identicalTo($file2)]
             )
             ->will($this->onConsecutiveCalls(true, false));
 

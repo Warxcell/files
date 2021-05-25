@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Arxy\FilesBundle\Tests;
 
 use Arxy\FilesBundle\ManagerInterface;
-use Arxy\FilesBundle\NamingStrategy;
 use Arxy\FilesBundle\PathResolver;
 use Arxy\FilesBundle\PathResolverManager;
 use PHPUnit\Framework\TestCase;
@@ -60,25 +59,6 @@ class PathResolverManagerTest extends TestCase
 
         $actual = $this->decorator->readStream($file);
         self::assertSame('!!!', $actual);
-    }
-
-    public function testRefresh()
-    {
-        $file = new File('filename', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg');
-        $this->decorated->expects($this->once())->method('refresh')->with($file);
-
-        $this->decorator->refresh($file);
-    }
-
-    public function testMigrate()
-    {
-        $file = new File('filename', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg');
-
-        $namingStrategy = $this->createMock(NamingStrategy::class);
-        $this->decorated->expects($this->once())->method('migrate')->with($file, $namingStrategy)->willReturn(true);
-
-        $result = $this->decorator->migrate($file, $namingStrategy);
-        self::assertTrue($result);
     }
 
     public function testMove()

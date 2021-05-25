@@ -564,13 +564,20 @@ Generates random path.
 
 ## Migrating between naming strategy.
 
-First configure the new naming strategy, but keep the old one as service. Then register the command for migration:
+Register Migrator service and command:
 
 ```yaml
 services:
+    Arxy\FilesBundle\Command\Migrator:
+        arguments:
+            $filesystem: '@League\Flysystem\FilesystemOperator'
+            $oldNamingStrategy: '@old_naming_strategy'
+            $newNamingStrategy: '@new_naming_strategy'
+
     Arxy\FilesBundle\Command\MigrateNamingStrategyCommand:
         arguments:
-            $oldNamingStrategy: 'old_naming_strategy_service_id'
+            $migrator: '@migrator'
+            $repository: '@repository' 
 ```
 
 then run it.
@@ -578,8 +585,6 @@ then run it.
 ```shell script
 bin/console arxy:files:migrate-naming-strategy
 ```
-
-Please note that until files are migrated - if some file is requested - it will throw error.
 
 ## PathResolver: used to generate browser URL to access the file. Few built-in resolvers exists:
 

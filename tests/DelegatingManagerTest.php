@@ -160,23 +160,6 @@ class DelegatingManagerTest extends TestCase
         $this->manager->getPathname(new File3('original_filename.jpg', 125, '1234567', 'image/jpeg'));
     }
 
-    public function testNoManagerForFileRefresh()
-    {
-        $this->expectException(LogicException::class);
-        $this->expectExceptionMessage('No manager for Arxy\FilesBundle\Tests\File3');
-        $this->manager->refresh(new File3('original_filename.jpg', 125, '1234567', 'image/jpeg'));
-    }
-
-    public function testNoManagerForFileMigrate()
-    {
-        $this->expectException(LogicException::class);
-        $this->expectExceptionMessage('No manager for Arxy\FilesBundle\Tests\File3');
-        $this->manager->migrate(
-            new File3('original_filename.jpg', 125, '1234567', 'image/jpeg'),
-            $this->createMock(NamingStrategy::class)
-        );
-    }
-
     public function testNoManagerForFileMove()
     {
         $this->expectException(LogicException::class);

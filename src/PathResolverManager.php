@@ -39,16 +39,6 @@ final class PathResolverManager implements ManagerInterface, PathResolver
         return $this->manager->readStream($file);
     }
 
-    public function refresh(MutableFile $file): void
-    {
-        $this->manager->refresh($file);
-    }
-
-    public function migrate(File $file, NamingStrategy $oldStrategy): bool
-    {
-        return $this->manager->migrate($file, $oldStrategy);
-    }
-
     public function moveFile(File $file): void
     {
         $this->manager->moveFile($file);

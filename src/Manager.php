@@ -66,11 +66,11 @@ final class Manager implements ManagerInterface
      */
     public function moveFile(File $file): void
     {
+        $splFileInfo = $this->fileMap->get($file);
+
         if ($this->eventDispatcher !== null) {
             $this->eventDispatcher->dispatch(new PreMove($this, $file));
         }
-
-        $splFileInfo = $this->fileMap->get($file);
 
         $this->fileMap->remove($file);
 
@@ -258,38 +258,6 @@ final class Manager implements ManagerInterface
 
             return $this->filesystem->mimeType($pathname);
         }
-    }
-
-    /**
-     * @throws FilesystemException
-     */
-    public function refresh(MutableFile $file): void
-    {
-        $file->setMimeType($this->mimeType($file));
-        $file->setFileSize($this->fileSize($file));
-        $file->setMd5Hash($this->md5Hash($file));
-
-        if ($this->eventDispatcher !== null) {
-            $this->eventDispatcher->dispatch(new PostRefresh($this, $file));
-        }
-    }
-
-    /**
-     * @throws FilesystemException
-     */
-    public function migrate(File $file, NamingStrategy $oldStrategy): bool
-    {
-        $oldName = $this->getPathnameFromNamingStrategy($file, $oldStrategy);
-
-        if (!$this->filesystem->fileExists($oldName)) {
-            return false;
-        }
-
-        $newName = $this->getPathnameFromNamingStrategy($file);
-
-        $this->filesystem->move($oldName, $newName);
-
-        return true;
     }
 
     public function getClass(): string

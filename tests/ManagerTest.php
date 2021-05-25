@@ -15,6 +15,7 @@ use Arxy\FilesBundle\Model\MutableFile;
 use Arxy\FilesBundle\NamingStrategy;
 use Arxy\FilesBundle\Repository;
 use DateTimeImmutable;
+use Exception;
 use InvalidArgumentException;
 use League\Flysystem\Filesystem;
 use League\Flysystem\FilesystemOperator;
@@ -119,6 +120,36 @@ class ManagerTest extends TestCase
         $manager->moveFile($file);
     }
 
+    public function testPreMoveEventNotFired()
+    {
+        $dispatcher = $this->createMock(EventDispatcherInterface::class);
+
+        $manager = new Manager(
+            File::class,
+            $this->createMock(FilesystemOperator::class),
+            $this->createMock(NamingStrategy::class),
+            null,
+            null,
+            null,
+            $dispatcher
+        );
+
+        $dispatcher->expects(self::exactly(0))->method('dispatch')->withConsecutive(
+            [
+                self::callback(
+                    static fn (PostUpload $fileUploaded): bool => $fileUploaded->getFile(
+                        ) instanceof File && $fileUploaded->getManager() === $manager
+                ),
+            ]
+        );
+
+        $file = new File('image2.jpg', 24053, '9aa1c5fc7c9388166d7ce7fd46648dd1', 'image/jpeg');
+        try {
+            $manager->moveFile($file);
+        } catch (Exception $exception) {
+        }
+    }
+
     public function testPreRemove()
     {
         $dispatcher = $this->createMock(EventDispatcherInterface::class);
@@ -151,40 +182,6 @@ class ManagerTest extends TestCase
         /** @var File $file */
         $file = $manager->upload(new SplFileObject(__DIR__.'/files/image1.jpg'));
         $manager->remove($file);
-    }
-
-    public function testPostRefresh()
-    {
-        $dispatcher = $this->createMock(EventDispatcherInterface::class);
-
-        $manager = new Manager(
-            File::class,
-            $this->createMock(FilesystemOperator::class),
-            $this->createMock(NamingStrategy::class),
-            null,
-            null,
-            null,
-            $dispatcher
-        );
-
-        $dispatcher->expects(self::exactly(2))->method('dispatch')->withConsecutive(
-            [
-                self::callback(
-                    static fn (PostUpload $fileUploaded): bool => $fileUploaded->getFile(
-                        ) instanceof File && $fileUploaded->getManager() === $manager
-                ),
-            ],
-            [
-                self::callback(
-                    static fn (PostRefresh $preRemove): bool => $preRemove->getFile(
-                        ) instanceof File && $preRemove->getManager() === $manager
-                ),
-            ]
-        );
-
-        /** @var File $file */
-        $file = $manager->upload(new SplFileObject(__DIR__.'/files/image1.jpg'));
-        $manager->refresh($file);
     }
 
     public function testInvalidClassPassed()
@@ -545,76 +542,6 @@ class ManagerTest extends TestCase
         self::assertEquals(file_get_contents(__DIR__.'/files/image1.jpg'), stream_get_contents($stream));
     }
 
-    public function testRefresh()
-    {
-        $forUpload = __DIR__.'/files/image1.jpg';
-        $replacement = __DIR__.'/files/image2.jpg';
-
-        /** @var File $file */
-        $file = $this->manager->upload(new SplFileObject($forUpload));
-        self::assertTrue($file instanceof File);
-        $file->setId(6);
-
-        $this->manager->moveFile($file);
-
-        self::assertTrue($this->filesystem->fileExists('6'));
-        self::assertEquals('9aa1c5fc7c9388166d7ce7fd46648dd1', md5($this->filesystem->read('6')));
-        self::assertEquals('9aa1c5fc7c9388166d7ce7fd46648dd1', $file->getMd5Hash());
-        self::assertEquals(24053, $file->getFileSize());
-        self::assertEquals('image1.jpg', $file->getOriginalFilename());
-        self::assertEquals('image/jpeg', $file->getMimeType());
-
-        $this->filesystem->writeStream('6', fopen($replacement, 'r'));
-
-        $this->manager->refresh($file);
-
-        self::assertEquals('59aeac36ae75786be1b573baad0e77c0', $file->getMd5Hash());
-        self::assertEquals(22518, $file->getFileSize());
-        self::assertEquals('image1.jpg', $file->getOriginalFilename());
-        self::assertEquals('image/jpeg', $file->getMimeType());
-    }
-
-    public function testRefreshFileMap()
-    {
-        $forUpload = __DIR__.'/files/image1.jpg';
-        $replacement = __DIR__.'/files/image2.jpg';
-        $tmpFile = tempnam(sys_get_temp_dir(), 'arxy_files');
-
-        copy($forUpload, $tmpFile);
-
-        /** @var File $file */
-        $file = $this->manager->upload(new SplFileObject($tmpFile));
-        self::assertTrue($file instanceof File);
-        $file->setId(6);
-
-        self::assertEquals('9aa1c5fc7c9388166d7ce7fd46648dd1', $file->getMd5Hash());
-//        self::assertEquals(24053, $file->getFileSize());
-        self::assertEquals('image/jpeg', $file->getMimeType());
-
-        copy($replacement, $tmpFile);
-        $this->manager->refresh($file);
-
-        self::assertEquals('59aeac36ae75786be1b573baad0e77c0', $file->getMd5Hash());
-//        self::assertEquals(22518, $file->getFileSize());
-        self::assertEquals('image/jpeg', $file->getMimeType());
-    }
-
-    public function testRefreshDeletedFile()
-    {
-        $forUpload = __DIR__.'/files/image1.jpg';
-        $tmpFile = tempnam(sys_get_temp_dir(), 'arxy_files');
-        copy($forUpload, $tmpFile);
-
-        $file = $this->manager->upload(new SplFileObject($tmpFile));
-
-        assert($file instanceof MutableFile);
-        unlink($tmpFile);
-
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Failed to detect mimeType for '.$tmpFile);
-        $this->manager->refresh($file);
-    }
-
     public function testDeleteDeletedFile(): void
     {
         $forUpload = __DIR__.'/files/image1.jpg';
@@ -628,66 +555,6 @@ class ManagerTest extends TestCase
         $this->expectNotToPerformAssertions();
     }
 
-    public function testMigrateStrategy(): void
-    {
-        $forUpload = __DIR__.'/files/image1.jpg';
-
-        $oldStrategy = new class implements NamingStrategy {
-            public function getDirectoryName(\Arxy\FilesBundle\Model\File $file): ?string
-            {
-                return null;
-            }
-
-            public function getFileName(\Arxy\FilesBundle\Model\File $file): string
-            {
-                return (string)$file->getId();
-            }
-        };
-
-        $manager = new Manager(
-            File::class,
-            $this->filesystem,
-            $oldStrategy,
-            new FileRepository(),
-        );
-
-        /** @var File $file */
-        $file = $manager->upload(new SplFileObject($forUpload));
-        self::assertTrue($file instanceof File);
-        $file->setId(7);
-
-        $manager->moveFile($file);
-
-        self::assertTrue($this->filesystem->fileExists('7'));
-        self::assertFalse($this->filesystem->fileExists('test_migrate_7'));
-
-
-        $manager = new Manager(
-            File::class,
-            $this->filesystem,
-            new class implements NamingStrategy {
-                public function getDirectoryName(\Arxy\FilesBundle\Model\File $file): ?string
-                {
-                    return null;
-                }
-
-                public function getFileName(\Arxy\FilesBundle\Model\File $file): string
-                {
-                    return 'test_migrate_'.$file->getId();
-                }
-            },
-            new FileRepository(),
-        );
-
-        self::assertTrue($manager->migrate($file, $oldStrategy));
-
-        self::assertFalse($this->filesystem->fileExists('7'));
-        self::assertTrue($this->filesystem->fileExists('test_migrate_7'));
-
-
-        self::assertFalse($manager->migrate($file, $oldStrategy));
-    }
-
     public function testClear()
     {
         $file = $this->manager->upload(new SplFileObject(__DIR__.'/files/image1.jpg'));
@@ -699,31 +566,5 @@ class ManagerTest extends TestCase
         $this->expectExceptionMessage('File '.spl_object_id($file).' not found in map');
 
         $this->manager->moveFile($file);
-    }
-
-    public function testAnotherMimeTypeDetector()
-    {
-        $mimeTypeDetector = $this->createMock(MimeTypeDetector::class);
-        $mimeTypeDetector->expects($this->exactly(2))
-            ->method('detectMimeTypeFromFile')
-            ->withConsecutive(
-                [$this->identicalTo(__DIR__.'/files/image1.jpg')],
-                [$this->identicalTo(__DIR__.'/files/image1.jpg')]
-            )
-            ->willReturn('image/jpeg');
-
-        $manager = new Manager(
-            File::class,
-            $this->createMock(FilesystemOperator::class),
-            $this->createMock(NamingStrategy::class),
-            new FileRepository(),
-            $mimeTypeDetector
-        );
-
-        $file = $manager->upload(new SplFileObject(__DIR__.'/files/image1.jpg'));
-
-        self::assertSame('image/jpeg', $file->getMimeType());
-        $manager->refresh($file);
-        self::assertSame('image/jpeg', $file->getMimeType());
     }
 }

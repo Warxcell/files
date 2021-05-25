@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace Arxy\FilesBundle\Command;
 
-use Arxy\FilesBundle\ManagerInterface;
-use Arxy\FilesBundle\NamingStrategy;
+use Arxy\FilesBundle\MigratorInterface;
 use Arxy\FilesBundle\Repository;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -16,19 +15,16 @@ class MigrateNamingStrategyCommand extends Command
 {
     protected static $defaultName = 'arxy:files:migrate-naming-strategy';
 
-    private ManagerInterface $fileManager;
+    private MigratorInterface $migrator;
     private Repository $repository;
-    private NamingStrategy $oldNamingStrategy;
 
     public function __construct(
-        ManagerInterface $fileManager,
-        Repository $repository,
-        NamingStrategy $oldNamingStrategy
+        MigratorInterface $migrator,
+        Repository $repository
     ) {
         parent::__construct();
-        $this->fileManager = $fileManager;
+        $this->migrator = $migrator;
         $this->repository = $repository;
-        $this->oldNamingStrategy = $oldNamingStrategy;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -41,7 +37,7 @@ class MigrateNamingStrategyCommand extends Command
 
         $files = $this->repository->findAllForBatchProcessing();
         foreach ($files as $file) {
-            $migrated = $this->fileManager->migrate($file, $this->oldNamingStrategy);
+            $migrated = $this->migrator->migrate($file);
             if ($migrated) {
                 $totalMigrated++;
                 $io->success('File '.$file->getMd5Hash().' migrated');
