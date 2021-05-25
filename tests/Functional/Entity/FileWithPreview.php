@@ -4,17 +4,15 @@ declare(strict_types=1);
 
 namespace Arxy\FilesBundle\Tests\Functional\Entity;
 
-use Arxy\FilesBundle\Entity\File as BaseFile;
-use Arxy\FilesBundle\Model\MutableFile;
+use Arxy\FilesBundle\Entity\MutableFile as BaseFile;
 use Arxy\FilesBundle\Model\MutablePathAware;
 use Arxy\FilesBundle\Preview\PreviewableFile;
-use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity()
  */
-class FileWithPreview extends BaseFile implements PreviewableFile, MutablePathAware, MutableFile
+class FileWithPreview extends BaseFile implements PreviewableFile, MutablePathAware
 {
     /**
      * @ORM\Id()
@@ -57,30 +55,5 @@ class FileWithPreview extends BaseFile implements PreviewableFile, MutablePathAw
     public function setPathname(string $pathname): void
     {
         $this->pathname = $pathname;
-    }
-
-    public function setOriginalFilename(string $originalFilename): void
-    {
-        $this->originalFilename = $originalFilename;
-    }
-
-    public function setFileSize(int $fileSize): void
-    {
-        $this->fileSize = $fileSize;
-    }
-
-    public function setMd5Hash(string $md5Hash): void
-    {
-        $this->md5Hash = $md5Hash;
-    }
-
-    public function setCreatedAt(DateTimeImmutable $createdAt): void
-    {
-        $this->createdAt = $createdAt;
-    }
-
-    public function setMimeType(string $mimeType): void
-    {
-        $this->mimeType = $mimeType;
     }
 }
