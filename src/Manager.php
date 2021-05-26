@@ -12,6 +12,7 @@ use Arxy\FilesBundle\Event\PreRemove;
 use Arxy\FilesBundle\Event\PreUpdate;
 use Arxy\FilesBundle\Model\File;
 use Arxy\FilesBundle\Model\MutableFile;
+use Arxy\FilesBundle\Utility\NamingStrategyUtility;
 use InvalidArgumentException;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
@@ -174,13 +175,9 @@ final class Manager implements ManagerInterface
         return $fileEntity;
     }
 
-    private function getPathnameFromNamingStrategy(File $file, NamingStrategy $namingStrategy = null): string
+    private function getPathnameFromNamingStrategy(File $file): string
     {
-        if ($namingStrategy === null) {
-            $namingStrategy = $this->namingStrategy;
-        }
-
-        return ($namingStrategy->getDirectoryName($file) ?? "").$namingStrategy->getFileName($file);
+        return NamingStrategyUtility::getPathnameFromStrategy($this->namingStrategy, $file);
     }
 
     public function getPathname(File $file): string

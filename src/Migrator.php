@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Arxy\FilesBundle;
 
 use Arxy\FilesBundle\Model\File;
+use Arxy\FilesBundle\Utility\NamingStrategyUtility;
 use League\Flysystem\FilesystemOperator;
 
 class Migrator implements MigratorInterface
@@ -23,21 +24,14 @@ class Migrator implements MigratorInterface
         $this->new = $newNamingStrategy;
     }
 
-    private function getPathname(File $file, NamingStrategy $namingStrategy): string
-    {
-        return ($namingStrategy->getDirectoryName($file) ?? "").$namingStrategy->getFileName($file);
-    }
-
     public function migrate(File $file): bool
     {
-        $oldName = $this->getPathname($file, $this->old);
-
+        $oldName = NamingStrategyUtility::getPathnameFromStrategy($this->old, $file);
         if (!$this->filesystem->fileExists($oldName)) {
             return false;
         }
 
-        $newName = $this->getPathname($file, $this->new);
-
+        $newName = NamingStrategyUtility::getPathnameFromStrategy($this->new, $file);
         $this->filesystem->move($oldName, $newName);
 
         return true;
