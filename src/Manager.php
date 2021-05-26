@@ -23,7 +23,21 @@ use RuntimeException;
 use SplFileInfo;
 use SplFileObject;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use function clearstatcache;
+use function fclose;
+use function file_get_contents;
+use function filesize;
+use function fopen;
+use function hash;
+use function hash_algos;
+use function hash_file;
 use function in_array;
+use function ini_get;
+use function is_resource;
+use function is_subclass_of;
+use function stream_copy_to_stream;
+use function sys_get_temp_dir;
+use function tempnam;
 
 final class Manager implements ManagerInterface
 {

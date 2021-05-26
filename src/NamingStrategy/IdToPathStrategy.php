@@ -9,6 +9,7 @@ use Arxy\FilesBundle\Model\File;
 use Arxy\FilesBundle\Model\IdentifiableFile;
 use Arxy\FilesBundle\NamingStrategy;
 use RuntimeException;
+use function chunk_split;
 
 final class IdToPathStrategy implements NamingStrategy
 {

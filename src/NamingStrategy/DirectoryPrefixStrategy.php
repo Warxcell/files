@@ -6,6 +6,7 @@ namespace Arxy\FilesBundle\NamingStrategy;
 
 use Arxy\FilesBundle\Model\File;
 use Arxy\FilesBundle\NamingStrategy;
+use function rtrim;
 
 final class DirectoryPrefixStrategy implements NamingStrategy
 {

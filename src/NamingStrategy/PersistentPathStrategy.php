@@ -8,6 +8,8 @@ use Arxy\FilesBundle\InvalidArgumentException;
 use Arxy\FilesBundle\Model\File;
 use Arxy\FilesBundle\Model\PathAwareFile;
 use Arxy\FilesBundle\NamingStrategy;
+use function basename;
+use function dirname;
 
 final class PersistentPathStrategy implements NamingStrategy
 {

@@ -7,6 +7,7 @@ namespace Arxy\FilesBundle;
 use Arxy\FilesBundle\Model\AbstractFile;
 use Arxy\FilesBundle\Model\File;
 use SplFileInfo;
+use function is_subclass_of;
 
 class AbstractModelFactory implements ModelFactory
 {

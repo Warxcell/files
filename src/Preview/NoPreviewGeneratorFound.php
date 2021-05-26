@@ -6,6 +6,7 @@ namespace Arxy\FilesBundle\Preview;
 
 use Arxy\FilesBundle\Model\File;
 use RuntimeException;
+use function method_exists;
 
 class NoPreviewGeneratorFound extends RuntimeException
 {

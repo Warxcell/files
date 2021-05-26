@@ -8,6 +8,9 @@ use Arxy\FilesBundle\ManagerInterface;
 use Arxy\FilesBundle\Model\File;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use function fclose;
+use function fopen;
+use function stream_copy_to_stream;
 use function Symfony\Component\String\u;
 
 class DownloadUtility

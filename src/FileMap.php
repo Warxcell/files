@@ -6,6 +6,7 @@ namespace Arxy\FilesBundle;
 
 use Arxy\FilesBundle\Model\File;
 use SplFileInfo;
+use function spl_object_id;
 
 /**
  * Holds map of files to be uploaded.

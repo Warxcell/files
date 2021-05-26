@@ -71,7 +71,7 @@ class ManagerTest extends TestCase
 
         $dispatcher->expects(self::once())->method('dispatch')->with(
             self::callback(
-                static fn(PostUpload $fileUploaded): bool => $fileUploaded->getFile(
+                static fn (PostUpload $fileUploaded): bool => $fileUploaded->getFile(
                     ) instanceof File && $fileUploaded->getManager() === $manager
             )
         );
@@ -96,19 +96,19 @@ class ManagerTest extends TestCase
         $dispatcher->expects(self::exactly(3))->method('dispatch')->withConsecutive(
             [
                 self::callback(
-                    static fn(PostUpload $fileUploaded): bool => $fileUploaded->getFile(
+                    static fn (PostUpload $fileUploaded): bool => $fileUploaded->getFile(
                         ) instanceof File && $fileUploaded->getManager() === $manager
                 ),
             ],
             [
                 self::callback(
-                    static fn(PreMove $preRemove): bool => $preRemove->getFile(
+                    static fn (PreMove $preRemove): bool => $preRemove->getFile(
                         ) instanceof File && $preRemove->getManager() === $manager
                 ),
             ],
             [
                 self::callback(
-                    static fn(PostMove $preRemove): bool => $preRemove->getFile(
+                    static fn (PostMove $preRemove): bool => $preRemove->getFile(
                         ) instanceof File && $preRemove->getManager() === $manager
                 ),
             ]
@@ -136,7 +136,7 @@ class ManagerTest extends TestCase
         $dispatcher->expects(self::exactly(0))->method('dispatch')->withConsecutive(
             [
                 self::callback(
-                    static fn(PostUpload $fileUploaded): bool => $fileUploaded->getFile(
+                    static fn (PostUpload $fileUploaded): bool => $fileUploaded->getFile(
                         ) instanceof File && $fileUploaded->getManager() === $manager
                 ),
             ]
@@ -166,13 +166,13 @@ class ManagerTest extends TestCase
         $dispatcher->expects(self::exactly(2))->method('dispatch')->withConsecutive(
             [
                 self::callback(
-                    static fn(PostUpload $fileUploaded): bool => $fileUploaded->getFile(
+                    static fn (PostUpload $fileUploaded): bool => $fileUploaded->getFile(
                         ) instanceof File && $fileUploaded->getManager() === $manager
                 ),
             ],
             [
                 self::callback(
-                    static fn(PreRemove $preRemove): bool => $preRemove->getFile(
+                    static fn (PreRemove $preRemove): bool => $preRemove->getFile(
                         ) instanceof File && $preRemove->getManager() === $manager
                 ),
             ]
@@ -650,13 +650,13 @@ class ManagerTest extends TestCase
         $dispatcher->expects(self::exactly(2))->method('dispatch')->withConsecutive(
             [
                 self::callback(
-                    static fn(PreUpdate $preRemove): bool => $preRemove->getFile() === $file && $preRemove->getManager(
+                    static fn (PreUpdate $preRemove): bool => $preRemove->getFile() === $file && $preRemove->getManager(
                         ) === $manager
                 ),
             ],
             [
                 self::callback(
-                    static fn(PostUpdate $postUpdate): bool => $postUpdate->getFile(
+                    static fn (PostUpdate $postUpdate): bool => $postUpdate->getFile(
                         ) === $file && $postUpdate->getManager() === $manager
                 ),
             ]
@@ -684,13 +684,13 @@ class ManagerTest extends TestCase
         $dispatcher->expects(self::exactly(2))->method('dispatch')->withConsecutive(
             [
                 self::callback(
-                    static fn(PreUpdate $preRemove): bool => $preRemove->getFile() === $file && $preRemove->getManager(
+                    static fn (PreUpdate $preRemove): bool => $preRemove->getFile() === $file && $preRemove->getManager(
                         ) === $manager
                 ),
             ],
             [
                 self::callback(
-                    static fn(PostUpdate $postUpdate): bool => $postUpdate->getFile(
+                    static fn (PostUpdate $postUpdate): bool => $postUpdate->getFile(
                         ) === $file && $postUpdate->getManager() === $manager
                 ),
             ]

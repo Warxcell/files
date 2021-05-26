@@ -9,6 +9,7 @@ use Arxy\FilesBundle\Model\File;
 use Arxy\FilesBundle\Model\MutableFile;
 use LogicException;
 use SplFileInfo;
+use function reset;
 
 final class DelegatingManager implements ManagerInterface
 {

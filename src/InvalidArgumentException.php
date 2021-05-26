@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Arxy\FilesBundle;
 
 use Arxy\FilesBundle\Model\File;
+use function sprintf;
 
 class InvalidArgumentException extends \InvalidArgumentException
 {

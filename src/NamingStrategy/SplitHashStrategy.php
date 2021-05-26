@@ -7,6 +7,7 @@ namespace Arxy\FilesBundle\NamingStrategy;
 use Arxy\FilesBundle\Model\File;
 use Arxy\FilesBundle\NamingStrategy;
 use InvalidArgumentException;
+use function chunk_split;
 
 final class SplitHashStrategy implements NamingStrategy
 {

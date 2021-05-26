@@ -6,6 +6,7 @@ namespace Arxy\FilesBundle\NamingStrategy;
 
 use Arxy\FilesBundle\Model\File;
 use Arxy\FilesBundle\NamingStrategy;
+use function pathinfo;
 
 final class AppendExtensionStrategy implements NamingStrategy
 {
