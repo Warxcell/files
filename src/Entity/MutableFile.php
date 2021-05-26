@@ -21,9 +21,9 @@ abstract class MutableFile extends File implements IdentifiableFile, \Arxy\Files
         $this->fileSize = $fileSize;
     }
 
-    public function setMd5Hash(string $md5Hash): void
+    public function setHash(string $hash): void
     {
-        $this->md5Hash = $md5Hash;
+        $this->hash = $hash;
     }
 
     public function setCreatedAt(DateTimeImmutable $createdAt): void

@@ -24,6 +24,6 @@ final class UuidV5Strategy implements NamingStrategy
 
     public function getFileName(File $file): string
     {
-        return (string)Uuid::v5($this->namespace, $file->getMd5Hash());
+        return (string)Uuid::v5($this->namespace, $file->getHash());
     }
 }

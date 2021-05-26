@@ -24,6 +24,6 @@ final class DateStrategy implements NamingStrategy
 
     public function getFileName(File $file): string
     {
-        return $file->getMd5Hash();
+        return $file->getHash();
     }
 }

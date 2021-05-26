@@ -15,11 +15,11 @@ class PersistentPathFile extends AbstractFile implements MutablePathAware
     public function __construct(
         string $originalFilename,
         int $fileSize,
-        string $md5Hash,
+        string $hash,
         string $mimeType,
         string $pathname
     ) {
-        parent::__construct($originalFilename, $fileSize, $md5Hash, $mimeType);
+        parent::__construct($originalFilename, $fileSize, $hash, $mimeType);
         $this->pathname = $pathname;
     }
 

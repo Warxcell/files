@@ -13,7 +13,7 @@ interface ModelFactory
         SplFileInfo $file,
         string $originalFilename,
         int $fileSize,
-        string $md5Hash,
+        string $hash,
         string $mimeType
     ): File;
 }

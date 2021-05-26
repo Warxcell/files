@@ -23,6 +23,7 @@ use RuntimeException;
 use SplFileInfo;
 use SplFileObject;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use function in_array;
 
 final class Manager implements ManagerInterface
 {
@@ -36,6 +37,7 @@ final class Manager implements ManagerInterface
     private ?EventDispatcherInterface $eventDispatcher;
     private const CHUNK_SIZE = 1024 * 1024;
     private string $temporaryDirectory;
+    private string $hashingAlgorithm;
 
     public function __construct(
         string $class,
@@ -45,8 +47,12 @@ final class Manager implements ManagerInterface
         MimeTypeDetector $mimeTypeDetector = null,
         ModelFactory $modelFactory = null,
         EventDispatcherInterface $eventDispatcher = null,
-        string $temporaryDirectory = null
+        string $temporaryDirectory = null,
+        string $hashingAlgorithm = 'md5'
     ) {
+        if (!in_array($hashingAlgorithm, hash_algos(), true)) {
+            throw new InvalidArgumentException(sprintf('The algorithm "%s" is not supported.', $hashingAlgorithm));
+        }
         if (!is_subclass_of($class, File::class)) {
             throw new InvalidArgumentException('Class must be subclass of '.File::class);
         }
@@ -60,6 +66,7 @@ final class Manager implements ManagerInterface
         $this->modelFactory = $modelFactory ?? new AbstractModelFactory($class);
         $this->eventDispatcher = $eventDispatcher;
         $this->temporaryDirectory = $temporaryDirectory ?? ini_get('upload_tmp_dir') ?: sys_get_temp_dir();
+        $this->hashingAlgorithm = $hashingAlgorithm;
     }
 
     /**
@@ -147,14 +154,14 @@ final class Manager implements ManagerInterface
         }
 
         $fileSize = $file->getSize();
-        $md5 = md5_file($file->getPathname());
+        $hash = hash_file($this->hashingAlgorithm, $file->getPathname());
 
         $fileEntity = null;
         if ($this->repository !== null) {
-            $fileEntity = $this->fileMap->findByHashAndSize($md5, $fileSize);
+            $fileEntity = $this->fileMap->findByHashAndSize($hash, $fileSize);
 
             if ($fileEntity === null) {
-                $fileEntity = $this->repository->findByHashAndSize($md5, $fileSize);
+                $fileEntity = $this->repository->findByHashAndSize($hash, $fileSize);
             }
         }
         if ($fileEntity === null) {
@@ -162,7 +169,7 @@ final class Manager implements ManagerInterface
                 $file,
                 $originalFilename,
                 $fileSize,
-                $md5,
+                $hash,
                 $this->getMimeTypeByFile($file)
             );
             $this->fileMap->put($fileEntity, $file);
@@ -271,7 +278,7 @@ final class Manager implements ManagerInterface
     {
         $file->setMimeType($this->mimeType($file));
         $file->setFileSize($this->fileSize($file));
-        $file->setMd5Hash($this->md5Hash($file));
+        $file->setHash($this->hash($file));
     }
 
     /**
@@ -291,14 +298,14 @@ final class Manager implements ManagerInterface
     /**
      * @throws FilesystemException
      */
-    private function md5Hash(File $file): string
+    private function hash(File $file): string
     {
         $pathname = $this->getPathname($file);
 
         if ($this->fileMap->has($file)) {
-            return md5_file($pathname);
+            return hash_file($this->hashingAlgorithm, $pathname);
         } else {
-            return md5($this->filesystem->read($pathname));
+            return hash($this->hashingAlgorithm, $this->filesystem->read($pathname));
         }
     }
 

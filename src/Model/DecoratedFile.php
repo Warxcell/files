@@ -30,9 +30,9 @@ abstract class DecoratedFile implements File
         return $this->decorated->getFileSize();
     }
 
-    public function getMd5Hash(): string
+    public function getHash(): string
     {
-        return $this->decorated->getMd5Hash();
+        return $this->decorated->getHash();
     }
 
     public function getCreatedAt(): DateTimeImmutable

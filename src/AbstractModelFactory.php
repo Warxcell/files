@@ -24,9 +24,9 @@ class AbstractModelFactory implements ModelFactory
         SplFileInfo $file,
         string $originalFilename,
         int $fileSize,
-        string $md5Hash,
+        string $hash,
         string $mimeType
     ): File {
-        return new $this->class($originalFilename, $fileSize, $md5Hash, $mimeType);
+        return new $this->class($originalFilename, $fileSize, $hash, $mimeType);
     }
 }

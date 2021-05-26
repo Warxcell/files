@@ -12,7 +12,7 @@ interface MutableFile extends File
 
     public function setFileSize(int $fileSize): void;
 
-    public function setMd5Hash(string $md5Hash): void;
+    public function setHash(string $hash): void;
 
     public function setCreatedAt(DateTimeImmutable $createdAt): void;
 

@@ -4,10 +4,7 @@ declare(strict_types=1);
 
 namespace Arxy\FilesBundle\Tests;
 
-use Arxy\FilesBundle\Entity\File as AbstractFile;
-use DateTimeImmutable;
-
-class File extends AbstractFile implements \Arxy\FilesBundle\Model\MutableFile
+class File extends MutableFile
 {
     private ?int $id = null;
 
@@ -19,30 +16,5 @@ class File extends AbstractFile implements \Arxy\FilesBundle\Model\MutableFile
     public function setId(int $id): void
     {
         $this->id = $id;
-    }
-
-    public function setOriginalFilename(string $originalFilename): void
-    {
-        $this->originalFilename = $originalFilename;
-    }
-
-    public function setFileSize(int $fileSize): void
-    {
-        $this->fileSize = $fileSize;
-    }
-
-    public function setMd5Hash(string $md5Hash): void
-    {
-        $this->md5Hash = $md5Hash;
-    }
-
-    public function setCreatedAt(DateTimeImmutable $createdAt): void
-    {
-        $this->createdAt = $createdAt;
-    }
-
-    public function setMimeType(string $mimeType): void
-    {
-        $this->mimeType = $mimeType;
     }
 }

@@ -20,10 +20,10 @@ class FileMap
     /** @var File[] */
     private array $pendingFiles = [];
 
-    public function findByHashAndSize(string $md5hash, int $size): ?File
+    public function findByHashAndSize(string $hash, int $size): ?File
     {
         foreach ($this->pendingFiles as $file) {
-            if ($file->getMd5Hash() === $md5hash && $file->getFileSize() === $size) {
+            if ($file->getHash() === $hash && $file->getFileSize() === $size) {
                 return $file;
             }
         }

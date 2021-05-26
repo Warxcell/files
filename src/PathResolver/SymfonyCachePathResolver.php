@@ -29,7 +29,7 @@ class SymfonyCachePathResolver implements PathResolver
 
     public function getPath(File $file): string
     {
-        $key = $file->getMd5Hash();
+        $key = $file->getHash();
 
         return $this->cache->get(
             $key,

@@ -12,7 +12,7 @@ interface File
 
     public function getFileSize(): int;
 
-    public function getMd5Hash(): string;
+    public function getHash(): string;
 
     public function getCreatedAt(): DateTimeImmutable;
 

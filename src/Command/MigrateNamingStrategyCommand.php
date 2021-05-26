@@ -40,10 +40,10 @@ class MigrateNamingStrategyCommand extends Command
             $migrated = $this->migrator->migrate($file);
             if ($migrated) {
                 $totalMigrated++;
-                $io->success('File '.$file->getMd5Hash().' migrated');
+                $io->success('File '.$file->getHash().' migrated');
             } else {
                 $totalFailed++;
-                $io->warning('File '.$file->getMd5Hash().' not migrated');
+                $io->warning('File '.$file->getHash().' not migrated');
             }
 
             $progressBar->advance();

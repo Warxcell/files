@@ -522,7 +522,7 @@ Naming strategy is responsible to converting File object to filepath. Several bu
 
 ### DateStrategy
 
-Use file's createdAt property. Default format: Y/m/d/md5hash. Example: 2021/05/17/59aeac36ae75786be1b573baad0e77c0
+Use file's createdAt property. Default format: Y/m/d/hash. Example: 2021/05/17/59aeac36ae75786be1b573baad0e77c0
 
 ### IdToPathStrategy
 

@@ -18,7 +18,7 @@ trait ORM
     {
         return $this->findOneBy(
             [
-                'md5Hash' => $hash,
+                'hash' => $hash,
                 'fileSize' => $size,
             ]
         );

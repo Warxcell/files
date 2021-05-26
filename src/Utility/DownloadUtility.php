@@ -42,7 +42,7 @@ class DownloadUtility
         $response->headers->set('Content-Type', $file->getMimeType());
         $response->setLastModified($file->getCreatedAt());
         $response->setPublic();
-        $response->setEtag($file->getMd5Hash());
+        $response->setEtag($file->getHash());
 
         if ($file instanceof DownloadableFile) {
             $expireAt = $file->getExpireAt();

@@ -18,7 +18,7 @@ class DecoratedFileTest extends TestCase
     {
         parent::setUp();
 
-        $file = new \Arxy\FilesBundle\Tests\File('filename', 1234, 'md5Hash', 'mimeType');
+        $file = new \Arxy\FilesBundle\Tests\File('filename', 1234, 'hash', 'mimeType');
         $file->setId(98);
         $this->createdAt = $file->getCreatedAt();
         $this->decorator = new VirtualFile($file);
@@ -34,9 +34,9 @@ class DecoratedFileTest extends TestCase
         self::assertSame(1234, $this->decorator->getFileSize());
     }
 
-    public function testGetMd5Hash()
+    public function testGetHash()
     {
-        self::assertSame('md5Hash', $this->decorator->getMd5Hash());
+        self::assertSame('hash', $this->decorator->getHash());
     }
 
     public function testGetMimeType()

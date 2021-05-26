@@ -62,7 +62,7 @@ class ManagerTest extends AbstractFunctionalTest
     {
         $content = 'this is temporary file upload test';
         $tmpFile = new SplTempFileObject(0);
-        $bytes = $tmpFile->fwrite($content);
+        $tmpFile->fwrite($content);
         $file = $this->manager->upload($tmpFile);
 
         $this->entityManager->persist($file);
@@ -71,6 +71,8 @@ class ManagerTest extends AbstractFunctionalTest
         self::assertTrue(
             $this->flysystem->fileExists('fa0ac560/d8862aad/fbe18ed1/9dc8663d/fa0ac560d8862aadfbe18ed19dc8663d')
         );
+
+        self::assertSame('this is temporary file upload test', $this->manager->read($file));
 
         self::assertSame(
             'fa0ac560d8862aadfbe18ed19dc8663d',

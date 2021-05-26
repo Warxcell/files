@@ -30,7 +30,7 @@ class MigratorTest extends TestCase
 
             public function getFileName(\Arxy\FilesBundle\Model\File $file): string
             {
-                return 'old_'.$file->getMd5Hash();
+                return 'old_'.$file->getHash();
             }
         };
 
@@ -42,7 +42,7 @@ class MigratorTest extends TestCase
 
             public function getFileName(\Arxy\FilesBundle\Model\File $file): string
             {
-                return 'new_'.$file->getMd5Hash();
+                return 'new_'.$file->getHash();
             }
         };
 

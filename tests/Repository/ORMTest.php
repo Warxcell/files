@@ -17,7 +17,7 @@ class ORMTest extends TestCase
 
         $mock->expects($this->once())
             ->method('findOneBy')
-            ->with(['md5Hash' => 'hash', 'fileSize' => 123456]);
+            ->with(['hash' => 'hash', 'fileSize' => 123456]);
 
         $mock->findByHashAndSize('hash', 123456);
     }

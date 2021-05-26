@@ -10,15 +10,15 @@ abstract class AbstractFile implements File
 {
     protected string $originalFilename;
     protected int $fileSize;
-    protected string $md5Hash;
+    protected string $hash;
     protected DateTimeImmutable $createdAt;
     protected string $mimeType;
 
-    public function __construct(string $originalFilename, int $fileSize, string $md5Hash, string $mimeType)
+    public function __construct(string $originalFilename, int $fileSize, string $hash, string $mimeType)
     {
         $this->originalFilename = $originalFilename;
         $this->fileSize = $fileSize;
-        $this->md5Hash = $md5Hash;
+        $this->hash = $hash;
         $this->mimeType = $mimeType;
         $this->createdAt = new DateTimeImmutable();
     }
@@ -33,9 +33,9 @@ abstract class AbstractFile implements File
         return $this->fileSize;
     }
 
-    public function getMd5Hash(): string
+    public function getHash(): string
     {
-        return $this->md5Hash;
+        return $this->hash;
     }
 
     public function getCreatedAt(): DateTimeImmutable

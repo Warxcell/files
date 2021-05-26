@@ -35,7 +35,7 @@ class PreviewGeneratorTest extends AbstractFunctionalTest
 
 //        $expectedMd5 = md5_file($expectedFilename);
 //        self::assertSame($expectedMd5, md5($previewManager->read($file->getPreview())));
-//        self::assertSame($expectedMd5, $file->getPreview()->getMd5Hash());
+//        self::assertSame($expectedMd5, $file->getPreview()->getHash());
 
 
 //        $expectedFilesize = filesize($expectedFilename);
