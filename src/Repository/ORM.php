@@ -19,7 +19,7 @@ trait ORM
         return $this->findOneBy(
             [
                 'hash' => $hash,
-                'fileSize' => $size,
+                'size' => $size,
             ]
         );
     }

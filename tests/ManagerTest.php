@@ -203,7 +203,7 @@ class ManagerTest extends TestCase
 
         self::assertTrue($file instanceof File);
         self::assertEquals('9aa1c5fc7c9388166d7ce7fd46648dd1', $file->getHash());
-        self::assertEquals(24053, $file->getFileSize());
+        self::assertEquals(24053, $file->getSize());
         self::assertEquals('image1.jpg', $file->getOriginalFilename());
         self::assertEquals('image/jpeg', $file->getMimeType());
 
@@ -226,7 +226,7 @@ class ManagerTest extends TestCase
         $file->setId(1);
 
         self::assertEquals('9aa1c5fc7c9388166d7ce7fd46648dd1', $file->getHash());
-        self::assertEquals(24053, $file->getFileSize());
+        self::assertEquals(24053, $file->getSize());
         self::assertEquals('image1.jpg', $file->getOriginalFilename());
         self::assertEquals('image/jpeg', $file->getMimeType());
 
@@ -244,7 +244,7 @@ class ManagerTest extends TestCase
 
         self::assertTrue($file instanceof File);
         self::assertEquals('9aa1c5fc7c9388166d7ce7fd46648dd1', $file->getHash());
-        self::assertEquals(24053, $file->getFileSize());
+        self::assertEquals(24053, $file->getSize());
         self::assertEquals('image_1_uploaded.jpg', $file->getOriginalFilename());
         self::assertEquals('image/jpeg', $file->getMimeType());
     }
@@ -271,7 +271,7 @@ class ManagerTest extends TestCase
         self::assertInstanceOf(File::class, $actual);
         self::assertSame($file, $actual);
         self::assertEquals('9aa1c5fc7c9388166d7ce7fd46648dd1', $file->getHash());
-        self::assertEquals(24053, $file->getFileSize());
+        self::assertEquals(24053, $file->getSize());
         self::assertEquals('image2.jpg', $file->getOriginalFilename());
         self::assertEquals('image/jpeg', $file->getMimeType());
     }
@@ -561,14 +561,14 @@ class ManagerTest extends TestCase
         $this->manager->moveFile($file);
 
         self::assertEquals('9aa1c5fc7c9388166d7ce7fd46648dd1', $file->getHash());
-        self::assertEquals(24053, $file->getFileSize());
+        self::assertEquals(24053, $file->getSize());
         self::assertEquals('image/jpeg', $file->getMimeType());
 
         assert($file instanceof MutableFile);
         $this->manager->write($file, file_get_contents(__DIR__.'/files/image2.jpg'));
 
         self::assertEquals('59aeac36ae75786be1b573baad0e77c0', $file->getHash());
-        self::assertEquals(22518, $file->getFileSize());
+        self::assertEquals(22518, $file->getSize());
         self::assertEquals('image/jpeg', $file->getMimeType());
     }
 
@@ -579,14 +579,14 @@ class ManagerTest extends TestCase
         $this->manager->moveFile($file);
 
         self::assertEquals('9aa1c5fc7c9388166d7ce7fd46648dd1', $file->getHash());
-        self::assertEquals(24053, $file->getFileSize());
+        self::assertEquals(24053, $file->getSize());
         self::assertEquals('image/jpeg', $file->getMimeType());
 
         assert($file instanceof MutableFile);
         $this->manager->writeStream($file, fopen(__DIR__.'/files/image2.jpg', 'r'));
 
         self::assertEquals('59aeac36ae75786be1b573baad0e77c0', $file->getHash());
-        self::assertEquals(22518, $file->getFileSize());
+        self::assertEquals(22518, $file->getSize());
         self::assertEquals('image/jpeg', $file->getMimeType());
     }
 
@@ -599,14 +599,14 @@ class ManagerTest extends TestCase
         $file = $this->manager->upload(new SplFileObject($tmp));
 
         self::assertEquals('9aa1c5fc7c9388166d7ce7fd46648dd1', $file->getHash());
-        self::assertEquals(24053, $file->getFileSize());
+        self::assertEquals(24053, $file->getSize());
         self::assertEquals('image/jpeg', $file->getMimeType());
 
         assert($file instanceof MutableFile);
         $this->manager->write($file, file_get_contents(__DIR__.'/files/image2.jpg'));
 
         self::assertEquals('59aeac36ae75786be1b573baad0e77c0', $file->getHash());
-        self::assertEquals(22518, $file->getFileSize());
+        self::assertEquals(22518, $file->getSize());
         self::assertEquals('image/jpeg', $file->getMimeType());
     }
 
@@ -619,14 +619,14 @@ class ManagerTest extends TestCase
         $file = $this->manager->upload(new SplFileObject($tmp));
 
         self::assertEquals('9aa1c5fc7c9388166d7ce7fd46648dd1', $file->getHash());
-        self::assertEquals(24053, $file->getFileSize());
+        self::assertEquals(24053, $file->getSize());
         self::assertEquals('image/jpeg', $file->getMimeType());
 
         assert($file instanceof MutableFile);
         $this->manager->writeStream($file, fopen(__DIR__.'/files/image2.jpg', 'r'));
 
         self::assertEquals('59aeac36ae75786be1b573baad0e77c0', $file->getHash());
-        self::assertEquals(22518, $file->getFileSize());
+        self::assertEquals(22518, $file->getSize());
         self::assertEquals('image/jpeg', $file->getMimeType());
     }
 

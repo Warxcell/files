@@ -29,9 +29,9 @@ class DecoratedFileTest extends TestCase
         self::assertSame('filename', $this->decorator->getOriginalFilename());
     }
 
-    public function testGetFilesize()
+    public function testGetSize()
     {
-        self::assertSame(1234, $this->decorator->getFileSize());
+        self::assertSame(1234, $this->decorator->getSize());
     }
 
     public function testGetHash()

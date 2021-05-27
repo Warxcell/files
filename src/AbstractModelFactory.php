@@ -24,10 +24,10 @@ class AbstractModelFactory implements ModelFactory
     public function create(
         SplFileInfo $file,
         string $originalFilename,
-        int $fileSize,
+        int $size,
         string $hash,
         string $mimeType
     ): File {
-        return new $this->class($originalFilename, $fileSize, $hash, $mimeType);
+        return new $this->class($originalFilename, $size, $hash, $mimeType);
     }
 }

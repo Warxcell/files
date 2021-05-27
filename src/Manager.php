@@ -291,7 +291,7 @@ final class Manager implements ManagerInterface
     private function refresh(MutableFile $file): void
     {
         $file->setMimeType($this->mimeType($file));
-        $file->setFileSize($this->fileSize($file));
+        $file->setSize($this->fileSize($file));
         $file->setHash($this->hash($file));
     }
 

@@ -40,7 +40,7 @@ class PreviewGeneratorTest extends AbstractFunctionalTest
 
 //        $expectedFilesize = filesize($expectedFilename);
 //        self::assertSame($expectedFilesize, strlen($previewManager->read($file->getPreview())));
-//        self::assertSame($expectedFilesize, $file->getPreview()->getFileSize());
+//        self::assertSame($expectedFilesize, $file->getPreview()->getSize());
 
 //        self::assertSame('image1_preview.jpg', $file->getPreview()->getOriginalFilename());
     }

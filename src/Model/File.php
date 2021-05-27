@@ -10,7 +10,7 @@ interface File
 {
     public function getOriginalFilename(): string;
 
-    public function getFileSize(): int;
+    public function getSize(): int;
 
     public function getHash(): string;
 

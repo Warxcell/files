@@ -25,9 +25,9 @@ abstract class DecoratedFile implements File
         return $this->decorated->getOriginalFilename();
     }
 
-    public function getFileSize(): int
+    public function getSize(): int
     {
-        return $this->decorated->getFileSize();
+        return $this->decorated->getSize();
     }
 
     public function getHash(): string

@@ -24,7 +24,7 @@ class FileMap
     public function findByHashAndSize(string $hash, int $size): ?File
     {
         foreach ($this->pendingFiles as $file) {
-            if ($file->getHash() === $hash && $file->getFileSize() === $size) {
+            if ($file->getHash() === $hash && $file->getSize() === $size) {
                 return $file;
             }
         }

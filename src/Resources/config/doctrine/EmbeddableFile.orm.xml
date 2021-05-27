@@ -5,7 +5,7 @@
 
     <embeddable name="Arxy\FilesBundle\Entity\EmbeddableFile">
         <field name="originalFilename" nullable="true"/>
-        <field name="fileSize" type="integer" nullable="true"/>
+        <field name="size" type="integer" nullable="true"/>
 
         <field name="hash" length="32" nullable="true">
             <options>

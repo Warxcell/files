@@ -9,15 +9,15 @@ use DateTimeImmutable;
 abstract class AbstractFile implements File
 {
     protected string $originalFilename;
-    protected int $fileSize;
+    protected int $size;
     protected string $hash;
     protected DateTimeImmutable $createdAt;
     protected string $mimeType;
 
-    public function __construct(string $originalFilename, int $fileSize, string $hash, string $mimeType)
+    public function __construct(string $originalFilename, int $size, string $hash, string $mimeType)
     {
         $this->originalFilename = $originalFilename;
-        $this->fileSize = $fileSize;
+        $this->size = $size;
         $this->hash = $hash;
         $this->mimeType = $mimeType;
         $this->createdAt = new DateTimeImmutable();
@@ -28,9 +28,9 @@ abstract class AbstractFile implements File
         return $this->originalFilename;
     }
 
-    public function getFileSize(): int
+    public function getSize(): int
     {
-        return $this->fileSize;
+        return $this->size;
     }
 
     public function getHash(): string

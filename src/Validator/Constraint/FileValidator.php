@@ -25,7 +25,7 @@ class FileValidator extends ConstraintValidator
 
         if ($constraint->maxSize !== null) {
             $limitInBytes = $constraint->maxSize;
-            $sizeInBytes = $value->getFileSize();
+            $sizeInBytes = $value->getSize();
 
             if ($sizeInBytes > $limitInBytes) {
                 $this->context->buildViolation($constraint->maxSizeMessage)

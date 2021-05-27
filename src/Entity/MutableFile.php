@@ -16,9 +16,9 @@ abstract class MutableFile extends File implements IdentifiableFile, \Arxy\Files
         $this->originalFilename = $originalFilename;
     }
 
-    public function setFileSize(int $fileSize): void
+    public function setSize(int $size): void
     {
-        $this->fileSize = $fileSize;
+        $this->size = $size;
     }
 
     public function setHash(string $hash): void

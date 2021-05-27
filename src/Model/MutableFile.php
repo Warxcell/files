@@ -10,7 +10,7 @@ interface MutableFile extends File
 {
     public function setOriginalFilename(string $originalFilename): void;
 
-    public function setFileSize(int $fileSize): void;
+    public function setSize(int $size): void;
 
     public function setHash(string $hash): void;
 

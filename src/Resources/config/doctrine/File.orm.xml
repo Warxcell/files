@@ -5,7 +5,7 @@
 
     <mapped-superclass name="Arxy\FilesBundle\Entity\File">
         <field name="originalFilename"/>
-        <field name="fileSize" type="integer"/>
+        <field name="size" type="integer"/>
 
         <field name="hash" length="32" unique="true">
             <options>

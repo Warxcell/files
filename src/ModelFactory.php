@@ -12,7 +12,7 @@ interface ModelFactory
     public function create(
         SplFileInfo $file,
         string $originalFilename,
-        int $fileSize,
+        int $size,
         string $hash,
         string $mimeType
     ): File;
