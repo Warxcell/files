@@ -904,37 +904,37 @@ class File extends \Arxy\FilesBundle\Entity\File
 }
 ```
 
-## Events
+# Events
 
-# PostUpload
+## PostUpload
 
 `Arxy\FilesBundle\Events\PostUpload` event is called right after File object is created. It is NOT called if existing
 file is found and re-used. At this moment file is located on local FS.
 
-# PreMove
+## PreMove
 
 `Arxy\FilesBundle\Events\PreMove` event is called right before File object is moved into its final location. At this
 moment file is still located locally. so `ManagerInterface::getPathname()` returns local filepath.
 
-# PostMove
+## PostMove
 
 `Arxy\FilesBundle\Events\PostMove` event is called right after File object is moved into its final location. At this
 moment file is located in FlySystem. so `ManagerInterface::getPathname()` returns filepath generated from naming
 strategy.
 
-# PreUpdate
+## PreUpdate
 
 `Arxy\FilesBundle\Events\PreUpdate` event is called right before File object is updated through write, writeStream.
 
-# PostUpdate
+## PostUpdate
 
 `Arxy\FilesBundle\Events\PostUpdate` event is called right after File object is updated through write, writeStream.
 
-# PreRemove
+## PreRemove
 
 `Arxy\FilesBundle\Events\PreRemove` event is called right before file is deleted from filesystem.
 
-## Preview
+# Preview
 
 There is a sub-system for preview generation for files: It generates preview and saves it as another file. There are 2
 ways to enable it:
@@ -970,7 +970,7 @@ Arxy\FilesBundle\Preview\PreviewGenerator:
 Currently, only image preview generator exists. You can add your own image preview generator. Just implement the
 `Arxy\FilesBundle\Preview\PreviewGeneratorInterface`.
 
-## Known issues
+# Known issues
 
 - If file entity is deleted within transaction and transaction is rolled back - file will be deleted.
 - Currently, files are deleted on `preRemove` event, since if `postRemove` is used in combination
