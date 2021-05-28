@@ -20,3 +20,8 @@ services:
 
     Arxy\FilesBundle\Tests\Functional\Repository\FileRepository: ~
     Arxy\FilesBundle\NamingStrategy\SplitHashStrategy: ~
+
+    Arxy\FilesBundle\NamingStrategy\NullDirectoryStrategy:
+        decorates: 'Arxy\FilesBundle\NamingStrategy\SplitHashStrategy'
+        arguments:
+            - '@.inner'

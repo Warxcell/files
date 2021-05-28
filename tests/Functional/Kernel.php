@@ -16,6 +16,11 @@ class Kernel extends SymfonyBaseKernel
     private string $config;
     private array $additionalBundles;
 
+    public function __construct()
+    {
+        parent::__construct('test', false);
+    }
+
     public function config(string $config)
     {
         $this->config = realpath($config);

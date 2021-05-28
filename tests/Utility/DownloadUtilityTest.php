@@ -15,6 +15,7 @@ use DateTimeImmutable;
 use League\Flysystem\Filesystem;
 use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
 use PHPUnit\Framework\TestCase;
+use SplFileObject;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class DownloadUtilityTest extends TestCase
@@ -45,7 +46,7 @@ class DownloadUtilityTest extends TestCase
     public function testCreateResponse()
     {
         $pathname = __DIR__.'/../files/image1.jpg';
-        $file = $this->manager->upload(new \SplFileObject($pathname));
+        $file = $this->manager->upload(new SplFileObject($pathname));
         $this->manager->moveFile($file);
 
         $response = $this->downloadUtility->createResponse($file);
@@ -66,11 +67,11 @@ class DownloadUtilityTest extends TestCase
     public function testCreateResponseDownloadableFile()
     {
         $pathname = __DIR__.'/../files/image1.jpg';
-        $file = $this->manager->upload(new \SplFileObject($pathname));
+        $file = $this->manager->upload(new SplFileObject($pathname));
         $this->manager->moveFile($file);
 
         $response = $this->downloadUtility->createResponse(
-            new DownloadableFile($file, 'my_name.jpg', false, new \DateTimeImmutable('2021-04-29 15:00:00'))
+            new DownloadableFile($file, 'my_name.jpg', false, new DateTimeImmutable('2021-04-29 15:00:00'))
         );
 
         self::assertInstanceOf(StreamedResponse::class, $response);

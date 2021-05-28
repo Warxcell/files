@@ -6,6 +6,8 @@ namespace Arxy\FilesBundle\Utility;
 
 use Arxy\FilesBundle\ManagerInterface;
 use Arxy\FilesBundle\Model\File;
+use Arxy\FilesBundle\Model\MutableFile;
+use DateTimeImmutable;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use function fclose;
@@ -43,16 +45,17 @@ class DownloadUtility
         $disposition = $this->createDisposition($file);
         $response->headers->set('Content-Disposition', $disposition);
         $response->headers->set('Content-Type', $file->getMimeType());
-        $response->setLastModified($file->getCreatedAt());
         $response->setPublic();
         $response->setEtag($file->getHash());
 
         if ($file instanceof DownloadableFile) {
             $expireAt = $file->getExpireAt();
             $response->setExpires($expireAt);
+            $response->setLastModified($file->getModifiedAt());
         } else {
-            $expireAt = new \DateTimeImmutable("+30 days");
+            $expireAt = new DateTimeImmutable("+30 days");
             $response->setExpires($expireAt);
+            $response->setLastModified($file->getCreatedAt());
         }
 
         $stream = $this->manager->readStream($file);

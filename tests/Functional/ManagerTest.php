@@ -47,12 +47,12 @@ class ManagerTest extends AbstractFunctionalTest
         $this->entityManager->flush();
 
         self::assertTrue(
-            $this->flysystem->fileExists('9aa1c5fc/7c938816/6d7ce7fd/46648dd1/9aa1c5fc7c9388166d7ce7fd46648dd1')
+            $this->flysystem->fileExists('9aa1c5fc7c9388166d7ce7fd46648dd1')
         );
 
         self::assertSame(
             '9aa1c5fc7c9388166d7ce7fd46648dd1',
-            md5($this->flysystem->read('9aa1c5fc/7c938816/6d7ce7fd/46648dd1/9aa1c5fc7c9388166d7ce7fd46648dd1'))
+            md5($this->flysystem->read('9aa1c5fc7c9388166d7ce7fd46648dd1'))
         );
 
         return $file;
@@ -69,14 +69,14 @@ class ManagerTest extends AbstractFunctionalTest
         $this->entityManager->flush();
 
         self::assertTrue(
-            $this->flysystem->fileExists('fa0ac560/d8862aad/fbe18ed1/9dc8663d/fa0ac560d8862aadfbe18ed19dc8663d')
+            $this->flysystem->fileExists('fa0ac560d8862aadfbe18ed19dc8663d')
         );
 
         self::assertSame('this is temporary file upload test', $this->manager->read($file));
 
         self::assertSame(
             'fa0ac560d8862aadfbe18ed19dc8663d',
-            md5($this->flysystem->read('fa0ac560/d8862aad/fbe18ed1/9dc8663d/fa0ac560d8862aadfbe18ed19dc8663d'))
+            md5($this->flysystem->read('fa0ac560d8862aadfbe18ed19dc8663d'))
         );
     }
 
@@ -90,12 +90,12 @@ class ManagerTest extends AbstractFunctionalTest
         $this->entityManager->flush();
 
         self::assertTrue(
-            $this->flysystem->fileExists('9aa1c5fc/7c938816/6d7ce7fd/46648dd1/9aa1c5fc7c9388166d7ce7fd46648dd1')
+            $this->flysystem->fileExists('9aa1c5fc7c9388166d7ce7fd46648dd1')
         );
 
         self::assertSame(
             '9aa1c5fc7c9388166d7ce7fd46648dd1',
-            md5($this->flysystem->read('9aa1c5fc/7c938816/6d7ce7fd/46648dd1/9aa1c5fc7c9388166d7ce7fd46648dd1'))
+            md5($this->flysystem->read('9aa1c5fc7c9388166d7ce7fd46648dd1'))
         );
 
         return $news;
@@ -106,7 +106,7 @@ class ManagerTest extends AbstractFunctionalTest
         $news = $this->testSimpleUploadRelation();
 
         self::assertTrue(
-            $this->flysystem->fileExists('9aa1c5fc/7c938816/6d7ce7fd/46648dd1/9aa1c5fc7c9388166d7ce7fd46648dd1')
+            $this->flysystem->fileExists('9aa1c5fc7c9388166d7ce7fd46648dd1')
         );
 
         $news = $this->entityManager->find(News::class, $news->getId());
@@ -115,28 +115,37 @@ class ManagerTest extends AbstractFunctionalTest
         $this->entityManager->flush();
 
         self::assertFalse(
-            $this->flysystem->fileExists('9aa1c5fc/7c938816/6d7ce7fd/46648dd1/9aa1c5fc7c9388166d7ce7fd46648dd1')
+            $this->flysystem->fileExists('9aa1c5fc7c9388166d7ce7fd46648dd1')
         );
     }
 
     public function testSimpleUploadEmbeddable()
     {
         $file = $this->embeddableManager->upload(new SplFileObject(__DIR__.'/../files/image1.jpg'));
+        $file2 = $this->embeddableManager->upload(new SplFileObject(__DIR__.'/../files/image2.jpg'));
 
         $news = new News();
         $news->setEmbeddableFile($file);
+        $news->setEmbeddableFile1($file2);
         $this->entityManager->persist($news);
         $this->entityManager->flush();
 
         $this->entityManager->clear();
 
         self::assertTrue(
-            $this->flysystem->fileExists('9aa1c5fc/7c938816/6d7ce7fd/46648dd1/9aa1c5fc7c9388166d7ce7fd46648dd1')
+            $this->flysystem->fileExists('9aa1c5fc7c9388166d7ce7fd46648dd1')
         );
-
         self::assertSame(
             '9aa1c5fc7c9388166d7ce7fd46648dd1',
-            md5($this->flysystem->read('9aa1c5fc/7c938816/6d7ce7fd/46648dd1/9aa1c5fc7c9388166d7ce7fd46648dd1'))
+            md5($this->flysystem->read('9aa1c5fc7c9388166d7ce7fd46648dd1'))
+        );
+
+        self::assertTrue(
+            $this->flysystem->fileExists('59aeac36ae75786be1b573baad0e77c0')
+        );
+        self::assertSame(
+            '59aeac36ae75786be1b573baad0e77c0',
+            md5($this->flysystem->read('59aeac36ae75786be1b573baad0e77c0'))
         );
 
         return $news;
@@ -147,7 +156,7 @@ class ManagerTest extends AbstractFunctionalTest
         $news = $this->testSimpleUploadEmbeddable();
 
         self::assertTrue(
-            $this->flysystem->fileExists('9aa1c5fc/7c938816/6d7ce7fd/46648dd1/9aa1c5fc7c9388166d7ce7fd46648dd1')
+            $this->flysystem->fileExists('9aa1c5fc7c9388166d7ce7fd46648dd1')
         );
 
         $news = $this->entityManager->find(News::class, $news->getId());
@@ -156,7 +165,7 @@ class ManagerTest extends AbstractFunctionalTest
         $this->entityManager->flush();
 
         self::assertFalse(
-            $this->flysystem->fileExists('9aa1c5fc/7c938816/6d7ce7fd/46648dd1/9aa1c5fc7c9388166d7ce7fd46648dd1')
+            $this->flysystem->fileExists('9aa1c5fc7c9388166d7ce7fd46648dd1')
         );
     }
 
@@ -168,7 +177,7 @@ class ManagerTest extends AbstractFunctionalTest
         $file = $this->testSimpleUpload();
 
         self::assertTrue(
-            $this->flysystem->fileExists('9aa1c5fc/7c938816/6d7ce7fd/46648dd1/9aa1c5fc7c9388166d7ce7fd46648dd1')
+            $this->flysystem->fileExists('9aa1c5fc7c9388166d7ce7fd46648dd1')
         );
 
         $this->entityManager->remove($file);
@@ -181,7 +190,7 @@ class ManagerTest extends AbstractFunctionalTest
         $this->entityManager->flush();
 
         self::assertFalse(
-            $this->flysystem->fileExists('9aa1c5fc/7c938816/6d7ce7fd/46648dd1/9aa1c5fc7c9388166d7ce7fd46648dd1')
+            $this->flysystem->fileExists('9aa1c5fc7c9388166d7ce7fd46648dd1')
         );
     }
 

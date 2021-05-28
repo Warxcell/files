@@ -8,7 +8,7 @@ use DateTimeImmutable;
 
 abstract class DecoratedFile implements File
 {
-    private File $decorated;
+    protected File $decorated;
 
     public function __construct(File $decorated)
     {

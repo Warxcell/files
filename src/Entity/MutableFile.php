@@ -11,6 +11,14 @@ abstract class MutableFile extends File implements IdentifiableFile, \Arxy\Files
 {
     abstract public function getId();
 
+    protected DateTimeImmutable $modifiedAt;
+
+    public function __construct(string $originalFilename, int $size, string $hash, string $mimeType)
+    {
+        parent::__construct($originalFilename, $size, $hash, $mimeType);
+        $this->modifiedAt = new DateTimeImmutable();
+    }
+
     public function setOriginalFilename(string $originalFilename): void
     {
         $this->originalFilename = $originalFilename;
@@ -26,9 +34,14 @@ abstract class MutableFile extends File implements IdentifiableFile, \Arxy\Files
         $this->hash = $hash;
     }
 
-    public function setCreatedAt(DateTimeImmutable $createdAt): void
+    public function getModifiedAt(): DateTimeImmutable
     {
-        $this->createdAt = $createdAt;
+        return $this->modifiedAt;
+    }
+
+    public function setModifiedAt(DateTimeImmutable $modifiedAt): void
+    {
+        $this->modifiedAt = $modifiedAt;
     }
 
     public function setMimeType(string $mimeType): void

@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Arxy\FilesBundle\Utility;
 
+use Arxy\FilesBundle\Entity\MutableFile;
 use Arxy\FilesBundle\Model\DecoratedFile;
 use Arxy\FilesBundle\Model\File;
+use DateTimeImmutable;
 use DateTimeInterface;
 
 class DownloadableFile extends DecoratedFile
@@ -24,6 +26,15 @@ class DownloadableFile extends DecoratedFile
         $this->name = $name;
         $this->forceDownload = $forceDownload;
         $this->expireAt = $expireAt;
+    }
+
+    public function getModifiedAt(): DateTimeImmutable
+    {
+        if ($this->decorated instanceof MutableFile) {
+            return $this->decorated->getModifiedAt();
+        } else {
+            return $this->decorated->getCreatedAt();
+        }
     }
 
     public function getName(): ?string

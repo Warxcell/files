@@ -27,6 +27,9 @@ class News
     /** @ORM\Embedded(class=EmbeddableFile::class) */
     private ?EmbeddableFile $embeddableFile = null;
 
+    /** @ORM\Embedded(class=EmbeddableFile::class) */
+    private ?EmbeddableFile $embeddableFile1 = null;
+
     /** @ORM\Embedded(class=EmbeddableFilePersistentPath::class) */
     private ?EmbeddableFilePersistentPath $embeddableFilePersistentPath = null;
 
@@ -58,6 +61,16 @@ class News
     public function setEmbeddableFile(?EmbeddableFile $embeddableFile): void
     {
         $this->embeddableFile = $embeddableFile;
+    }
+
+    public function getEmbeddableFile1(): ?EmbeddableFile
+    {
+        return $this->embeddableFile1;
+    }
+
+    public function setEmbeddableFile1(?EmbeddableFile $embeddableFile1): void
+    {
+        $this->embeddableFile1 = $embeddableFile1;
     }
 
     public function getEmbeddableFilePersistentPath(): ?EmbeddableFilePersistentPath

@@ -14,7 +14,9 @@ interface MutableFile extends File
 
     public function setHash(string $hash): void;
 
-    public function setCreatedAt(DateTimeImmutable $createdAt): void;
+    public function getModifiedAt(): DateTimeImmutable;
+
+    public function setModifiedAt(DateTimeImmutable $modifiedAt): void;
 
     public function setMimeType(string $mimeType): void;
 }

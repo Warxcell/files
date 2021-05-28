@@ -36,12 +36,12 @@ final class DoctrineORMListener
         };
     }
 
-    protected function supports(object $entity): bool
+    private function supports(object $entity): bool
     {
         return $entity instanceof $this->class;
     }
 
-    protected function handleEmbeddable(
+    private function handleEmbeddable(
         EntityManagerInterface $entityManager,
         object $entity,
         Closure $action
