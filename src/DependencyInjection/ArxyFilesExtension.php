@@ -15,6 +15,7 @@ use Arxy\FilesBundle\Repository;
 use Arxy\FilesBundle\Twig\FilesExtension;
 use League\Flysystem\FilesystemOperator;
 use League\MimeTypeDetection\MimeTypeDetector;
+use LogicException;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -29,8 +30,6 @@ class ArxyFilesExtension extends Extension
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
-        $totalManagers = count($config['managers']);
-
         if ($config['form']) {
             $formDefinition = new Definition(FileType::class);
             $formDefinition->setAutowired(true);
@@ -43,6 +42,7 @@ class ArxyFilesExtension extends Extension
             $container->setDefinition(FilesExtension::class, $filesExtension);
         }
 
+        $totalManagers = count($config['managers']);
         if ($totalManagers === 0) {
             return;
         }
@@ -79,7 +79,7 @@ class ArxyFilesExtension extends Extension
                     DelegatingManager::class,
                     [
                         '$managers' => array_map(
-                            static fn (array $config): Reference => $config['reference'],
+                            static fn(array $config): Reference => $config['reference'],
                             $config['managers']
                         ),
                     ]
@@ -101,7 +101,7 @@ class ArxyFilesExtension extends Extension
 
                 return $definition;
             default:
-                throw new \LogicException('Driver not supported '.$driver);
+                throw new LogicException('Driver not supported '.$driver);
         }
     }
 
@@ -128,7 +128,6 @@ class ArxyFilesExtension extends Extension
             '$modelFactory',
             $modelFactory ? new Reference($modelFactory, ContainerInterface::NULL_ON_INVALID_REFERENCE) : null
         );
-
 
         $definition->setArgument(
             '$eventDispatcher',

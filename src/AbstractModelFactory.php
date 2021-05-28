@@ -11,6 +11,9 @@ use function is_subclass_of;
 
 class AbstractModelFactory implements ModelFactory
 {
+    /**
+     * @psalm-param class-string<AbstractFile> $class
+     */
     private string $class;
 
     public function __construct(string $class)

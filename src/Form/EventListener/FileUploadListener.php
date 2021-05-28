@@ -36,11 +36,13 @@ class FileUploadListener implements EventSubscriberInterface
     private function transform($data)
     {
         if ($this->multiple) {
+            /** @var SplFileInfo[] $data */
             return array_map(
                 fn (SplFileInfo $file): File => $this->fileManager->upload($file),
                 $data
             );
         } else {
+            /** @var SplFileInfo $data */
             return $this->fileManager->upload($data);
         }
     }

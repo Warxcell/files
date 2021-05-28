@@ -32,6 +32,9 @@ interface ManagerInterface
 
     public function write(MutableFile $file, string $contents): void;
 
+    /**
+     * @param resource $resource
+     */
     public function writeStream(MutableFile $file, $resource): void;
 
     /**
@@ -44,6 +47,9 @@ interface ManagerInterface
      */
     public function remove(File $file): void;
 
+    /**
+     * @psalm-param class-string<File> $class
+     */
     public function getClass(): string;
 
     /**

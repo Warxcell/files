@@ -43,7 +43,7 @@ class PreviewGeneratorListener implements EventSubscriberInterface
         }
     }
 
-    private function generatePreview(PreviewableFile $file)
+    private function generatePreview(PreviewableFile $file): void
     {
         try {
             $file->setPreview($this->previewGenerator->generate($file));
