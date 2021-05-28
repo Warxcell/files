@@ -13,6 +13,7 @@ use Arxy\FilesBundle\Event\PreUpdate;
 use Arxy\FilesBundle\Model\File;
 use Arxy\FilesBundle\Model\MutableFile;
 use Arxy\FilesBundle\Utility\NamingStrategyUtility;
+use DateTimeImmutable;
 use InvalidArgumentException;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
@@ -293,6 +294,7 @@ final class Manager implements ManagerInterface
         $file->setMimeType($this->mimeType($file));
         $file->setSize($this->fileSize($file));
         $file->setHash($this->hash($file));
+        $file->setModifiedAt(new DateTimeImmutable());
     }
 
     /**
