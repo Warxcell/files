@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase;
 
 class ORMTest extends TestCase
 {
-    public function testFindByHashAndSize()
+    public function testFindByHashAndSize(): void
     {
         $mock = $this->getMockForTrait(ORM::class);
 
@@ -22,7 +22,7 @@ class ORMTest extends TestCase
         $mock->findByHashAndSize('hash', 123456);
     }
 
-    public function testFindAllForBatchProcessing()
+    public function testFindAllForBatchProcessing(): void
     {
         $mock = $this->getMockForTrait(ORM::class);
 

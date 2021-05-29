@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Arxy\FilesBundle\Utility;
 
-use Arxy\FilesBundle\Entity\MutableFile;
 use Arxy\FilesBundle\Model\DecoratedFile;
 use Arxy\FilesBundle\Model\File;
+use Arxy\FilesBundle\Model\MutableFile;
 use DateTimeImmutable;
 use DateTimeInterface;
 

@@ -40,7 +40,7 @@ class DirectoryPrefixStrategyTest extends AbstractStrategyTest
         return $file;
     }
 
-    public function testIfDecoratedStrategyIsNull()
+    public function testIfDecoratedStrategyIsNull(): void
     {
         $strategy = new NamingStrategy\DirectoryPrefixStrategy(
             new class() implements NamingStrategy {

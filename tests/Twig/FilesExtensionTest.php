@@ -21,7 +21,7 @@ class FilesExtensionTest extends TestCase
         $this->extension = new FilesExtension($this->manager);
     }
 
-    public function testGetFilters()
+    public function testGetFilters(): void
     {
         $twigFilters = $this->extension->getFilters();
         self::assertCount(2, $twigFilters);
@@ -37,7 +37,7 @@ class FilesExtensionTest extends TestCase
         self::assertSame('readContent', $twigFilters[1]->getCallable()[1]);
     }
 
-    public function testReadContent()
+    public function testReadContent(): void
     {
         $file = new File('filename', 125, '12345', 'image/jpeg');
         $this->manager->expects($this->once())->method('read')->with($file)->willReturn('all good');
@@ -45,7 +45,7 @@ class FilesExtensionTest extends TestCase
         self::assertSame('all good', $this->extension->readContent($file));
     }
 
-    public function testFormatBytes()
+    public function testFormatBytes(): void
     {
         self::assertSame('1.02 kB', $this->extension->formatBytes(1020));
         self::assertSame('1.02 kB', $this->extension->formatBytes(1024));

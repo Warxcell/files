@@ -10,42 +10,42 @@ use Symfony\Component\Validator\Exception\ConstraintDefinitionException;
 
 class FileTest extends TestCase
 {
-    public function testNormalizeBytes()
+    public function testNormalizeBytes(): void
     {
         $file = new File(['maxSize' => 1000]);
 
         self::assertSame(1000, $file->maxSize);
     }
 
-    public function testNormalizeKb()
+    public function testNormalizeKb(): void
     {
         $file = new File(['maxSize' => '1k']);
 
         self::assertSame(1000, $file->maxSize);
     }
 
-    public function testNormalizeMb()
+    public function testNormalizeMb(): void
     {
         $file = new File(['maxSize' => '1M']);
 
         self::assertSame(1000000, $file->maxSize);
     }
 
-    public function testNormalizeKi()
+    public function testNormalizeKi(): void
     {
         $file = new File(['maxSize' => '1Ki']);
 
         self::assertSame(1024, $file->maxSize);
     }
 
-    public function testNormalizeMi()
+    public function testNormalizeMi(): void
     {
         $file = new File(['maxSize' => '1Mi']);
 
         self::assertSame(1048576, $file->maxSize);
     }
 
-    public function testInvalid()
+    public function testInvalid(): void
     {
         $this->expectException(ConstraintDefinitionException::class);
         $this->expectExceptionMessage('"1 gigabyte" is not a valid maximum size.');
@@ -54,7 +54,7 @@ class FileTest extends TestCase
         new File(['maxSize' => '1 gigabyte']);
     }
 
-    public function testSingleMimeType()
+    public function testSingleMimeType(): void
     {
         $file = new File(['mimeTypes' => 'image/jpg']);
 

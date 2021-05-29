@@ -24,24 +24,23 @@ class FileTypeTest extends TypeTestCase
         parent::setUp();
     }
 
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         $type = new FileType($this->manager);
 
         return [
             new PreloadedExtension([$type], []),
-
         ];
     }
 
-    protected function getTypeExtensions()
+    protected function getTypeExtensions(): array
     {
         return [
             new FormTypeHttpFoundationExtension(),
         ];
     }
 
-    public function testSingleUpload()
+    public function testSingleUpload(): void
     {
         $uploadedFile = new UploadedFile(__DIR__.'/../../files/image1.jpg', 'image1.jpg');
 
@@ -61,7 +60,7 @@ class FileTypeTest extends TypeTestCase
         self::assertSame($file, $actual);
     }
 
-    public function testMultipleUpload()
+    public function testMultipleUpload(): void
     {
         $uploadedFile1 = new UploadedFile(__DIR__.'/../../files/image1.jpg', 'image1.jpg');
         $uploadedFile2 = new UploadedFile(__DIR__.'/../../files/image2.jpg', 'image2.jpg');

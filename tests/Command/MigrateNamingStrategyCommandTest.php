@@ -29,7 +29,7 @@ class MigrateNamingStrategyCommandTest extends TestCase
         $this->command = new MigrateNamingStrategyCommand($this->migrator, $this->repository);
     }
 
-    public function testExecute()
+    public function testExecute(): void
     {
         $file1 = new File('filename', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg');
         $file1->setId(1);

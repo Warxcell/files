@@ -10,7 +10,7 @@ use stdClass;
 
 class AbstractModelFactoryTest extends TestCase
 {
-    public function testCreate()
+    public function testCreate(): void
     {
         $factory = new AbstractModelFactory(File::class);
         $file = $factory->create(new \SplFileInfo(__DIR__.'/files/image1.jpg'), 'name', 12345, 'hash', 'mimeType');
@@ -21,7 +21,7 @@ class AbstractModelFactoryTest extends TestCase
         self::assertSame('mimeType', $file->getMimeType());
     }
 
-    public function testInvalidClass()
+    public function testInvalidClass(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage(

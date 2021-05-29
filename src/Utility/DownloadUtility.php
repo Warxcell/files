@@ -6,7 +6,6 @@ namespace Arxy\FilesBundle\Utility;
 
 use Arxy\FilesBundle\ManagerInterface;
 use Arxy\FilesBundle\Model\File;
-use Arxy\FilesBundle\Model\MutableFile;
 use DateTimeImmutable;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -24,26 +23,9 @@ class DownloadUtility
         $this->manager = $manager;
     }
 
-    private function createDisposition(File $file): string
-    {
-        if ($file instanceof DownloadableFile) {
-            return HeaderUtils::makeDisposition(
-                $file->isForceDownload() ? HeaderUtils::DISPOSITION_ATTACHMENT : HeaderUtils::DISPOSITION_INLINE,
-                $file->getName() ?? u($file->getOriginalFilename())->ascii()->toString()
-            );
-        } else {
-            return HeaderUtils::makeDisposition(
-                HeaderUtils::DISPOSITION_ATTACHMENT,
-                u($file->getOriginalFilename())->ascii()->toString()
-            );
-        }
-    }
-
     public function createResponse(File $file): StreamedResponse
     {
         $response = new StreamedResponse();
-        $disposition = $this->createDisposition($file);
-        $response->headers->set('Content-Disposition', $disposition);
         $response->headers->set('Content-Type', $file->getMimeType());
         $response->setPublic();
         $response->setEtag($file->getHash());
@@ -52,11 +34,25 @@ class DownloadUtility
             $expireAt = $file->getExpireAt();
             $response->setExpires($expireAt);
             $response->setLastModified($file->getModifiedAt());
+
+            $contentDisposition = HeaderUtils::makeDisposition(
+                $file->isForceDownload() ? HeaderUtils::DISPOSITION_ATTACHMENT : HeaderUtils::DISPOSITION_INLINE,
+                $file->getName() ?? u($file->getOriginalFilename())->ascii()->toString()
+            );
         } else {
             $expireAt = new DateTimeImmutable("+30 days");
             $response->setExpires($expireAt);
             $response->setLastModified($file->getCreatedAt());
+
+            $contentDisposition = HeaderUtils::makeDisposition(
+                HeaderUtils::DISPOSITION_ATTACHMENT,
+                u($file->getOriginalFilename())->ascii()->toString()
+            );
         }
+
+        $response->headers->set('Content-Length', $file->getSize());
+
+        $response->headers->set('Content-Disposition', $contentDisposition);
 
         $stream = $this->manager->readStream($file);
         $response->setCallback(

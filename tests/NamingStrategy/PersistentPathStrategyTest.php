@@ -55,7 +55,7 @@ class PersistentPathStrategyTest extends AbstractStrategyTest
         );
     }
 
-    public function testInvalidDirectoryFile()
+    public function testInvalidDirectoryFile(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
@@ -65,7 +65,7 @@ class PersistentPathStrategyTest extends AbstractStrategyTest
         $this->getStrategy()->getDirectoryName($this->createMock(File::class));
     }
 
-    public function testInvalidFileName()
+    public function testInvalidFileName(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(

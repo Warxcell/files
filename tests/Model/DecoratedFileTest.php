@@ -24,27 +24,27 @@ class DecoratedFileTest extends TestCase
         $this->decorator = new VirtualFile($file);
     }
 
-    public function testGetOriginalFilename()
+    public function testGetOriginalFilename(): void
     {
         self::assertSame('filename', $this->decorator->getOriginalFilename());
     }
 
-    public function testGetSize()
+    public function testGetSize(): void
     {
         self::assertSame(1234, $this->decorator->getSize());
     }
 
-    public function testGetHash()
+    public function testGetHash(): void
     {
         self::assertSame('hash', $this->decorator->getHash());
     }
 
-    public function testGetMimeType()
+    public function testGetMimeType(): void
     {
         self::assertSame('mimeType', $this->decorator->getMimeType());
     }
 
-    public function testGetCreatedAt()
+    public function testGetCreatedAt(): void
     {
         self::assertSame($this->createdAt, $this->decorator->getCreatedAt());
     }

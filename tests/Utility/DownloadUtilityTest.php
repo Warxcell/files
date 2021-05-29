@@ -7,82 +7,102 @@ namespace Arxy\FilesBundle\Tests\Utility;
 use Arxy\FilesBundle\Manager;
 use Arxy\FilesBundle\ManagerInterface;
 use Arxy\FilesBundle\NamingStrategy;
-use Arxy\FilesBundle\Repository;
 use Arxy\FilesBundle\Tests\File;
+use Arxy\FilesBundle\Tests\MutableFile;
 use Arxy\FilesBundle\Utility\DownloadableFile;
 use Arxy\FilesBundle\Utility\DownloadUtility;
 use DateTimeImmutable;
-use League\Flysystem\Filesystem;
-use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
+use League\Flysystem\FilesystemOperator;
 use PHPUnit\Framework\TestCase;
-use SplFileObject;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class DownloadUtilityTest extends TestCase
 {
     private ManagerInterface $manager;
     private DownloadUtility $downloadUtility;
+    private string $pathname;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $repository = new class implements Repository {
-            public function findByHashAndSize(string $hash, int $size): ?File
-            {
-                return null;
-            }
 
-            public function findAllForBatchProcessing(): iterable
-            {
-                return [];
-            }
-        };
-        $flysystem = new Filesystem(new InMemoryFilesystemAdapter());
-        $namingStrategy = new NamingStrategy\SplitHashStrategy();
-        $this->manager = new Manager(File::class, $flysystem, $namingStrategy, $repository);
+        $this->pathname = __DIR__.'/../files/image1.jpg';
+        $flysystem = $this->createMock(FilesystemOperator::class);
+        $flysystem->method('readStream')->willReturn(fopen($this->pathname, 'r'));
+
+        $namingStrategy = $this->createMock(NamingStrategy::class);
+        $this->manager = new Manager(File::class, $flysystem, $namingStrategy);
         $this->downloadUtility = new DownloadUtility($this->manager);
     }
 
-    public function testCreateResponse()
+    public function createResponseProvider(): iterable
     {
-        $pathname = __DIR__.'/../files/image1.jpg';
-        $file = $this->manager->upload(new SplFileObject($pathname));
-        $this->manager->moveFile($file);
+        $file = new File('image1.jpg', 1234, '12345', 'image/jpeg');
+        $expiresAt = new DateTimeImmutable('+30 days');
+        yield [
+            $file,
+            'attachment; filename=image1.jpg',
+            'image/jpeg',
+            $expiresAt->format('D, d M Y H:i'),
+            $file->getCreatedAt()->format('D, d M Y H:i:s').' GMT',
+            1234,
+        ];
 
-        $response = $this->downloadUtility->createResponse($file);
+        yield [
+            new DownloadableFile(
+                $file,
+                'my_name.jpg',
+                false,
+                new DateTimeImmutable('2021-04-29 15:00:00')
+            ),
+            'inline; filename=my_name.jpg',
+            'image/jpeg',
+            'Thu, 29 Apr 2021 15:00:00 GMT',
+            $file->getCreatedAt()->format('D, d M Y H:i:s').' GMT',
+            1234,
+        ];
 
-        $now = new DateTimeImmutable('+30 days');
-        self::assertInstanceOf(StreamedResponse::class, $response);
-        self::assertSame('attachment; filename=image1.jpg', $response->headers->get('Content-Disposition'));
-        self::assertSame('image/jpeg', $response->headers->get('Content-Type'));
-        self::assertSame($now->format('D, d M Y H:i:s').' GMT', $response->headers->get('Expires'));
-
-        ob_start();
-        $response->sendContent();
-        $streamedContent = ob_get_clean();
-
-        self::assertSame(file_get_contents($pathname), $streamedContent);
+        $mutableFile = new MutableFile('image1.jpg', 1234, '12345', 'image/jpeg');
+        $mutableFile->setModifiedAt(new DateTimeImmutable('2021-04-30 15:00:00'));
+        yield [
+            new DownloadableFile(
+                $mutableFile,
+                'my_name.jpg',
+                false,
+                new DateTimeImmutable('2021-05-29 15:00:00')
+            ),
+            'inline; filename=my_name.jpg',
+            'image/jpeg',
+            'Sat, 29 May 2021 15:00:00 GMT',
+            $mutableFile->getModifiedAt()->format('D, d M Y H:i:s').' GMT',
+            1234,
+        ];
     }
 
-    public function testCreateResponseDownloadableFile()
-    {
-        $pathname = __DIR__.'/../files/image1.jpg';
-        $file = $this->manager->upload(new SplFileObject($pathname));
-        $this->manager->moveFile($file);
-
-        $response = $this->downloadUtility->createResponse(
-            new DownloadableFile($file, 'my_name.jpg', false, new DateTimeImmutable('2021-04-29 15:00:00'))
-        );
+    /**
+     * @dataProvider createResponseProvider
+     */
+    public function testCreateResponse(
+        \Arxy\FilesBundle\Model\File $file,
+        string $expectedContentDisposition,
+        string $expectedContentType,
+        string $expectedExpires,
+        string $expectedLastModified,
+        int $expectedContentLength
+    ) {
+        $response = $this->downloadUtility->createResponse($file);
 
         self::assertInstanceOf(StreamedResponse::class, $response);
-        self::assertSame('inline; filename=my_name.jpg', $response->headers->get('Content-Disposition'));
-        self::assertSame('image/jpeg', $response->headers->get('Content-Type'));
-        self::assertSame('Thu, 29 Apr 2021 15:00:00 GMT', $response->headers->get('Expires'));
+        self::assertSame($expectedContentDisposition, $response->headers->get('Content-Disposition'));
+        self::assertSame($expectedContentType, $response->headers->get('Content-Type'));
+        self::assertStringContainsString($expectedExpires, $response->headers->get('Expires'));
+        self::assertSame($expectedLastModified, $response->headers->get('Last-Modified'));
+        self::assertSame((string)$expectedContentLength, $response->headers->get('Content-Length'));
 
         ob_start();
         $response->sendContent();
         $streamedContent = ob_get_clean();
 
-        self::assertSame(file_get_contents($pathname), $streamedContent);
+        self::assertSame(file_get_contents($this->pathname), $streamedContent);
     }
 }

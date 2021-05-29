@@ -25,7 +25,7 @@ class AwsS3PathResolverTest extends TestCase
         $this->pathResolver = new PathResolver\AwsS3PathResolver($this->s3Client, 'bucket', $this->manager);
     }
 
-    public function testGetPath()
+    public function testGetPath(): void
     {
         $file = new File('original_filename.jpg', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg');
 

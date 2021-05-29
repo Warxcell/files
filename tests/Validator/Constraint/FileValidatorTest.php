@@ -12,12 +12,12 @@ use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class FileValidatorTest extends ConstraintValidatorTestCase
 {
-    protected function createValidator()
+    protected function createValidator(): FileValidator
     {
         return new FileValidator();
     }
 
-    public function testNotValidValue()
+    public function testNotValidValue(): void
     {
         $this->expectException(UnexpectedTypeException::class);
         $this->expectExceptionMessage('Expected argument of type "Arxy\FilesBundle\Model\File", "stdClass" given');
@@ -32,7 +32,7 @@ class FileValidatorTest extends ConstraintValidatorTestCase
         );
     }
 
-    public function testNotValidConstraint()
+    public function testNotValidConstraint(): void
     {
         $this->expectException(UnexpectedTypeException::class);
         $this->expectExceptionMessage(

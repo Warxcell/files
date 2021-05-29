@@ -28,7 +28,7 @@ class IdToPathStrategyTest extends AbstractStrategyTest
         return $file;
     }
 
-    public function testInvalidDirectoryFile()
+    public function testInvalidDirectoryFile(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
@@ -38,7 +38,7 @@ class IdToPathStrategyTest extends AbstractStrategyTest
         $this->getStrategy()->getDirectoryName($this->createMock(\Arxy\FilesBundle\Model\File::class));
     }
 
-    public function testInvalidFileName()
+    public function testInvalidFileName(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(

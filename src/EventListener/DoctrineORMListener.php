@@ -77,6 +77,11 @@ final class DoctrineORMListener
 
     public function preRemove(LifecycleEventArgs $eventArgs): void
     {
+        $this->postRemove($eventArgs);
+    }
+
+    public function postRemove(LifecycleEventArgs $eventArgs): void
+    {
         $entity = $eventArgs->getEntity();
         $entityManager = $eventArgs->getEntityManager();
 
@@ -84,11 +89,6 @@ final class DoctrineORMListener
             ($this->remove)($entity);
         }
         $this->handleEmbeddable($entityManager, $entity, $this->remove);
-    }
-
-    public function postRemove(LifecycleEventArgs $eventArgs): void
-    {
-        $this->preRemove($eventArgs);
     }
 
     public function onClear(): void

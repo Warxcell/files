@@ -25,12 +25,12 @@ class UuidV4StrategyTest extends TestCase
         );
     }
 
-    public function testDirectoryName()
+    public function testDirectoryName(): void
     {
         self::assertNull($this->getStrategy()->getDirectoryName($this->getFile()));
     }
 
-    public function testGetFilename()
+    public function testGetFilename(): void
     {
         $strategy = $this->getStrategy();
 

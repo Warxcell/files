@@ -35,7 +35,7 @@ class DelegatingManagerTest extends TestCase
         );
     }
 
-    public function testZeroManagers()
+    public function testZeroManagers(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('You should pass at least one manager!');
@@ -43,7 +43,7 @@ class DelegatingManagerTest extends TestCase
         new DelegatingManager([]);
     }
 
-    public function testRead()
+    public function testRead(): void
     {
         $file1 = new File('original_filename.jpg', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg');
         $file2 = new File2('original_filename.jpg', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg');
@@ -55,7 +55,7 @@ class DelegatingManagerTest extends TestCase
         self::assertSame('manager2Read', $this->manager->read($file2));
     }
 
-    public function testReadStream()
+    public function testReadStream(): void
     {
         $file1 = new File('original_filename.jpg', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg');
         $file2 = new File2('original_filename.jpg', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg');
@@ -67,7 +67,7 @@ class DelegatingManagerTest extends TestCase
         self::assertSame('manager2Read', $this->manager->readStream($file2));
     }
 
-    public function testGetPathname()
+    public function testGetPathname(): void
     {
         $file1 = new File('original_filename.jpg', 125, '1234567', 'image/jpeg');
         $file1->setId(1);
@@ -92,7 +92,7 @@ class DelegatingManagerTest extends TestCase
         );
     }
 
-    public function testWrite()
+    public function testWrite(): void
     {
         $file1 = new File('original_filename.jpg', 125, '1234567', 'image/jpeg');
 
@@ -101,7 +101,7 @@ class DelegatingManagerTest extends TestCase
         $this->manager->write($file1, 'test');
     }
 
-    public function testWriteStream()
+    public function testWriteStream(): void
     {
         $file1 = new File('original_filename.jpg', 125, '1234567', 'image/jpeg');
         $stream = fopen('data://text/plain,test', 'r');
@@ -111,61 +111,61 @@ class DelegatingManagerTest extends TestCase
         $this->manager->writeStream($file1, $stream);
     }
 
-    public function testNoManagerForFileRead()
+    public function testNoManagerForFileRead(): void
     {
         $this->expectException(LogicException::class);
         $this->expectExceptionMessage('No manager for Arxy\FilesBundle\Tests\File3');
         $this->manager->read(new File3('original_filename.jpg', 125, '1234567', 'image/jpeg'));
     }
 
-    public function testNoManagerForFileReadStream()
+    public function testNoManagerForFileReadStream(): void
     {
         $this->expectException(LogicException::class);
         $this->expectExceptionMessage('No manager for Arxy\FilesBundle\Tests\File3');
         $this->manager->readStream(new File3('original_filename.jpg', 125, '1234567', 'image/jpeg'));
     }
 
-    public function testNoManagerForFileWrite()
+    public function testNoManagerForFileWrite(): void
     {
         $this->expectException(LogicException::class);
         $this->expectExceptionMessage('No manager for Arxy\FilesBundle\Tests\File3');
         $this->manager->readStream(new File3('original_filename.jpg', 125, '1234567', 'image/jpeg'));
     }
 
-    public function testNoManagerForFileWriteStream()
+    public function testNoManagerForFileWriteStream(): void
     {
         $this->expectException(LogicException::class);
         $this->expectExceptionMessage('No manager for Arxy\FilesBundle\Tests\File3');
         $this->manager->readStream(new File3('original_filename.jpg', 125, '1234567', 'image/jpeg'));
     }
 
-    public function testNoManagerForFilePathname()
+    public function testNoManagerForFilePathname(): void
     {
         $this->expectException(LogicException::class);
         $this->expectExceptionMessage('No manager for Arxy\FilesBundle\Tests\File3');
         $this->manager->getPathname(new File3('original_filename.jpg', 125, '1234567', 'image/jpeg'));
     }
 
-    public function testNoManagerForFileMove()
+    public function testNoManagerForFileMove(): void
     {
         $this->expectException(LogicException::class);
         $this->expectExceptionMessage('No manager for Arxy\FilesBundle\Tests\File3');
         $this->manager->moveFile(new File3('original_filename.jpg', 125, '1234567', 'image/jpeg'));
     }
 
-    public function testNoManagerForRemove()
+    public function testNoManagerForRemove(): void
     {
         $this->expectException(LogicException::class);
         $this->expectExceptionMessage('No manager for Arxy\FilesBundle\Tests\File3');
         $this->manager->remove(new File3('original_filename.jpg', 125, '1234567', 'image/jpeg'));
     }
 
-    public function testGetClass()
+    public function testGetClass(): void
     {
         self::assertEquals($this->manager1->getClass(), $this->manager->getClass());
     }
 
-    public function testMainManager()
+    public function testMainManager(): void
     {
         $forUpload = new \SplFileInfo(__DIR__.'/files/image1.jpg');
         $uploadedFile = new File2('original_filename.jpg', 125, '1234567', 'image/jpeg');
@@ -186,7 +186,7 @@ class DelegatingManagerTest extends TestCase
         self::assertSame($uploadedFile, $actualFile);
     }
 
-    public function testClear()
+    public function testClear(): void
     {
         $manager1 = $this->createMock(ManagerInterface::class);
         $manager1->expects($this->once())->method('clear');

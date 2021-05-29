@@ -20,7 +20,7 @@ class PreviewGeneratorTest extends AbstractFunctionalTest
         return [];
     }
 
-    public function testImagePreview()
+    public function testImagePreview(): void
     {
         $file = $this->manager->upload(new SplFileInfo(__DIR__.'/../../files/image1.jpg'));
         assert($file instanceof FileWithPreview);
@@ -45,7 +45,7 @@ class PreviewGeneratorTest extends AbstractFunctionalTest
 //        self::assertSame('image1_preview.jpg', $file->getPreview()->getOriginalFilename());
     }
 
-    public function testPreviewWrite()
+    public function testPreviewWrite(): void
     {
         $file = $this->manager->upload(new SplFileInfo(__DIR__.'/../../files/image1.jpg'));
         assert($file instanceof FileWithPreview);
@@ -61,7 +61,7 @@ class PreviewGeneratorTest extends AbstractFunctionalTest
         self::assertNotSame($preview1, $file->getPreview());
     }
 
-    public function testPreviewWriteStream()
+    public function testPreviewWriteStream(): void
     {
         $file = $this->manager->upload(new SplFileInfo(__DIR__.'/../../files/image1.jpg'));
         assert($file instanceof FileWithPreview);
@@ -79,7 +79,7 @@ class PreviewGeneratorTest extends AbstractFunctionalTest
         self::assertNotSame($preview1, $file->getPreview());
     }
 
-    public function testNotSupportedFile()
+    public function testNotSupportedFile(): void
     {
         $file = $this->manager->upload(new SplFileInfo(__DIR__.'/../../files/lorem-ipsum.pdf'));
         assert($file instanceof FileWithPreview);

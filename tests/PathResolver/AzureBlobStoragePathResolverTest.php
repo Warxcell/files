@@ -22,7 +22,7 @@ class AzureBlobStoragePathResolverTest extends TestCase
         $this->blobRestProxy = $this->createMock(BlobRestProxy::class);
     }
 
-    public function testGetPath()
+    public function testGetPath(): void
     {
         $file = new File('original_filename.jpg', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg');
 

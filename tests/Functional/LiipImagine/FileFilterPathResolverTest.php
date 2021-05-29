@@ -34,7 +34,7 @@ class FileFilterPathResolverTest extends AbstractFunctionalTest
         $this->entityManager->flush();
     }
 
-    public function testFilter()
+    public function testFilter(): void
     {
         $pathResolver = self::$container->get(FileFilterPathResolver::class);
         assert($pathResolver instanceof FileFilterPathResolver);
@@ -46,7 +46,7 @@ class FileFilterPathResolverTest extends AbstractFunctionalTest
         );
     }
 
-    public function testInvalidInstancePassed()
+    public function testInvalidInstancePassed(): void
     {
         $pathResolver = self::$container->get(FileFilterPathResolver::class);
         assert($pathResolver instanceof FileFilterPathResolver);

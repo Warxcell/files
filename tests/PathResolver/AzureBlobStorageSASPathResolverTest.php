@@ -64,7 +64,7 @@ class AzureBlobStorageSASPathResolverTest extends TestCase
         self::assertSame('url?sas', $sasResolver->getPath($file));
     }
 
-    public function testGetPathNullParams()
+    public function testGetPathNullParams(): void
     {
         $file = new File('original_filename.jpg', 125, '1234567', 'image/jpeg');
 

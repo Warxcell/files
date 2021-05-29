@@ -17,7 +17,7 @@ class AzureBlobStorageSASParametersTest extends TestCase
         $this->parameters = new PathResolver\AzureBlobStorageSASParameters(new \DateTimeImmutable());
     }
 
-    public function testWithExpiry()
+    public function testWithExpiry(): void
     {
         $expiry = new \DateTimeImmutable();
 
@@ -27,7 +27,7 @@ class AzureBlobStorageSASParametersTest extends TestCase
         self::assertSame($expiry, $new->getExpiry());
     }
 
-    public function testWithStart()
+    public function testWithStart(): void
     {
         $expiry = new \DateTimeImmutable();
 
@@ -37,7 +37,7 @@ class AzureBlobStorageSASParametersTest extends TestCase
         self::assertSame($expiry, $new->getStart());
     }
 
-    public function testWithIp()
+    public function testWithIp(): void
     {
         $new = $this->parameters->withIp('127.0.0.1');
 
@@ -45,7 +45,7 @@ class AzureBlobStorageSASParametersTest extends TestCase
         self::assertSame('127.0.0.1', $new->getIp());
     }
 
-    public function testWithIdentifier()
+    public function testWithIdentifier(): void
     {
         $new = $this->parameters->withIdentifier('id');
 
@@ -53,7 +53,7 @@ class AzureBlobStorageSASParametersTest extends TestCase
         self::assertSame('id', $new->getIdentifier());
     }
 
-    public function testWithCacheControl()
+    public function testWithCacheControl(): void
     {
         $new = $this->parameters->withCacheControl('cache-control');
 
@@ -61,7 +61,7 @@ class AzureBlobStorageSASParametersTest extends TestCase
         self::assertSame('cache-control', $new->getCacheControl());
     }
 
-    public function testWithContentDisposition()
+    public function testWithContentDisposition(): void
     {
         $new = $this->parameters->withContentDisposition('content-disposition');
 
@@ -69,7 +69,7 @@ class AzureBlobStorageSASParametersTest extends TestCase
         self::assertSame('content-disposition', $new->getContentDisposition());
     }
 
-    public function testWithContentEncoding()
+    public function testWithContentEncoding(): void
     {
         $new = $this->parameters->withContentEncoding('content-encoding');
 
@@ -77,7 +77,7 @@ class AzureBlobStorageSASParametersTest extends TestCase
         self::assertSame('content-encoding', $new->getContentEncoding());
     }
 
-    public function testWithContentLanguage()
+    public function testWithContentLanguage(): void
     {
         $new = $this->parameters->withContentLanguage('content-language');
 
@@ -85,7 +85,7 @@ class AzureBlobStorageSASParametersTest extends TestCase
         self::assertSame('content-language', $new->getContentLanguage());
     }
 
-    public function testWithContentType()
+    public function testWithContentType(): void
     {
         $new = $this->parameters->withContentType('content-type');
 

@@ -55,7 +55,7 @@ class ManagerTest extends TestCase
         );
     }
 
-    public function testUploadEvent()
+    public function testUploadEvent(): void
     {
         $dispatcher = $this->createMock(EventDispatcherInterface::class);
 
@@ -79,7 +79,7 @@ class ManagerTest extends TestCase
         $manager->upload(new SplFileObject(__DIR__.'/files/image1.jpg'));
     }
 
-    public function testMoveEvents()
+    public function testMoveEvents(): void
     {
         $dispatcher = $this->createMock(EventDispatcherInterface::class);
 
@@ -119,7 +119,7 @@ class ManagerTest extends TestCase
         $manager->moveFile($file);
     }
 
-    public function testPreMoveEventNotFired()
+    public function testPreMoveEventNotFired(): void
     {
         $dispatcher = $this->createMock(EventDispatcherInterface::class);
 
@@ -149,7 +149,7 @@ class ManagerTest extends TestCase
         }
     }
 
-    public function testPreRemove()
+    public function testPreRemove(): void
     {
         $dispatcher = $this->createMock(EventDispatcherInterface::class);
 
@@ -183,7 +183,7 @@ class ManagerTest extends TestCase
         $manager->remove($file);
     }
 
-    public function testInvalidClassPassed()
+    public function testInvalidClassPassed(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Class must be subclass of '.\Arxy\FilesBundle\Model\File::class);
@@ -195,7 +195,7 @@ class ManagerTest extends TestCase
         );
     }
 
-    public function testSimpleUpload()
+    public function testSimpleUpload(): void
     {
         self::assertEquals(File::class, $this->manager->getClass());
         /** @var File $file */
@@ -216,7 +216,7 @@ class ManagerTest extends TestCase
         );
     }
 
-    public function testSimpleUploadFromUrl()
+    public function testSimpleUploadFromUrl(): void
     {
         $url = 'file:///'.__DIR__.'/files/image1.jpg';
 
@@ -237,7 +237,7 @@ class ManagerTest extends TestCase
         self::assertEquals(24053, strlen($this->filesystem->read('1')));
     }
 
-    public function testUploadedFileUpload()
+    public function testUploadedFileUpload(): void
     {
         $uploadedFile = new UploadedFile(__DIR__.'/files/image1.jpg', 'image_1_uploaded.jpg', 'image/jpg');
         $file = $this->manager->upload($uploadedFile);
@@ -249,7 +249,7 @@ class ManagerTest extends TestCase
         self::assertEquals('image/jpeg', $file->getMimeType());
     }
 
-    public function testAlreadyUploadedFile()
+    public function testAlreadyUploadedFile(): void
     {
         $file = new File('image2.jpg', 24053, '9aa1c5fc7c9388166d7ce7fd46648dd1', 'image/jpeg');
 
@@ -276,7 +276,7 @@ class ManagerTest extends TestCase
         self::assertEquals('image/jpeg', $file->getMimeType());
     }
 
-    public function testAlreadyUploadedFileWithoutRepository()
+    public function testAlreadyUploadedFileWithoutRepository(): void
     {
         $manager = new Manager(
             File::class,
@@ -292,7 +292,7 @@ class ManagerTest extends TestCase
         self::assertNotSame($file1, $file2);
     }
 
-    public function testCreateDirectoryCalled()
+    public function testCreateDirectoryCalled(): void
     {
         $filesystem = $this->createMock(FilesystemOperator::class);
         $filesystem->expects($this->once())->method('createDirectory')->with('directory');
@@ -318,7 +318,7 @@ class ManagerTest extends TestCase
         $manager->moveFile($upload);
     }
 
-    public function testCreateDirectoryNotCalled()
+    public function testCreateDirectoryNotCalled(): void
     {
         $filesystem = $this->createMock(FilesystemOperator::class);
         $filesystem->expects($this->never())->method('createDirectory');
@@ -344,7 +344,7 @@ class ManagerTest extends TestCase
         $manager->moveFile($upload);
     }
 
-    public function testNamingStrategyWithDirectory()
+    public function testNamingStrategyWithDirectory(): void
     {
         $manager = new Manager(
             File::class,
@@ -373,7 +373,7 @@ class ManagerTest extends TestCase
     }
 
 
-    public function testNamingStrategyWithoutDirectory()
+    public function testNamingStrategyWithoutDirectory(): void
     {
         $manager = new Manager(
             File::class,
@@ -401,7 +401,7 @@ class ManagerTest extends TestCase
         self::assertTrue($this->filesystem->fileExists('directory_test.jpg'));
     }
 
-    public function testMoveDeletedFile()
+    public function testMoveDeletedFile(): void
     {
         $forUpload = __DIR__.'/files/image1.jpg';
         $tmpFile = tempnam(sys_get_temp_dir(), 'arxy_files');
@@ -417,7 +417,7 @@ class ManagerTest extends TestCase
         $this->manager->moveFile($file);
     }
 
-    public function testWrongFileMove()
+    public function testWrongFileMove(): void
     {
         $file = new File('filename', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg');
         $this->expectException(InvalidArgumentException::class);
@@ -426,7 +426,7 @@ class ManagerTest extends TestCase
         $this->manager->moveFile($file);
     }
 
-    public function testWrongFileMoveStringable()
+    public function testWrongFileMoveStringable(): void
     {
         $file = new StringableFile('filename', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg');
         $file->setId(25);
@@ -436,7 +436,7 @@ class ManagerTest extends TestCase
         $this->manager->moveFile($file);
     }
 
-    public function testSimpleMoveFile()
+    public function testSimpleMoveFile(): void
     {
         $forUpload = __DIR__.'/files/image1.jpg';
         /** @var File $file */
@@ -452,7 +452,7 @@ class ManagerTest extends TestCase
         self::assertEquals(md5_file($forUpload), md5($this->filesystem->read('1')));
     }
 
-    public function testSimpleDelete()
+    public function testSimpleDelete(): void
     {
         self::assertFalse($this->filesystem->fileExists('2'));
 
@@ -480,7 +480,7 @@ class ManagerTest extends TestCase
         self::assertEquals(__DIR__.'/files/image1.jpg', $pathname);
     }
 
-    public function testFinalFilePathname()
+    public function testFinalFilePathname(): void
     {
         /** @var File $file */
         $file = $this->manager->upload(new SplFileObject(__DIR__.'/files/image1.jpg'));
@@ -498,7 +498,7 @@ class ManagerTest extends TestCase
         self::assertEquals('3', $pathname);
     }
 
-    public function testTemporaryFileRead()
+    public function testTemporaryFileRead(): void
     {
         /** @var File $file */
         $file = $this->manager->upload(new SplFileObject(__DIR__.'/files/image1.jpg'));
@@ -506,7 +506,7 @@ class ManagerTest extends TestCase
         self::assertEquals(file_get_contents(__DIR__.'/files/image1.jpg'), $this->manager->read($file));
     }
 
-    public function testFinalFileRead()
+    public function testFinalFileRead(): void
     {
         /** @var File $file */
         $file = $this->manager->upload(new SplFileObject(__DIR__.'/files/image1.jpg'));
@@ -517,7 +517,7 @@ class ManagerTest extends TestCase
         self::assertEquals(file_get_contents(__DIR__.'/files/image1.jpg'), $this->manager->read($file));
     }
 
-    public function testTemporaryReadStream()
+    public function testTemporaryReadStream(): void
     {
         /** @var File $file */
         $file = $this->manager->upload(new SplFileObject(__DIR__.'/files/image1.jpg'));
@@ -528,7 +528,7 @@ class ManagerTest extends TestCase
         self::assertEquals(file_get_contents(__DIR__.'/files/image1.jpg'), stream_get_contents($stream));
     }
 
-    public function testFinalFileReadStream()
+    public function testFinalFileReadStream(): void
     {
         /** @var File $file */
         $file = $this->manager->upload(new SplFileObject(__DIR__.'/files/image1.jpg'));
@@ -554,7 +554,7 @@ class ManagerTest extends TestCase
         $this->expectNotToPerformAssertions();
     }
 
-    public function testWrite()
+    public function testWrite(): void
     {
         $forUpload = __DIR__.'/files/image1.jpg';
         $file = $this->manager->upload(new SplFileObject($forUpload));
@@ -572,7 +572,7 @@ class ManagerTest extends TestCase
         self::assertEquals('image/jpeg', $file->getMimeType());
     }
 
-    public function testWriteStream()
+    public function testWriteStream(): void
     {
         $forUpload = __DIR__.'/files/image1.jpg';
         $file = $this->manager->upload(new SplFileObject($forUpload));
@@ -590,7 +590,7 @@ class ManagerTest extends TestCase
         self::assertEquals('image/jpeg', $file->getMimeType());
     }
 
-    public function testWriteTemporaryFile()
+    public function testWriteTemporaryFile(): void
     {
         $tmp = tempnam(sys_get_temp_dir(), 'files');
         $forUpload = __DIR__.'/files/image1.jpg';
@@ -610,7 +610,7 @@ class ManagerTest extends TestCase
         self::assertEquals('image/jpeg', $file->getMimeType());
     }
 
-    public function testWriteStreamTemporaryFile()
+    public function testWriteStreamTemporaryFile(): void
     {
         $tmp = tempnam(sys_get_temp_dir(), 'files');
         $forUpload = __DIR__.'/files/image1.jpg';
@@ -630,7 +630,7 @@ class ManagerTest extends TestCase
         self::assertEquals('image/jpeg', $file->getMimeType());
     }
 
-    public function testWriteEvents()
+    public function testWriteEvents(): void
     {
         $dispatcher = $this->createMock(EventDispatcherInterface::class);
 
@@ -664,7 +664,7 @@ class ManagerTest extends TestCase
         $manager->write($file, 'test');
     }
 
-    public function testWriteStreamEvents()
+    public function testWriteStreamEvents(): void
     {
         $dispatcher = $this->createMock(EventDispatcherInterface::class);
 
@@ -700,7 +700,7 @@ class ManagerTest extends TestCase
         $manager->writeStream($file, $stream);
     }
 
-    public function testClear()
+    public function testClear(): void
     {
         $file = $this->manager->upload(new SplFileObject(__DIR__.'/files/image1.jpg'));
         assert($file instanceof File);
