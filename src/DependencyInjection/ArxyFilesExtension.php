@@ -89,14 +89,14 @@ class ArxyFilesExtension extends Extension
         }
     }
 
-    private function createListenerDefinition(string $driver, string $serviceId, bool $preRemove = false): Definition
+    private function createListenerDefinition(string $driver, string $serviceId): Definition
     {
         switch ($driver) {
             case 'orm':
                 $definition = new Definition(DoctrineORMListener::class);
                 $definition->setArgument('$manager', new Reference($serviceId));
                 $definition->addTag('doctrine.event_listener', ['event' => 'postPersist', 'lazy' => true]);
-                $definition->addTag('doctrine.event_listener', ['event' => 'preRemove', 'lazy' => true]);
+                $definition->addTag('doctrine.event_listener', ['event' => 'postRemove', 'lazy' => true]);
                 $definition->addTag('doctrine.event_listener', ['event' => 'onClear', 'lazy' => true]);
 
                 return $definition;
