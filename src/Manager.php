@@ -69,7 +69,7 @@ final class Manager implements ManagerInterface
             throw new InvalidArgumentException(sprintf('The algorithm "%s" is not supported.', $hashingAlgorithm));
         }
         if (!is_subclass_of($class, File::class)) {
-            throw new InvalidArgumentException('Class must be subclass of '.File::class);
+            throw new InvalidArgumentException('Class must be subclass of ' . File::class);
         }
 
         $this->class = $class;
@@ -107,7 +107,7 @@ final class Manager implements ManagerInterface
 
         $stream = @fopen($splFileInfo->getPathname(), 'r');
         if (!$stream) {
-            throw new RuntimeException('Failed to open '.$splFileInfo->getPathname());
+            throw new RuntimeException('Failed to open ' . $splFileInfo->getPathname());
         }
         $this->filesystem->writeStream($path, $stream);
         if (is_resource($stream)) {
@@ -131,11 +131,14 @@ final class Manager implements ManagerInterface
         $this->filesystem->delete($this->getPathname($file));
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     private function getMimeTypeByFile(SplFileInfo $file): string
     {
         $mimeType = $this->mimeTypeDetector->detectMimeTypeFromFile($file->getPathname());
         if ($mimeType === null) {
-            throw new InvalidArgumentException('Failed to detect mimeType for '.$file->getPathname());
+            throw new InvalidArgumentException('Failed to detect mimeType for ' . $file->getPathname());
         }
 
         return $mimeType;

@@ -11,6 +11,7 @@ use Closure;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\LifecycleEventArgs;
+use ReflectionObject;
 
 final class DoctrineORMListener
 {
@@ -53,7 +54,7 @@ final class DoctrineORMListener
                 continue;
             }
 
-            $refl = new \ReflectionObject($entity);
+            $refl = new ReflectionObject($entity);
             $reflProperty = $refl->getProperty($property);
             $reflProperty->setAccessible(true);
             $file = $reflProperty->getValue($entity);

@@ -50,8 +50,7 @@ class DownloadUtility
             );
         }
 
-        $response->headers->set('Content-Length', $file->getSize());
-
+        $response->headers->set('Content-Length', (string)$file->getSize());
         $response->headers->set('Content-Disposition', $contentDisposition);
 
         $stream = $this->manager->readStream($file);
