@@ -10,6 +10,8 @@ use Arxy\FilesBundle\LiipImagine\FileFilter;
 use Arxy\FilesBundle\ManagerInterface;
 use LogicException;
 use PHPUnit\Framework\TestCase;
+use SplFileInfo;
+use stdClass;
 
 class DelegatingManagerTest extends TestCase
 {
@@ -167,7 +169,7 @@ class DelegatingManagerTest extends TestCase
 
     public function testMainManager(): void
     {
-        $forUpload = new \SplFileInfo(__DIR__.'/files/image1.jpg');
+        $forUpload = new SplFileInfo(__DIR__.'/files/image1.jpg');
         $uploadedFile = new File2('original_filename.jpg', 125, '1234567', 'image/jpeg');
 
         $manager1 = $this->createMock(ManagerInterface::class);
@@ -184,6 +186,28 @@ class DelegatingManagerTest extends TestCase
 
         $actualFile = $manager->upload($forUpload);
         self::assertSame($uploadedFile, $actualFile);
+    }
+
+    public function testGetManagerFor()
+    {
+        $manager1 = $this->createMock(ManagerInterface::class);
+        $manager1->method('getClass')->willReturn(File::class);
+        $manager2 = $this->createMock(ManagerInterface::class);
+        $manager2->method('getClass')->willReturn(File2::class);
+
+        $manager = new DelegatingManager(
+            [
+                $manager1,
+                $manager2,
+            ]
+        );
+
+        self::assertSame($manager1, $manager->getManagerFor(File::class));
+        self::assertSame($manager2, $manager->getManagerFor(File2::class));
+
+        $this->expectException(LogicException::class);
+        $this->expectExceptionMessage('No manager for stdClass');
+        $manager->getManagerFor(stdClass::class);
     }
 
     public function testClear(): void

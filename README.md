@@ -733,6 +733,19 @@ Used when your system have multiple file entities:
         alias: Arxy\FilesBundle\PathResolverManager
 ```
 
+There is also DelegatingManager, which can be used as router to different other managers, supporting different classes.
+```yaml
+    Arxy\FilesBundle\DelegatingManager:
+        arguments:
+            $managers: ['@manager_1', '@manager_2']
+```
+
+
+Then you can do: `$manager->getManagerFor(File::class)->upload($file)`. 
+Note: If you do directly `$manager->upload($file)` - it will call first manager's upload method.
+Reading is even easier: Just pass the `$file` directly, it will determine the correct inner manager for that file. 
+`$manager->read($file)`
+
 ### Sending additional parameters to path resolver.
 
 Ok, we have path generated to our files now, but what if we want to represent same file, differently? Obviously we

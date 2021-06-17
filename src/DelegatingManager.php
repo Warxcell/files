@@ -40,7 +40,20 @@ final class DelegatingManager implements ManagerInterface
         return $file;
     }
 
-    private function getManagerFor(File $file): ManagerInterface
+    /**
+     * @throws LogicException if not manager is found for $class
+     */
+    public function getManagerFor(string $class): ManagerInterface
+    {
+        foreach ($this->managers as $manager) {
+            if ($manager->getClass() === $class) {
+                return $manager;
+            }
+        }
+        throw new LogicException('No manager for '.$class);
+    }
+
+    private function getManagerForFile(File $file): ManagerInterface
     {
         foreach ($this->managers as $manager) {
             $class = $manager->getClass();
@@ -60,47 +73,47 @@ final class DelegatingManager implements ManagerInterface
     {
         $file = $this->getFile($file);
 
-        return $this->getManagerFor($file)->getPathname($file);
+        return $this->getManagerForFile($file)->getPathname($file);
     }
 
     public function read(File $file): string
     {
         $file = $this->getFile($file);
 
-        return $this->getManagerFor($file)->read($file);
+        return $this->getManagerForFile($file)->read($file);
     }
 
     public function readStream(File $file)
     {
         $file = $this->getFile($file);
 
-        return $this->getManagerFor($file)->readStream($file);
+        return $this->getManagerForFile($file)->readStream($file);
     }
 
     public function write(MutableFile $file, string $contents): void
     {
         $file = $this->getFile($file);
         assert($file instanceof MutableFile);
-        $this->getManagerFor($file)->write($file, $contents);
+        $this->getManagerForFile($file)->write($file, $contents);
     }
 
     public function writeStream(MutableFile $file, $resource): void
     {
         $file = $this->getFile($file);
         assert($file instanceof MutableFile);
-        $this->getManagerFor($file)->writeStream($file, $resource);
+        $this->getManagerForFile($file)->writeStream($file, $resource);
     }
 
     public function moveFile(File $file): void
     {
         $file = $this->getFile($file);
-        $this->getManagerFor($file)->moveFile($file);
+        $this->getManagerForFile($file)->moveFile($file);
     }
 
     public function remove(File $file): void
     {
         $file = $this->getFile($file);
-        $this->getManagerFor($file)->remove($file);
+        $this->getManagerForFile($file)->remove($file);
     }
 
     public function getClass(): string
