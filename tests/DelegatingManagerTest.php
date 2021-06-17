@@ -213,13 +213,33 @@ class DelegatingManagerTest extends TestCase
     public function testClear(): void
     {
         $manager1 = $this->createMock(ManagerInterface::class);
+        $manager1->method('getClass')->willReturn(File::class);
         $manager1->expects($this->once())->method('clear');
+
         $manager2 = $this->createMock(ManagerInterface::class);
+        $manager2->method('getClass')->willReturn(File2::class);
         $manager2->expects($this->once())->method('clear');
+
         $manager3 = $this->createMock(ManagerInterface::class);
+        $manager3->method('getClass')->willReturn(File3::class);
         $manager3->expects($this->once())->method('clear');
 
         $manager = new DelegatingManager([$manager1, $manager2], $manager3);
+        $manager->clear();
+
+        $manager1 = $this->createMock(ManagerInterface::class);
+        $manager1->method('getClass')->willReturn(File::class);
+        $manager1->expects($this->once())->method('clear');
+
+        $manager2 = $this->createMock(ManagerInterface::class);
+        $manager2->method('getClass')->willReturn(File2::class);
+        $manager2->expects($this->once())->method('clear');
+
+        $manager3 = $this->createMock(ManagerInterface::class);
+        $manager3->method('getClass')->willReturn(File3::class);
+        $manager3->expects($this->once())->method('clear');
+
+        $manager = new DelegatingManager([$manager1, $manager2, $manager3], $manager3);
         $manager->clear();
     }
 }

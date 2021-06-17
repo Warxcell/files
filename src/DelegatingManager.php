@@ -17,17 +17,22 @@ final class DelegatingManager implements ManagerInterface
     private array $managers;
     private ManagerInterface $manager;
 
+    /**
+     * @param ManagerInterface[] $managers
+     */
     public function __construct(array $managers, ManagerInterface $manager = null)
     {
         if (count($managers) === 0) {
             throw new InvalidArgumentException('You should pass at least one manager!');
         }
-        $this->managers = $managers;
-
         if ($manager !== null) {
             $this->manager = $manager;
         } else {
             $this->manager = reset($managers);
+        }
+
+        foreach ($managers as $manager) {
+            $this->managers[$manager->getClass()] = $manager;
         }
     }
 
@@ -45,18 +50,16 @@ final class DelegatingManager implements ManagerInterface
      */
     public function getManagerFor(string $class): ManagerInterface
     {
-        foreach ($this->managers as $manager) {
-            if ($manager->getClass() === $class) {
-                return $manager;
-            }
+        if (!isset($this->managers[$class])) {
+            throw new LogicException('No manager for '.$class);
         }
-        throw new LogicException('No manager for '.$class);
+
+        return $this->managers[$class];
     }
 
     private function getManagerForFile(File $file): ManagerInterface
     {
-        foreach ($this->managers as $manager) {
-            $class = $manager->getClass();
+        foreach ($this->managers as $class => $manager) {
             if ($file instanceof $class) {
                 return $manager;
             }
@@ -123,9 +126,7 @@ final class DelegatingManager implements ManagerInterface
 
     public function clear(): void
     {
-        $this->manager->clear();
-
-        foreach ($this->managers as $manager) {
+        foreach (array_merge($this->managers, [$this->manager->getClass() => $this->manager]) as $manager) {
             $manager->clear();
         }
     }
