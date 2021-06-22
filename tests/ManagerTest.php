@@ -10,6 +10,7 @@ use Arxy\FilesBundle\Event\PostUpload;
 use Arxy\FilesBundle\Event\PreMove;
 use Arxy\FilesBundle\Event\PreRemove;
 use Arxy\FilesBundle\Event\PreUpdate;
+use Arxy\FilesBundle\FileException;
 use Arxy\FilesBundle\Manager;
 use Arxy\FilesBundle\ManagerInterface;
 use Arxy\FilesBundle\Model\MutableFile;
@@ -23,8 +24,10 @@ use League\Flysystem\FilesystemOperator;
 use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use RuntimeException;
 use SplFileObject;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Throwable;
 
 class ManagerTest extends TestCase
 {
@@ -412,28 +415,49 @@ class ManagerTest extends TestCase
         $file->setId(1);
         unlink($tmpFile);
 
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('Failed to open '.$tmpFile);
-        $this->manager->moveFile($file);
+        try {
+            $this->manager->moveFile($file);
+        } catch (Throwable $exception) {
+            $this->assertInstanceOf(FileException::class, $exception);
+            $this->assertEquals('Unable to move file', $exception->getMessage());
+
+            $this->assertInstanceOf(RuntimeException::class, $exception->getPrevious());
+            $this->assertEquals('Failed to open '.$tmpFile, $exception->getPrevious()->getMessage());
+        }
     }
 
     public function testWrongFileMove(): void
     {
         $file = new File('filename', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg');
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectErrorMessage('File '.spl_object_id($file).' not found in map');
 
-        $this->manager->moveFile($file);
+        try {
+            $this->manager->moveFile($file);
+        } catch (Throwable $exception) {
+            $this->assertInstanceOf(FileException::class, $exception);
+            $this->assertEquals('Unable to move file', $exception->getMessage());
+
+            $this->assertInstanceOf(InvalidArgumentException::class, $exception->getPrevious());
+            $this->assertEquals(
+                'File '.spl_object_id($file).' not found in map',
+                $exception->getPrevious()->getMessage()
+            );
+        }
     }
 
     public function testWrongFileMoveStringable(): void
     {
         $file = new StringableFile('filename', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg');
         $file->setId(25);
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectErrorMessage('File 25 not found in map');
 
-        $this->manager->moveFile($file);
+        try {
+            $this->manager->moveFile($file);
+        } catch (Throwable $exception) {
+            $this->assertInstanceOf(FileException::class, $exception);
+            $this->assertEquals('Unable to move file', $exception->getMessage());
+
+            $this->assertInstanceOf(InvalidArgumentException::class, $exception->getPrevious());
+            $this->assertEquals('File 25 not found in map', $exception->getPrevious()->getMessage());
+        }
     }
 
     public function testSimpleMoveFile(): void
@@ -707,9 +731,17 @@ class ManagerTest extends TestCase
         $file->setId(1);
         $this->manager->clear();
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('File '.spl_object_id($file).' not found in map');
+        try {
+            $this->manager->moveFile($file);
+        } catch (Throwable $exception) {
+            $this->assertInstanceOf(FileException::class, $exception);
+            $this->assertEquals('Unable to move file', $exception->getMessage());
 
-        $this->manager->moveFile($file);
+            $this->assertInstanceOf(InvalidArgumentException::class, $exception->getPrevious());
+            $this->assertEquals(
+                'File '.spl_object_id($file).' not found in map',
+                $exception->getPrevious()->getMessage()
+            );
+        }
     }
 }

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Arxy\FilesBundle\EventListener;
 
-use Arxy\FilesBundle\InvalidArgumentException;
 use Arxy\FilesBundle\ManagerInterface;
 use Arxy\FilesBundle\Model\File;
 use Closure;
@@ -26,11 +25,7 @@ final class DoctrineORMListener
         $this->manager = $manager;
 
         $this->move = static function (File $file) use ($manager): void {
-            try {
-                $manager->moveFile($file);
-            } catch (InvalidArgumentException $exception) {
-                // file doesn't exists in FileMap.
-            }
+            $manager->moveFile($file);
         };
         $this->remove = static function (File $file) use ($manager): void {
             $manager->remove($file);

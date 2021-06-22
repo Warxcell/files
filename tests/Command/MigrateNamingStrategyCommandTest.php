@@ -14,6 +14,7 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 class MigrateNamingStrategyCommandTest extends TestCase
 {
+    private ManagerInterface $manager;
     private Repository $repository;
     private MigratorInterface $migrator;
     private MigrateNamingStrategyCommand $command;
