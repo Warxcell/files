@@ -7,8 +7,14 @@ namespace Arxy\FilesBundle;
 use Arxy\FilesBundle\Model\File;
 use SplFileInfo;
 
+/**
+ * @template T of File
+ */
 interface ModelFactory
 {
+    /**
+     * @return T
+     */
     public function create(
         SplFileInfo $file,
         string $originalFilename,

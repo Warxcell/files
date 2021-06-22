@@ -6,9 +6,18 @@ namespace Arxy\FilesBundle;
 
 use Arxy\FilesBundle\Model\File;
 
+/**
+ * @template T of File
+ */
 interface NamingStrategy
 {
+    /**
+     * @param T $file
+     */
     public function getDirectoryName(File $file): ?string;
 
+    /**
+     * @param T $file
+     */
     public function getFileName(File $file): string;
 }

@@ -11,6 +11,9 @@ use Arxy\FilesBundle\NamingStrategy;
 use RuntimeException;
 use function chunk_split;
 
+/**
+ * @implements NamingStrategy<IdentifiableFile>
+ */
 final class IdToPathStrategy implements NamingStrategy
 {
     private function getId(IdentifiableFile $file): string

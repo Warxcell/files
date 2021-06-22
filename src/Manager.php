@@ -41,6 +41,10 @@ use function stream_copy_to_stream;
 use function sys_get_temp_dir;
 use function tempnam;
 
+/**
+ * @template T of File
+ * @implements ManagerInterface<T>
+ */
 final class Manager implements ManagerInterface
 {
     private string $class;
@@ -56,7 +60,7 @@ final class Manager implements ManagerInterface
     private string $hashingAlgorithm;
 
     /**
-     * @psalm-param class-string<File> $class
+     * @psalm-param class-string<T> $class
      */
     public function __construct(
         string $class,

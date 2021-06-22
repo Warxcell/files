@@ -9,10 +9,13 @@ use Arxy\FilesBundle\Model\File;
 use SplFileInfo;
 use function is_subclass_of;
 
+/**
+ * @implements ModelFactory<AbstractFile>
+ */
 class AbstractModelFactory implements ModelFactory
 {
     /**
-     * @psalm-param class-string<AbstractFile> $class
+     * @param class-string<AbstractFile> $class
      */
     private string $class;
 

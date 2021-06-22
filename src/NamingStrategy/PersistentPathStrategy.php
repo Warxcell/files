@@ -11,6 +11,9 @@ use Arxy\FilesBundle\NamingStrategy;
 use function basename;
 use function dirname;
 
+/**
+ * @implements NamingStrategy<PathAwareFile>
+ */
 final class PersistentPathStrategy implements NamingStrategy
 {
     public function getDirectoryName(File $file): ?string

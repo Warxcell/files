@@ -11,6 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity()
+ * @implements PreviewableFile<Preview>
  */
 class FileWithPreview extends BaseFile implements PreviewableFile, MutablePathAware
 {
@@ -43,7 +44,6 @@ class FileWithPreview extends BaseFile implements PreviewableFile, MutablePathAw
 
     public function setPreview(?\Arxy\FilesBundle\Model\File $file): void
     {
-        assert($file instanceof Preview);
         $this->preview = $file;
     }
 
