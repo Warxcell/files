@@ -4,6 +4,6 @@ declare(strict_types=1);
 
 namespace Arxy\FilesBundle\Event;
 
-class PostMove extends AbstractFileEvent
+final class PostMove extends AbstractFileEvent
 {
 }
