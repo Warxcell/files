@@ -6,6 +6,7 @@ namespace Arxy\FilesBundle;
 
 use Arxy\FilesBundle\Model\File;
 use Arxy\FilesBundle\Utility\NamingStrategyUtility;
+use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
 
 class Migrator implements MigratorInterface
@@ -27,12 +28,17 @@ class Migrator implements MigratorInterface
     public function migrate(File $file): bool
     {
         $oldName = NamingStrategyUtility::getPathnameFromStrategy($this->old, $file);
-        if (!$this->filesystem->fileExists($oldName)) {
-            return false;
-        }
+        try {
+            if (!$this->filesystem->fileExists($oldName)) {
+                return false;
+            }
 
-        $newName = NamingStrategyUtility::getPathnameFromStrategy($this->new, $file);
-        $this->filesystem->move($oldName, $newName);
+            $newName = NamingStrategyUtility::getPathnameFromStrategy($this->new, $file);
+
+            $this->filesystem->move($oldName, $newName);
+        } catch (FilesystemException $exception) {
+            throw new FileException($file, 'Unable to migrate file', $exception);
+        }
 
         return true;
     }

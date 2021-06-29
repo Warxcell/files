@@ -8,5 +8,8 @@ use Arxy\FilesBundle\Model\File;
 
 interface MigratorInterface
 {
+    /**
+     * @throws FileException
+     */
     public function migrate(File $file): bool;
 }
