@@ -64,6 +64,8 @@ final class Manager implements ManagerInterface
 
     /**
      * @param class-string<T> $class
+     * @param ModelFactory<T>|null $modelFactory
+     * @param Repository<T>|null $repository
      */
     public function __construct(
         string $class,
