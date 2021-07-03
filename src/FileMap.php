@@ -39,9 +39,9 @@ class FileMap
         $this->pendingFiles[$id] = $file;
     }
 
-    public function has(File $file): bool
+    private function getObjectId(File $file): int
     {
-        return isset($this->map[$this->getObjectId($file)]);
+        return spl_object_id($file);
     }
 
     public function get(File $file): SplFileInfo
@@ -53,15 +53,15 @@ class FileMap
         return $this->map[$this->getObjectId($file)];
     }
 
+    public function has(File $file): bool
+    {
+        return isset($this->map[$this->getObjectId($file)]);
+    }
+
     public function remove(File $file): void
     {
         $id = $this->getObjectId($file);
         unset($this->map[$id]);
         unset($this->pendingFiles[$id]);
-    }
-
-    private function getObjectId(File $file): int
-    {
-        return spl_object_id($file);
     }
 }

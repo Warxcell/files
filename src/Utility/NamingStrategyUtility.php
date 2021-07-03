@@ -14,6 +14,6 @@ class NamingStrategyUtility
 {
     public static function getPathnameFromStrategy(NamingStrategy $namingStrategy, File $file): string
     {
-        return ($namingStrategy->getDirectoryName($file) ?? "") . $namingStrategy->getFileName($file);
+        return ($namingStrategy->getDirectoryName($file) ?? "").$namingStrategy->getFileName($file);
     }
 }

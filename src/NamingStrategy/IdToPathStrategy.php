@@ -16,6 +16,15 @@ use function chunk_split;
  */
 final class IdToPathStrategy implements NamingStrategy
 {
+    public function getDirectoryName(File $file): ?string
+    {
+        if (!$file instanceof IdentifiableFile) {
+            throw InvalidArgumentException::invalidType($file, IdentifiableFile::class);
+        }
+
+        return chunk_split($this->getId($file), 1, DIRECTORY_SEPARATOR);
+    }
+
     private function getId(IdentifiableFile $file): string
     {
         $id = $file->getId();
@@ -25,15 +34,6 @@ final class IdToPathStrategy implements NamingStrategy
         }
 
         return (string)$id;
-    }
-
-    public function getDirectoryName(File $file): ?string
-    {
-        if (!$file instanceof IdentifiableFile) {
-            throw InvalidArgumentException::invalidType($file, IdentifiableFile::class);
-        }
-
-        return chunk_split($this->getId($file), 1, DIRECTORY_SEPARATOR);
     }
 
     public function getFileName(File $file): string

@@ -10,6 +10,14 @@ use Throwable;
 
 class FileException extends RuntimeException
 {
+    private File $relatedFile;
+
+    public function __construct(File $file, string $message, Throwable $previous = null)
+    {
+        parent::__construct($message, 0, $previous);
+        $this->relatedFile = $file;
+    }
+
     public static function unableToRead(File $file, Throwable $exception): self
     {
         return new self($file, 'Unable to read file', $exception);
@@ -28,14 +36,6 @@ class FileException extends RuntimeException
     public static function unableToRemove(File $file, Throwable $exception): self
     {
         return new self($file, 'Unable to remove file', $exception);
-    }
-
-    private File $relatedFile;
-
-    public function __construct(File $file, string $message, Throwable $previous = null)
-    {
-        parent::__construct($message, 0, $previous);
-        $this->relatedFile = $file;
     }
 
     public function getRelatedFile(): File

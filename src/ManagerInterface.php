@@ -10,7 +10,6 @@ use SplFileInfo;
 
 /**
  * @template T of File
- * @template W of MutableFile
  */
 interface ManagerInterface
 {
@@ -31,7 +30,7 @@ interface ManagerInterface
      * Reads the content of file object.
      * @param T $file
      * @throws FileException
-     *      */
+     */
     public function read(File $file): string;
 
     /**
@@ -42,14 +41,12 @@ interface ManagerInterface
     public function readStream(File $file);
 
     /**
-     * @param W $file
      * @throws FileException
      */
     public function write(MutableFile $file, string $contents): void;
 
     /**
      * @param resource $resource
-     * @param W $file
      * @throws FileException
      */
     public function writeStream(MutableFile $file, $resource): void;
@@ -69,7 +66,7 @@ interface ManagerInterface
     public function remove(File $file): void;
 
     /**
-     * @psalm-return class-string<T>
+     * @return class-string<T>
      */
     public function getClass(): string;
 

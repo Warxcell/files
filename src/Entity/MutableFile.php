@@ -9,8 +9,6 @@ use DateTimeImmutable;
 
 abstract class MutableFile extends File implements IdentifiableFile, \Arxy\FilesBundle\Model\MutableFile
 {
-    abstract public function getId();
-
     protected DateTimeImmutable $modifiedAt;
 
     public function __construct(string $originalFilename, int $size, string $hash, string $mimeType)
@@ -18,6 +16,8 @@ abstract class MutableFile extends File implements IdentifiableFile, \Arxy\Files
         parent::__construct($originalFilename, $size, $hash, $mimeType);
         $this->modifiedAt = new DateTimeImmutable();
     }
+
+    abstract public function getId();
 
     public function setOriginalFilename(string $originalFilename): void
     {

@@ -32,6 +32,16 @@ final class DoctrineORMListener
         };
     }
 
+    public function postPersist(LifecycleEventArgs $eventArgs): void
+    {
+        $entity = $eventArgs->getEntity();
+        $entityManager = $eventArgs->getEntityManager();
+        if ($this->supports($entity)) {
+            ($this->move)($entity);
+        }
+        $this->handleEmbeddable($entityManager, $entity, $this->move);
+    }
+
     private function supports(object $entity): bool
     {
         return $entity instanceof $this->class;
@@ -59,16 +69,6 @@ final class DoctrineORMListener
             }
             $action($file);
         }
-    }
-
-    public function postPersist(LifecycleEventArgs $eventArgs): void
-    {
-        $entity = $eventArgs->getEntity();
-        $entityManager = $eventArgs->getEntityManager();
-        if ($this->supports($entity)) {
-            ($this->move)($entity);
-        }
-        $this->handleEmbeddable($entityManager, $entity, $this->move);
     }
 
     public function preRemove(LifecycleEventArgs $eventArgs): void

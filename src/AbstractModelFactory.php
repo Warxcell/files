@@ -10,15 +10,19 @@ use SplFileInfo;
 use function is_subclass_of;
 
 /**
- * @implements ModelFactory<AbstractFile>
+ * @template T of AbstractFile
+ * @implements ModelFactory<T>
  */
 class AbstractModelFactory implements ModelFactory
 {
     /**
-     * @param class-string<AbstractFile> $class
+     * @var class-string<T>
      */
     private string $class;
 
+    /**
+     * @param class-string<T> $class
+     */
     public function __construct(string $class)
     {
         if (!is_subclass_of($class, AbstractFile::class)) {

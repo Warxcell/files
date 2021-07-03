@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Arxy\FilesBundle;
 
-use Arxy\FilesBundle\Model\DecoratedFile;
 use Arxy\FilesBundle\Model\File;
 use Arxy\FilesBundle\Model\MutableFile;
 use LogicException;
@@ -36,15 +35,6 @@ final class DelegatingManager implements ManagerInterface
         }
     }
 
-    private function getFile(File $file): File
-    {
-        while ($file instanceof DecoratedFile) {
-            $file = $file->getDecorated();
-        }
-
-        return $file;
-    }
-
     /**
      * @throws LogicException if not manager is found for $class
      */
@@ -57,6 +47,16 @@ final class DelegatingManager implements ManagerInterface
         return $this->managers[$class];
     }
 
+    public function upload(SplFileInfo $file): File
+    {
+        return $this->manager->upload($file);
+    }
+
+    public function getPathname(File $file): string
+    {
+        return $this->getManagerForFile($file)->getPathname($file);
+    }
+
     private function getManagerForFile(File $file): ManagerInterface
     {
         foreach ($this->managers as $class => $manager) {
@@ -67,55 +67,33 @@ final class DelegatingManager implements ManagerInterface
         throw new LogicException('No manager for '.get_class($file));
     }
 
-    public function upload(SplFileInfo $file): File
-    {
-        return $this->manager->upload($file);
-    }
-
-    public function getPathname(File $file): string
-    {
-        $file = $this->getFile($file);
-
-        return $this->getManagerForFile($file)->getPathname($file);
-    }
-
     public function read(File $file): string
     {
-        $file = $this->getFile($file);
-
         return $this->getManagerForFile($file)->read($file);
     }
 
     public function readStream(File $file)
     {
-        $file = $this->getFile($file);
-
         return $this->getManagerForFile($file)->readStream($file);
     }
 
     public function write(MutableFile $file, string $contents): void
     {
-        $file = $this->getFile($file);
-        assert($file instanceof MutableFile);
         $this->getManagerForFile($file)->write($file, $contents);
     }
 
     public function writeStream(MutableFile $file, $resource): void
     {
-        $file = $this->getFile($file);
-        assert($file instanceof MutableFile);
         $this->getManagerForFile($file)->writeStream($file, $resource);
     }
 
     public function moveFile(File $file): void
     {
-        $file = $this->getFile($file);
         $this->getManagerForFile($file)->moveFile($file);
     }
 
     public function remove(File $file): void
     {
-        $file = $this->getFile($file);
         $this->getManagerForFile($file)->remove($file);
     }
 

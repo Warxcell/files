@@ -79,29 +79,13 @@ class ArxyFilesExtension extends Extension
                     DelegatingManager::class,
                     [
                         '$managers' => array_map(
-                            static fn (array $config): Reference => $config['reference'],
+                            static fn(array $config): Reference => $config['reference'],
                             $config['managers']
                         ),
                     ]
                 )
             );
             $container->setAlias(ManagerInterface::class, 'arxy_files.delegating_manager');
-        }
-    }
-
-    private function createListenerDefinition(string $driver, string $serviceId): Definition
-    {
-        switch ($driver) {
-            case 'orm':
-                $definition = new Definition(DoctrineORMListener::class);
-                $definition->setArgument('$manager', new Reference($serviceId));
-                $definition->addTag('doctrine.event_listener', ['event' => 'postPersist', 'lazy' => true]);
-                $definition->addTag('doctrine.event_listener', ['event' => 'postRemove', 'lazy' => true]);
-                $definition->addTag('doctrine.event_listener', ['event' => 'onClear', 'lazy' => true]);
-
-                return $definition;
-            default:
-                throw new LogicException('Driver not supported '.$driver);
         }
     }
 
@@ -135,5 +119,21 @@ class ArxyFilesExtension extends Extension
         );
 
         return $definition;
+    }
+
+    private function createListenerDefinition(string $driver, string $serviceId): Definition
+    {
+        switch ($driver) {
+            case 'orm':
+                $definition = new Definition(DoctrineORMListener::class);
+                $definition->setArgument('$manager', new Reference($serviceId));
+                $definition->addTag('doctrine.event_listener', ['event' => 'postPersist', 'lazy' => true]);
+                $definition->addTag('doctrine.event_listener', ['event' => 'postRemove', 'lazy' => true]);
+                $definition->addTag('doctrine.event_listener', ['event' => 'onClear', 'lazy' => true]);
+
+                return $definition;
+            default:
+                throw new LogicException('Driver not supported '.$driver);
+        }
     }
 }

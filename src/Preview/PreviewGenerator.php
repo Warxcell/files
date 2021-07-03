@@ -30,17 +30,6 @@ class PreviewGenerator
         $this->dimension = $dimension;
     }
 
-    private function generatePreview(File $file): SplFileInfo
-    {
-        foreach ($this->generators as $generator) {
-            if ($generator->supports($file)) {
-                return $generator->generate($file, $this->dimension);
-            }
-        }
-
-        throw NoPreviewGeneratorFound::instance($file);
-    }
-
     /**
      * @throws NoPreviewGeneratorFound
      */
@@ -55,5 +44,16 @@ class PreviewGenerator
         }
 
         return $preview;
+    }
+
+    private function generatePreview(File $file): SplFileInfo
+    {
+        foreach ($this->generators as $generator) {
+            if ($generator->supports($file)) {
+                return $generator->generate($file, $this->dimension);
+            }
+        }
+
+        throw NoPreviewGeneratorFound::instance($file);
     }
 }

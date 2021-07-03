@@ -30,6 +30,9 @@ class FileFilterPathResolver implements PathResolver
             throw InvalidArgumentException::invalidType($file, FileFilter::class);
         }
 
-        return $this->cacheManager->getBrowserPath($this->fileManager->getPathname($file), $file->getFilter());
+        return $this->cacheManager->getBrowserPath(
+            $this->fileManager->getPathname($file->getDecorated()),
+            $file->getFilter()
+        );
     }
 }

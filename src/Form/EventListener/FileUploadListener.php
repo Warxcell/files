@@ -29,6 +29,16 @@ class FileUploadListener implements EventSubscriberInterface
         ];
     }
 
+    public function submit(FormEvent $event): void
+    {
+        /** @var SplFileInfo|SplFileInfo[] $uploadedFile */
+        $uploadedFile = $event->getForm()->get('file')->getData();
+
+        if (!empty($uploadedFile)) {
+            $event->setData($this->transform($uploadedFile));
+        }
+    }
+
     /**
      * @param SplFileInfo|SplFileInfo[] $data
      * @return File|File[]
@@ -38,22 +48,12 @@ class FileUploadListener implements EventSubscriberInterface
         if ($this->multiple) {
             /** @var SplFileInfo[] $data */
             return array_map(
-                fn (SplFileInfo $file): File => $this->fileManager->upload($file),
+                fn(SplFileInfo $file): File => $this->fileManager->upload($file),
                 $data
             );
         } else {
             /** @var SplFileInfo $data */
             return $this->fileManager->upload($data);
-        }
-    }
-
-    public function submit(FormEvent $event): void
-    {
-        /** @var SplFileInfo|SplFileInfo[] $uploadedFile */
-        $uploadedFile = $event->getForm()->get('file')->getData();
-
-        if (!empty($uploadedFile)) {
-            $event->setData($this->transform($uploadedFile));
         }
     }
 }

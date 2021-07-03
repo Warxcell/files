@@ -47,6 +47,8 @@ use function tempnam;
  */
 final class Manager implements ManagerInterface
 {
+    private const CHUNK_SIZE = 1024 * 1024;
+    /** @var class-string<T> */
     private string $class;
     private FilesystemOperator $filesystem;
     private NamingStrategy $namingStrategy;
@@ -55,12 +57,11 @@ final class Manager implements ManagerInterface
     private MimeTypeDetector $mimeTypeDetector;
     private ModelFactory $modelFactory;
     private ?EventDispatcherInterface $eventDispatcher;
-    private const CHUNK_SIZE = 1024 * 1024;
     private string $temporaryDirectory;
     private string $hashingAlgorithm;
 
     /**
-     * @psalm-param class-string<T> $class
+     * @param class-string<T> $class
      */
     public function __construct(
         string $class,
@@ -110,6 +111,7 @@ final class Manager implements ManagerInterface
                 }
 
                 $originalFilename = $remoteFile->getFilename();
+                unset($remoteFile);
 
                 clearstatcache(true, $tempFilename);
             } else {
@@ -152,6 +154,19 @@ final class Manager implements ManagerInterface
         }
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
+    private function getMimeTypeByFile(SplFileInfo $file): string
+    {
+        $mimeType = $this->mimeTypeDetector->detectMimeTypeFromFile($file->getPathname());
+        if ($mimeType === null) {
+            throw new InvalidArgumentException('Failed to detect mimeType for '.$file->getPathname());
+        }
+
+        return $mimeType;
+    }
+
     public function moveFile(File $file): void
     {
         try {
@@ -175,6 +190,8 @@ final class Manager implements ManagerInterface
                 throw new RuntimeException('Failed to open '.$splFileInfo->getPathname());
             }
             $this->filesystem->writeStream($path, $stream);
+
+            /** @psalm-suppress RedundantCondition */
             if (is_resource($stream)) {
                 fclose($stream);
             }
@@ -187,6 +204,20 @@ final class Manager implements ManagerInterface
         }
     }
 
+    public function getPathname(File $file): string
+    {
+        if ($this->fileMap->has($file)) {
+            return $this->fileMap->get($file)->getPathname();
+        } else {
+            return $this->getPathnameFromNamingStrategy($file);
+        }
+    }
+
+    private function getPathnameFromNamingStrategy(File $file): string
+    {
+        return NamingStrategyUtility::getPathnameFromStrategy($this->namingStrategy, $file);
+    }
+
     public function remove(File $file): void
     {
         try {
@@ -197,33 +228,6 @@ final class Manager implements ManagerInterface
             $this->filesystem->delete($this->getPathname($file));
         } catch (Throwable $exception) {
             throw FileException::unableToRemove($file, $exception);
-        }
-    }
-
-    /**
-     * @throws InvalidArgumentException
-     */
-    private function getMimeTypeByFile(SplFileInfo $file): string
-    {
-        $mimeType = $this->mimeTypeDetector->detectMimeTypeFromFile($file->getPathname());
-        if ($mimeType === null) {
-            throw new InvalidArgumentException('Failed to detect mimeType for '.$file->getPathname());
-        }
-
-        return $mimeType;
-    }
-
-    private function getPathnameFromNamingStrategy(File $file): string
-    {
-        return NamingStrategyUtility::getPathnameFromStrategy($this->namingStrategy, $file);
-    }
-
-    public function getPathname(File $file): string
-    {
-        if ($this->fileMap->has($file)) {
-            return $this->fileMap->get($file)->getPathname();
-        } else {
-            return $this->getPathnameFromNamingStrategy($file);
         }
     }
 
@@ -240,10 +244,7 @@ final class Manager implements ManagerInterface
             throw FileException::unableToRead($file, $exception);
         }
     }
-
-    /**
-     * @return resource
-     */
+    
     public function readStream(File $file)
     {
         try {
@@ -282,32 +283,6 @@ final class Manager implements ManagerInterface
         }
     }
 
-    public function writeStream(MutableFile $file, $resource): void
-    {
-        try {
-            if ($this->eventDispatcher !== null) {
-                $this->eventDispatcher->dispatch(new PreUpdate($this, $file));
-            }
-
-            $pathname = $this->getPathname($file);
-            if ($this->fileMap->has($file)) {
-                $stream = fopen($pathname, 'w+b');
-                stream_copy_to_stream($resource, $stream);
-                fclose($stream);
-                clearstatcache(true, $pathname);
-            } else {
-                $this->filesystem->writeStream($pathname, $resource);
-            }
-            $this->refresh($file);
-
-            if ($this->eventDispatcher !== null) {
-                $this->eventDispatcher->dispatch(new PostUpdate($this, $file));
-            }
-        } catch (Throwable $exception) {
-            throw FileException::unableToWrite($file, $exception);
-        }
-    }
-
     /**
      * @throws FilesystemException
      */
@@ -317,6 +292,20 @@ final class Manager implements ManagerInterface
         $file->setSize($this->fileSize($file));
         $file->setHash($this->hash($file));
         $file->setModifiedAt(new DateTimeImmutable());
+    }
+
+    /**
+     * @throws FilesystemException
+     */
+    private function mimeType(File $file): string
+    {
+        if ($this->fileMap->has($file)) {
+            return $this->getMimeTypeByFile($this->fileMap->get($file));
+        } else {
+            $pathname = $this->getPathname($file);
+
+            return $this->filesystem->mimeType($pathname);
+        }
     }
 
     /**
@@ -347,17 +336,29 @@ final class Manager implements ManagerInterface
         }
     }
 
-    /**
-     * @throws FilesystemException
-     */
-    private function mimeType(File $file): string
+    public function writeStream(MutableFile $file, $resource): void
     {
-        if ($this->fileMap->has($file)) {
-            return $this->getMimeTypeByFile($this->fileMap->get($file));
-        } else {
-            $pathname = $this->getPathname($file);
+        try {
+            if ($this->eventDispatcher !== null) {
+                $this->eventDispatcher->dispatch(new PreUpdate($this, $file));
+            }
 
-            return $this->filesystem->mimeType($pathname);
+            $pathname = $this->getPathname($file);
+            if ($this->fileMap->has($file)) {
+                $stream = fopen($pathname, 'w+b');
+                stream_copy_to_stream($resource, $stream);
+                fclose($stream);
+                clearstatcache(true, $pathname);
+            } else {
+                $this->filesystem->writeStream($pathname, $resource);
+            }
+            $this->refresh($file);
+
+            if ($this->eventDispatcher !== null) {
+                $this->eventDispatcher->dispatch(new PostUpdate($this, $file));
+            }
+        } catch (Throwable $exception) {
+            throw FileException::unableToWrite($file, $exception);
         }
     }
 

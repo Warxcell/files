@@ -33,11 +33,6 @@ class ImagePreviewGenerator implements PreviewGeneratorInterface
         $this->transformation = $transformation;
     }
 
-    private function getFormat(File $file): string
-    {
-        return $this->format ?? str_replace('image/', '', $file->getMimeType());
-    }
-
     public function supports(File $file): bool
     {
         return stripos($file->getMimeType(), 'image/') !== false;
@@ -56,5 +51,10 @@ class ImagePreviewGenerator implements PreviewGeneratorInterface
         $preview->fwrite($image->get($this->getFormat($file)));
 
         return $preview;
+    }
+
+    private function getFormat(File $file): string
+    {
+        return $this->format ?? str_replace('image/', '', $file->getMimeType());
     }
 }

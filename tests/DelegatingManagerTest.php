@@ -6,7 +6,6 @@ namespace Arxy\FilesBundle\Tests;
 
 use Arxy\FilesBundle\DelegatingManager;
 use Arxy\FilesBundle\InvalidArgumentException;
-use Arxy\FilesBundle\LiipImagine\FileFilter;
 use Arxy\FilesBundle\ManagerInterface;
 use LogicException;
 use PHPUnit\Framework\TestCase;
@@ -73,25 +72,15 @@ class DelegatingManagerTest extends TestCase
     {
         $file1 = new File('original_filename.jpg', 125, '1234567', 'image/jpeg');
         $file1->setId(1);
-        $this->manager1->expects(self::exactly(3))->method('getPathname')->with($file1)->willReturn('manager1_file1');
+        $this->manager1->expects(self::exactly(1))->method('getPathname')->with($file1)->willReturn('manager1_file1');
 
         self::assertSame('manager1_file1', $this->manager->getPathname($file1));
-        self::assertSame('manager1_file1', $this->manager->getPathname(new VirtualFile($file1)));
-        self::assertSame(
-            'manager1_file1',
-            $this->manager->getPathname(new FileFilter(new VirtualFile($file1), 'filter'))
-        );
 
         $file2 = new File2('original_filename.jpg', 125, '1234567', 'image/jpeg');
         $file2->setId(1);
-        $this->manager2->expects(self::exactly(3))->method('getPathname')->with($file2)->willReturn('manager2_file1');
+        $this->manager2->expects(self::exactly(1))->method('getPathname')->with($file2)->willReturn('manager2_file1');
 
         self::assertSame('manager2_file1', $this->manager->getPathname($file2));
-        self::assertSame('manager2_file1', $this->manager->getPathname(new VirtualFile($file2)));
-        self::assertSame(
-            'manager2_file1',
-            $this->manager->getPathname(new FileFilter(new VirtualFile($file2), 'filter'))
-        );
     }
 
     public function testWrite(): void
