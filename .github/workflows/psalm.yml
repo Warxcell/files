@@ -1,14 +1,16 @@
 name: Psalm Static analysis
 
-on: [push, pull_request]
+on: [ push, pull_request ]
 
 jobs:
     psalm:
         name: Psalm
         runs-on: ubuntu-latest
         steps:
-            - name: Checkout code
-              uses: actions/checkout@v2
+            -   name: Checkout code
+                uses: actions/checkout@v2
 
-            - name: Psalm
-              uses: docker://vimeo/psalm-github-actions
+            -   name: Psalm
+                uses: docker://vimeo/psalm-github-actions
+                with:
+                    composer_ignore_platform_reqs: true
