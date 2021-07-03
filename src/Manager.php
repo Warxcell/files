@@ -53,8 +53,10 @@ final class Manager implements ManagerInterface
     private FilesystemOperator $filesystem;
     private NamingStrategy $namingStrategy;
     private ?Repository $repository;
+    /** @var FileMap<T> */
     private FileMap $fileMap;
     private MimeTypeDetector $mimeTypeDetector;
+    /** @var ModelFactory<T> */
     private ModelFactory $modelFactory;
     private ?EventDispatcherInterface $eventDispatcher;
     private string $temporaryDirectory;
@@ -78,7 +80,7 @@ final class Manager implements ManagerInterface
             throw new InvalidArgumentException(sprintf('The algorithm "%s" is not supported.', $hashingAlgorithm));
         }
         if (!is_subclass_of($class, File::class)) {
-            throw new InvalidArgumentException('Class must be subclass of '.File::class);
+            throw new InvalidArgumentException('$class must be subclass of '.File::class);
         }
 
         $this->class = $class;
@@ -244,7 +246,7 @@ final class Manager implements ManagerInterface
             throw FileException::unableToRead($file, $exception);
         }
     }
-    
+
     public function readStream(File $file)
     {
         try {
