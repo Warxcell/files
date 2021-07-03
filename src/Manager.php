@@ -28,6 +28,7 @@ use Throwable;
 use function clearstatcache;
 use function fclose;
 use function file_get_contents;
+use function file_put_contents;
 use function filesize;
 use function fopen;
 use function hash;
@@ -51,7 +52,9 @@ final class Manager implements ManagerInterface
     /** @var class-string<T> */
     private string $class;
     private FilesystemOperator $filesystem;
+    /** @var NamingStrategy<T> */
     private NamingStrategy $namingStrategy;
+    /** @var Repository<T>|null */
     private ?Repository $repository;
     /** @var FileMap<T> */
     private FileMap $fileMap;
@@ -64,8 +67,9 @@ final class Manager implements ManagerInterface
 
     /**
      * @param class-string<T> $class
-     * @param ModelFactory<T>|null $modelFactory
+     * @param NamingStrategy<T> $namingStrategy
      * @param Repository<T>|null $repository
+     * @param ModelFactory<T>|null $modelFactory
      */
     public function __construct(
         string $class,
