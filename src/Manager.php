@@ -66,9 +66,14 @@ final class Manager implements ManagerInterface
 
     /**
      * @param class-string<T> $class
+     * @param FilesystemOperator $filesystem
      * @param NamingStrategy<T> $namingStrategy
      * @param Repository<T>|null $repository
+     * @param MimeTypeDetector|null $mimeTypeDetector
      * @param ModelFactory<T>|null $modelFactory
+     * @param EventDispatcherInterface|null $eventDispatcher
+     * @param string|null $temporaryDirectory
+     * @param string $hashingAlgorithm
      */
     public function __construct(
         string $class,
