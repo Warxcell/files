@@ -15,7 +15,6 @@ use Arxy\FilesBundle\Model\MutableFile;
 use Arxy\FilesBundle\Utility\NamingStrategyUtility;
 use DateTimeImmutable;
 use InvalidArgumentException;
-use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
 use League\MimeTypeDetection\FinfoMimeTypeDetector;
 use League\MimeTypeDetection\MimeTypeDetector;
@@ -29,7 +28,6 @@ use function clearstatcache;
 use function fclose;
 use function file_get_contents;
 use function file_put_contents;
-use function filesize;
 use function fopen;
 use function hash;
 use function hash_algos;
@@ -39,6 +37,7 @@ use function ini_get;
 use function is_resource;
 use function is_subclass_of;
 use function stream_copy_to_stream;
+use function strlen;
 use function sys_get_temp_dir;
 use function tempnam;
 
@@ -131,7 +130,7 @@ final class Manager implements ManagerInterface
             }
 
             $fileSize = $file->getSize();
-            $hash = hash_file($this->hashingAlgorithm, $file->getPathname());
+            $hash = $this->hashFile($file);
 
             $fileEntity = null;
             if ($this->repository !== null) {
@@ -160,6 +159,11 @@ final class Manager implements ManagerInterface
         } catch (Throwable $exception) {
             throw new UnableToUpload($file, $exception);
         }
+    }
+
+    private function hashFile(SplFileInfo $file): string
+    {
+        return hash_file($this->hashingAlgorithm, $file->getPathname());
     }
 
     /**
@@ -281,66 +285,17 @@ final class Manager implements ManagerInterface
             } else {
                 $this->filesystem->write($pathname, $contents);
             }
-            $this->refresh($file);
+
+            $file->setMimeType($this->mimeTypeDetector->detectMimeTypeFromBuffer($contents));
+            $file->setSize(strlen($contents));
+            $file->setHash(hash($this->hashingAlgorithm, $contents));
+            $file->setModifiedAt(new DateTimeImmutable());
 
             if ($this->eventDispatcher !== null) {
                 $this->eventDispatcher->dispatch(new PostUpdate($this, $file));
             }
         } catch (Throwable $exception) {
             throw FileException::unableToWrite($file, $exception);
-        }
-    }
-
-    /**
-     * @throws FilesystemException
-     */
-    private function refresh(MutableFile $file): void
-    {
-        $file->setMimeType($this->mimeType($file));
-        $file->setSize($this->fileSize($file));
-        $file->setHash($this->hash($file));
-        $file->setModifiedAt(new DateTimeImmutable());
-    }
-
-    /**
-     * @throws FilesystemException
-     */
-    private function mimeType(File $file): string
-    {
-        if ($this->fileMap->has($file)) {
-            return $this->getMimeTypeByFile($this->fileMap->get($file));
-        } else {
-            $pathname = $this->getPathname($file);
-
-            return $this->filesystem->mimeType($pathname);
-        }
-    }
-
-    /**
-     * @throws FilesystemException
-     */
-    private function fileSize(File $file): int
-    {
-        $pathname = $this->getPathname($file);
-
-        if ($this->fileMap->has($file)) {
-            return filesize($pathname);
-        } else {
-            return $this->filesystem->fileSize($pathname);
-        }
-    }
-
-    /**
-     * @throws FilesystemException
-     */
-    private function hash(File $file): string
-    {
-        $pathname = $this->getPathname($file);
-
-        if ($this->fileMap->has($file)) {
-            return hash_file($this->hashingAlgorithm, $pathname);
-        } else {
-            return hash($this->hashingAlgorithm, $this->filesystem->read($pathname));
         }
     }
 
@@ -353,14 +308,24 @@ final class Manager implements ManagerInterface
 
             $pathname = $this->getPathname($file);
             if ($this->fileMap->has($file)) {
+                $splFile = $this->fileMap->get($file);
                 $stream = fopen($pathname, 'w+b');
                 stream_copy_to_stream($resource, $stream);
                 fclose($stream);
                 clearstatcache(true, $pathname);
+
+                $file->setMimeType($this->getMimeTypeByFile($splFile));
+                $file->setSize($splFile->getSize());
+                $file->setHash($this->hashFile($splFile));
             } else {
                 $this->filesystem->writeStream($pathname, $resource);
+
+                $file->setMimeType($this->filesystem->mimeType($pathname));
+                $file->setSize($this->filesystem->fileSize($pathname));
+                $file->setHash(hash($this->hashingAlgorithm, $this->filesystem->read($pathname)));
             }
-            $this->refresh($file);
+
+            $file->setModifiedAt(new DateTimeImmutable());
 
             if ($this->eventDispatcher !== null) {
                 $this->eventDispatcher->dispatch(new PostUpdate($this, $file));

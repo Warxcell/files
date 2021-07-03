@@ -189,7 +189,7 @@ class ManagerTest extends TestCase
     public function testInvalidClassPassed(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Class must be subclass of '.\Arxy\FilesBundle\Model\File::class);
+        $this->expectExceptionMessage('$class must be subclass of '.\Arxy\FilesBundle\Model\File::class);
 
         new Manager(
             \stdClass::class,
