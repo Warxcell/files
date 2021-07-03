@@ -55,7 +55,7 @@ final class Manager implements ManagerInterface
     private NamingStrategy $namingStrategy;
     /** @var Repository<T>|null */
     private ?Repository $repository;
-    /** @var FileMap<T> */
+    /** @var FileMap<T, SplFileInfo> */
     private FileMap $fileMap;
     private MimeTypeDetector $mimeTypeDetector;
     /** @var ModelFactory<T> */

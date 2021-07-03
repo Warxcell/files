@@ -12,12 +12,11 @@ use function spl_object_id;
  * Holds map of files to be uploaded.
  * @internal
  * @template T of File
+ * @template S of SplFileInfo
  */
 final class FileMap
 {
-    /**
-     * @var SplFileInfo[]
-     */
+    /** @var array<int, S> */
     private array $map = [];
     /** @var array<int, T> */
     private array $pendingFiles = [];
@@ -38,6 +37,7 @@ final class FileMap
 
     /**
      * @param T $file
+     * @param S $fileInfo
      */
     public function put(File $file, SplFileInfo $fileInfo): void
     {
@@ -56,6 +56,7 @@ final class FileMap
 
     /**
      * @param T $file
+     * @return S
      */
     public function get(File $file): SplFileInfo
     {

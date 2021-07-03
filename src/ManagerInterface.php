@@ -41,11 +41,15 @@ interface ManagerInterface
     public function readStream(File $file);
 
     /**
+     * @template W of T & MutableFile
+     * @param W $file
      * @throws FileException
      */
     public function write(MutableFile $file, string $contents): void;
 
     /**
+     * @template W of T & MutableFile
+     * @param W $file
      * @param resource $resource
      * @throws FileException
      */
