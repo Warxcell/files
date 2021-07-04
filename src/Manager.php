@@ -97,12 +97,12 @@ final class Manager implements ManagerInterface
         $this->filesystem = $filesystem;
         $this->namingStrategy = $namingStrategy;
         $this->repository = $repository;
-        $this->fileMap = new FileMap();
         $this->mimeTypeDetector = $mimeTypeDetector ?? new FinfoMimeTypeDetector();
         $this->modelFactory = $modelFactory ?? new AbstractModelFactory($class);
         $this->eventDispatcher = $eventDispatcher;
         $this->temporaryDirectory = $temporaryDirectory ?? ini_get('upload_tmp_dir') ?: sys_get_temp_dir();
         $this->hashingAlgorithm = $hashingAlgorithm;
+        $this->clear();
     }
 
     public function upload(SplFileInfo $file): File
@@ -166,24 +166,6 @@ final class Manager implements ManagerInterface
         }
     }
 
-    private function hashFile(SplFileInfo $file): string
-    {
-        return hash_file($this->hashingAlgorithm, $file->getPathname());
-    }
-
-    /**
-     * @throws InvalidArgumentException
-     */
-    private function getMimeTypeByFile(SplFileInfo $file): string
-    {
-        $mimeType = $this->mimeTypeDetector->detectMimeTypeFromFile($file->getPathname());
-        if ($mimeType === null) {
-            throw new InvalidArgumentException('Failed to detect mimeType for '.$file->getPathname());
-        }
-
-        return $mimeType;
-    }
-
     public function moveFile(File $file): void
     {
         try {
@@ -228,11 +210,6 @@ final class Manager implements ManagerInterface
         } else {
             return $this->getPathnameFromNamingStrategy($file);
         }
-    }
-
-    private function getPathnameFromNamingStrategy(File $file): string
-    {
-        return NamingStrategyUtility::getPathnameFromStrategy($this->namingStrategy, $file);
     }
 
     public function remove(File $file): void
@@ -347,6 +324,31 @@ final class Manager implements ManagerInterface
 
     public function clear(): void
     {
-        $this->fileMap = new FileMap();
+        /** @var FileMap<T, \SplFileInfo> $map */
+        $map = new FileMap();
+        $this->fileMap = $map;
+    }
+
+    private function hashFile(SplFileInfo $file): string
+    {
+        return hash_file($this->hashingAlgorithm, $file->getPathname());
+    }
+
+    /**
+     * @throws InvalidArgumentException
+     */
+    private function getMimeTypeByFile(SplFileInfo $file): string
+    {
+        $mimeType = $this->mimeTypeDetector->detectMimeTypeFromFile($file->getPathname());
+        if ($mimeType === null) {
+            throw new InvalidArgumentException('Failed to detect mimeType for '.$file->getPathname());
+        }
+
+        return $mimeType;
+    }
+
+    private function getPathnameFromNamingStrategy(File $file): string
+    {
+        return NamingStrategyUtility::getPathnameFromStrategy($this->namingStrategy, $file);
     }
 }
