@@ -771,11 +771,12 @@ class VirtualFile extends \Arxy\FilesBundle\Model\DecoratedFile {
 2. Then we create/decorate also the path resolver
 
 ```php
+/**
+ * @implements \Arxy\FilesBundle\PathResolver<\Arxy\FilesBundle\Tests\VirtualFile>
+ */
 class VirtualFilePathResolver implements \Arxy\FilesBundle\PathResolver 
 {
     public function getPath(\Arxy\FilesBundle\Model\File $file) : string {
-        assert($file instanceof VirtualFile);
-        
         return sprintf('url?download_filename=%s', $file->getDownloadFilename());
     }
 }
@@ -787,7 +788,7 @@ class VirtualFilePathResolver implements \Arxy\FilesBundle\PathResolver
 public function someAction(\Arxy\FilesBundle\PathResolver $pathResolver) {
     $virtualFile = new \Arxy\FilesBundle\Tests\VirtualFile($file);
     $virtualFile->setDownloadFilename('this_file_is_renamed_during_download.jpg');
-    $downloadUrl = $pathResolver->getPath($virtualFile);
+    $downloadUrl = $pathResolver->getPath($virtualFile->getDecorated());
 }
 ```
 
