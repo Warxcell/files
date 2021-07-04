@@ -324,9 +324,7 @@ final class Manager implements ManagerInterface
 
     public function clear(): void
     {
-        /** @var FileMap<T, \SplFileInfo> $map */
-        $map = new FileMap();
-        $this->fileMap = $map;
+        $this->fileMap = new FileMap();
     }
 
     private function hashFile(SplFileInfo $file): string

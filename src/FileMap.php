@@ -22,6 +22,16 @@ final class FileMap
     private array $pendingFiles = [];
 
     /**
+     * @param array<int, S> $files
+     * @param array<int, T> $splFiles
+     */
+    public function __construct(array $files = [], array $splFiles = [])
+    {
+        $this->map = $files;
+        $this->pendingFiles = $splFiles;
+    }
+
+    /**
      * @return T|null
      */
     public function findByHashAndSize(string $hash, int $size): ?File
@@ -44,14 +54,6 @@ final class FileMap
         $id = $this->getObjectId($file);
         $this->map[$id] = $fileInfo;
         $this->pendingFiles[$id] = $file;
-    }
-
-    /**
-     * @param T $file
-     */
-    private function getObjectId(File $file): int
-    {
-        return spl_object_id($file);
     }
 
     /**
@@ -83,5 +85,13 @@ final class FileMap
         $id = $this->getObjectId($file);
         unset($this->map[$id]);
         unset($this->pendingFiles[$id]);
+    }
+
+    /**
+     * @param T $file
+     */
+    private function getObjectId(File $file): int
+    {
+        return spl_object_id($file);
     }
 }
