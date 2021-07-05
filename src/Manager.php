@@ -35,14 +35,13 @@ use function hash_file;
 use function in_array;
 use function ini_get;
 use function is_resource;
-use function is_subclass_of;
 use function stream_copy_to_stream;
 use function strlen;
 use function sys_get_temp_dir;
 use function tempnam;
 
 /**
- * @template T of File
+ * @template T of \Arxy\FilesBundle\Model\File
  * @implements ManagerInterface<T>
  */
 final class Manager implements ManagerInterface
@@ -88,9 +87,6 @@ final class Manager implements ManagerInterface
     ) {
         if (!in_array($hashingAlgorithm, hash_algos(), true)) {
             throw new InvalidArgumentException(sprintf('The algorithm "%s" is not supported.', $hashingAlgorithm));
-        }
-        if (!is_subclass_of($class, File::class)) {
-            throw new InvalidArgumentException('$class must be subclass of '.File::class);
         }
 
         $this->class = $class;

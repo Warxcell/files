@@ -51,7 +51,7 @@ class MigrateNamingStrategyCommand extends Command
 
         $progressBar->finish();
 
-        $io->note('Migrated: '.$totalMigrated.'. Failures: '.$totalFailed.'.');
+        $io->note('Migrated: '.(string)$totalMigrated.'. Failures: '.(string)$totalFailed.'.');
 
         return 0;
     }

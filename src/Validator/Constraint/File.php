@@ -17,10 +17,13 @@ class File extends Constraint
 {
     public ?int $maxSize = null;
     public string $maxSizeMessage = 'The file is too large ({{ size }}). Allowed maximum size is {{ limit }}.';
+    /** @var array<int, string> */
     public array $mimeTypes = [];
     public string $mimeTypesMessage = 'The mime type of the file is invalid ({{ type }}). Allowed mime types are {{ types }}.';
 
     /**
+     * @param array<string, mixed> $options
+     * @param array<int, string> $groups
      * @param mixed $payload
      */
     public function __construct(array $options = null, array $groups = null, $payload = null)

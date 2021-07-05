@@ -10,9 +10,12 @@ use LogicException;
 
 class DelegatingPathResolver implements PathResolver
 {
-    /** @var PathResolver[] */
+    /** @var array<class-string<PathResolver>, PathResolver> */
     private array $resolvers;
 
+    /**
+     * @param array<class-string<PathResolver>, PathResolver> $resolvers
+     */
     public function __construct(array $resolvers)
     {
         $this->resolvers = $resolvers;

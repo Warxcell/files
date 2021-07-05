@@ -54,24 +54,4 @@ class PersistentPathStrategyTest extends AbstractStrategyTest
             '123'
         );
     }
-
-    public function testInvalidDirectoryFile(): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage(
-            'Expected argument of type "Arxy\FilesBundle\Model\PathAwareFile"'
-        );
-
-        $this->getStrategy()->getDirectoryName($this->createMock(File::class));
-    }
-
-    public function testInvalidFileName(): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage(
-            'Expected argument of type "Arxy\FilesBundle\Model\PathAwareFile"'
-        );
-
-        $this->getStrategy()->getFileName($this->createMock(File::class));
-    }
 }

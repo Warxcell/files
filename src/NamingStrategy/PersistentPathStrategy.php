@@ -4,23 +4,18 @@ declare(strict_types=1);
 
 namespace Arxy\FilesBundle\NamingStrategy;
 
-use Arxy\FilesBundle\InvalidArgumentException;
 use Arxy\FilesBundle\Model\File;
-use Arxy\FilesBundle\Model\PathAwareFile;
 use Arxy\FilesBundle\NamingStrategy;
 use function basename;
 use function dirname;
 
 /**
- * @implements NamingStrategy<PathAwareFile>
+ * @implements NamingStrategy<\Arxy\FilesBundle\Model\PathAwareFile>
  */
 final class PersistentPathStrategy implements NamingStrategy
 {
     public function getDirectoryName(File $file): ?string
     {
-        if (!$file instanceof PathAwareFile) {
-            throw InvalidArgumentException::invalidType($file, PathAwareFile::class);
-        }
         $pathname = $file->getPathname();
 
         $directory = dirname($pathname);
@@ -33,9 +28,6 @@ final class PersistentPathStrategy implements NamingStrategy
 
     public function getFileName(File $file): string
     {
-        if (!$file instanceof PathAwareFile) {
-            throw InvalidArgumentException::invalidType($file, PathAwareFile::class);
-        }
         $pathname = $file->getPathname();
 
         return basename($pathname);

@@ -6,7 +6,6 @@ namespace Arxy\FilesBundle\Tests;
 
 use Arxy\FilesBundle\AbstractModelFactory;
 use PHPUnit\Framework\TestCase;
-use stdClass;
 
 class AbstractModelFactoryTest extends TestCase
 {
@@ -19,15 +18,5 @@ class AbstractModelFactoryTest extends TestCase
         self::assertSame(12345, $file->getSize());
         self::assertSame('hash', $file->getHash());
         self::assertSame('mimeType', $file->getMimeType());
-    }
-
-    public function testInvalidClass(): void
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage(
-            'Expected class of type "Arxy\FilesBundle\Model\AbstractFile", "stdClass" given'
-        );
-
-        new AbstractModelFactory(stdClass::class);
     }
 }

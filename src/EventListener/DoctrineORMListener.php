@@ -62,6 +62,7 @@ final class DoctrineORMListener
             $refl = new ReflectionObject($entity);
             $reflProperty = $refl->getProperty($property);
             $reflProperty->setAccessible(true);
+            /** @var File|null $file */
             $file = $reflProperty->getValue($entity);
 
             if ($file === null) {

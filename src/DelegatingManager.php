@@ -6,18 +6,19 @@ namespace Arxy\FilesBundle;
 
 use Arxy\FilesBundle\Model\File;
 use Arxy\FilesBundle\Model\MutableFile;
+use InvalidArgumentException;
 use LogicException;
 use SplFileInfo;
 use function reset;
 
 final class DelegatingManager implements ManagerInterface
 {
-    /** @var ManagerInterface[] */
-    private array $managers;
+    /** @var array<class-string<File>, ManagerInterface> */
+    private array $managers = [];
     private ManagerInterface $manager;
 
     /**
-     * @param ManagerInterface[] $managers
+     * @param array<class-string<File>, ManagerInterface> $managers
      */
     public function __construct(array $managers, ManagerInterface $manager = null)
     {

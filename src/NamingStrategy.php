@@ -7,7 +7,7 @@ namespace Arxy\FilesBundle;
 use Arxy\FilesBundle\Model\File;
 
 /**
- * @template T of File
+ * @template T of \Arxy\FilesBundle\Model\File
  */
 interface NamingStrategy
 {

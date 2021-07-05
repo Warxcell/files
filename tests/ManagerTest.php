@@ -18,10 +18,10 @@ use Arxy\FilesBundle\NamingStrategy;
 use Arxy\FilesBundle\Repository;
 use DateTimeImmutable;
 use Exception;
-use InvalidArgumentException;
 use League\Flysystem\Filesystem;
 use League\Flysystem\FilesystemOperator;
 use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
+use OutOfBoundsException;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use RuntimeException;
@@ -33,30 +33,6 @@ class ManagerTest extends TestCase
 {
     private ManagerInterface $manager;
     private FilesystemOperator $filesystem;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->filesystem = new Filesystem(new InMemoryFilesystemAdapter());
-
-        $this->manager = new Manager(
-            File::class,
-            $this->filesystem,
-            new class implements NamingStrategy {
-                public function getDirectoryName(\Arxy\FilesBundle\Model\File $file): ?string
-                {
-                    return null;
-                }
-
-                public function getFileName(\Arxy\FilesBundle\Model\File $file): string
-                {
-                    return (string)$file->getId();
-                }
-            },
-            new FileRepository(),
-        );
-    }
 
     public function testUploadEvent(): void
     {
@@ -74,7 +50,7 @@ class ManagerTest extends TestCase
 
         $dispatcher->expects(self::once())->method('dispatch')->with(
             self::callback(
-                static fn (PostUpload $fileUploaded): bool => $fileUploaded->getFile(
+                static fn(PostUpload $fileUploaded): bool => $fileUploaded->getFile(
                     ) instanceof File && $fileUploaded->getManager() === $manager
             )
         );
@@ -99,19 +75,19 @@ class ManagerTest extends TestCase
         $dispatcher->expects(self::exactly(3))->method('dispatch')->withConsecutive(
             [
                 self::callback(
-                    static fn (PostUpload $fileUploaded): bool => $fileUploaded->getFile(
+                    static fn(PostUpload $fileUploaded): bool => $fileUploaded->getFile(
                         ) instanceof File && $fileUploaded->getManager() === $manager
                 ),
             ],
             [
                 self::callback(
-                    static fn (PreMove $preRemove): bool => $preRemove->getFile(
+                    static fn(PreMove $preRemove): bool => $preRemove->getFile(
                         ) instanceof File && $preRemove->getManager() === $manager
                 ),
             ],
             [
                 self::callback(
-                    static fn (PostMove $preRemove): bool => $preRemove->getFile(
+                    static fn(PostMove $preRemove): bool => $preRemove->getFile(
                         ) instanceof File && $preRemove->getManager() === $manager
                 ),
             ]
@@ -139,7 +115,7 @@ class ManagerTest extends TestCase
         $dispatcher->expects(self::exactly(0))->method('dispatch')->withConsecutive(
             [
                 self::callback(
-                    static fn (PostUpload $fileUploaded): bool => $fileUploaded->getFile(
+                    static fn(PostUpload $fileUploaded): bool => $fileUploaded->getFile(
                         ) instanceof File && $fileUploaded->getManager() === $manager
                 ),
             ]
@@ -169,13 +145,13 @@ class ManagerTest extends TestCase
         $dispatcher->expects(self::exactly(2))->method('dispatch')->withConsecutive(
             [
                 self::callback(
-                    static fn (PostUpload $fileUploaded): bool => $fileUploaded->getFile(
+                    static fn(PostUpload $fileUploaded): bool => $fileUploaded->getFile(
                         ) instanceof File && $fileUploaded->getManager() === $manager
                 ),
             ],
             [
                 self::callback(
-                    static fn (PreRemove $preRemove): bool => $preRemove->getFile(
+                    static fn(PreRemove $preRemove): bool => $preRemove->getFile(
                         ) instanceof File && $preRemove->getManager() === $manager
                 ),
             ]
@@ -186,22 +162,9 @@ class ManagerTest extends TestCase
         $manager->remove($file);
     }
 
-    public function testInvalidClassPassed(): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('$class must be subclass of '.\Arxy\FilesBundle\Model\File::class);
-
-        new Manager(
-            \stdClass::class,
-            $this->createMock(FilesystemOperator::class),
-            $this->createMock(NamingStrategy::class)
-        );
-    }
-
     public function testSimpleUpload(): void
     {
         self::assertEquals(File::class, $this->manager->getClass());
-        /** @var File $file */
         $file = $this->manager->upload(new SplFileObject(__DIR__.'/files/image1.jpg'));
 
         self::assertTrue($file instanceof File);
@@ -375,7 +338,6 @@ class ManagerTest extends TestCase
         self::assertTrue($this->filesystem->fileExists('directory/test/directory_test.jpg'));
     }
 
-
     public function testNamingStrategyWithoutDirectory(): void
     {
         $manager = new Manager(
@@ -436,9 +398,9 @@ class ManagerTest extends TestCase
             $this->assertInstanceOf(FileException::class, $exception);
             $this->assertEquals('Unable to move file', $exception->getMessage());
 
-            $this->assertInstanceOf(InvalidArgumentException::class, $exception->getPrevious());
+            $this->assertInstanceOf(OutOfBoundsException::class, $exception->getPrevious());
             $this->assertEquals(
-                'File '.spl_object_id($file).' not found in map',
+                'File '.(string)spl_object_id($file).' not found in map',
                 $exception->getPrevious()->getMessage()
             );
         }
@@ -455,7 +417,7 @@ class ManagerTest extends TestCase
             $this->assertInstanceOf(FileException::class, $exception);
             $this->assertEquals('Unable to move file', $exception->getMessage());
 
-            $this->assertInstanceOf(InvalidArgumentException::class, $exception->getPrevious());
+            $this->assertInstanceOf(OutOfBoundsException::class, $exception->getPrevious());
             $this->assertEquals('File 25 not found in map', $exception->getPrevious()->getMessage());
         }
     }
@@ -674,13 +636,13 @@ class ManagerTest extends TestCase
         $dispatcher->expects(self::exactly(2))->method('dispatch')->withConsecutive(
             [
                 self::callback(
-                    static fn (PreUpdate $preRemove): bool => $preRemove->getFile() === $file && $preRemove->getManager(
+                    static fn(PreUpdate $preRemove): bool => $preRemove->getFile() === $file && $preRemove->getManager(
                         ) === $manager
                 ),
             ],
             [
                 self::callback(
-                    static fn (PostUpdate $postUpdate): bool => $postUpdate->getFile(
+                    static fn(PostUpdate $postUpdate): bool => $postUpdate->getFile(
                         ) === $file && $postUpdate->getManager() === $manager
                 ),
             ]
@@ -708,13 +670,13 @@ class ManagerTest extends TestCase
         $dispatcher->expects(self::exactly(2))->method('dispatch')->withConsecutive(
             [
                 self::callback(
-                    static fn (PreUpdate $preRemove): bool => $preRemove->getFile() === $file && $preRemove->getManager(
+                    static fn(PreUpdate $preRemove): bool => $preRemove->getFile() === $file && $preRemove->getManager(
                         ) === $manager
                 ),
             ],
             [
                 self::callback(
-                    static fn (PostUpdate $postUpdate): bool => $postUpdate->getFile(
+                    static fn(PostUpdate $postUpdate): bool => $postUpdate->getFile(
                         ) === $file && $postUpdate->getManager() === $manager
                 ),
             ]
@@ -737,11 +699,35 @@ class ManagerTest extends TestCase
             $this->assertInstanceOf(FileException::class, $exception);
             $this->assertEquals('Unable to move file', $exception->getMessage());
 
-            $this->assertInstanceOf(InvalidArgumentException::class, $exception->getPrevious());
+            $this->assertInstanceOf(OutOfBoundsException::class, $exception->getPrevious());
             $this->assertEquals(
-                'File '.spl_object_id($file).' not found in map',
+                'File '.(string)spl_object_id($file).' not found in map',
                 $exception->getPrevious()->getMessage()
             );
         }
+    }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->filesystem = new Filesystem(new InMemoryFilesystemAdapter());
+
+        $this->manager = new Manager(
+            File::class,
+            $this->filesystem,
+            new class implements NamingStrategy {
+                public function getDirectoryName(\Arxy\FilesBundle\Model\File $file): ?string
+                {
+                    return null;
+                }
+
+                public function getFileName(\Arxy\FilesBundle\Model\File $file): string
+                {
+                    return (string)$file->getId();
+                }
+            },
+            new FileRepository(),
+        );
     }
 }

@@ -23,6 +23,9 @@ use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Reference;
 
+/**
+ * @psalm-suppress all
+ */
 class ArxyFilesExtension extends Extension
 {
     public function load(array $configs, ContainerBuilder $container): void
@@ -79,7 +82,7 @@ class ArxyFilesExtension extends Extension
                     DelegatingManager::class,
                     [
                         '$managers' => array_map(
-                            static fn(array $config): Reference => $config['reference'],
+                            static fn (array $config): Reference => $config['reference'],
                             $config['managers']
                         ),
                     ]

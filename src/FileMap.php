@@ -5,8 +5,11 @@ declare(strict_types=1);
 namespace Arxy\FilesBundle;
 
 use Arxy\FilesBundle\Model\File;
+use OutOfBoundsException;
 use SplFileInfo;
+use function method_exists;
 use function spl_object_id;
+use function sprintf;
 
 /**
  * Holds map of files to be uploaded.
@@ -58,12 +61,25 @@ final class FileMap
 
     /**
      * @param T $file
+     */
+    private function getObjectId(File $file): int
+    {
+        return spl_object_id($file);
+    }
+
+    /**
+     * @param T $file
      * @return S
      */
     public function get(File $file): SplFileInfo
     {
         if (!$this->has($file)) {
-            throw InvalidArgumentException::fileNotExistsInMap($file);
+            throw new OutOfBoundsException(
+                sprintf(
+                    'File %s not found in map',
+                    method_exists($file, '__toString') ? (string)$file : (string)spl_object_id($file)
+                )
+            );
         }
 
         return $this->map[$this->getObjectId($file)];
@@ -85,13 +101,5 @@ final class FileMap
         $id = $this->getObjectId($file);
         unset($this->map[$id]);
         unset($this->pendingFiles[$id]);
-    }
-
-    /**
-     * @param T $file
-     */
-    private function getObjectId(File $file): int
-    {
-        return spl_object_id($file);
     }
 }

@@ -45,16 +45,4 @@ class FileFilterPathResolverTest extends AbstractFunctionalTest
             $path
         );
     }
-
-    public function testInvalidInstancePassed(): void
-    {
-        $pathResolver = self::$container->get(FileFilterPathResolver::class);
-        assert($pathResolver instanceof FileFilterPathResolver);
-
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage(
-            'Expected argument of type "Arxy\FilesBundle\LiipImagine\FileFilter", "Arxy\FilesBundle\Tests\Functional\Entity\File" given'
-        );
-        $pathResolver->getPath($this->file);
-    }
 }

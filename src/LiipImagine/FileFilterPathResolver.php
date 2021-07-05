@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Arxy\FilesBundle\LiipImagine;
 
-use Arxy\FilesBundle\InvalidArgumentException;
 use Arxy\FilesBundle\ManagerInterface;
 use Arxy\FilesBundle\Model\File;
 use Arxy\FilesBundle\PathResolver;
@@ -26,10 +25,6 @@ class FileFilterPathResolver implements PathResolver
 
     public function getPath(File $file): string
     {
-        if (!$file instanceof FileFilter) {
-            throw InvalidArgumentException::invalidType($file, FileFilter::class);
-        }
-
         return $this->cacheManager->getBrowserPath(
             $this->fileManager->getPathname($file->getDecorated()),
             $file->getFilter()

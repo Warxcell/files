@@ -14,7 +14,7 @@ class NoPreviewGeneratorFound extends RuntimeException
     {
         return new self(
             'No preview generator found for file '.
-            (method_exists($file, '__toString') ? (string)$file : spl_object_id($file))
+            (method_exists($file, '__toString') ? (string)$file : (string)spl_object_id($file))
         );
     }
 }

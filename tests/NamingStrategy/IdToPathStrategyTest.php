@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Arxy\FilesBundle\Tests\NamingStrategy;
 
-use Arxy\FilesBundle\InvalidArgumentException;
 use Arxy\FilesBundle\NamingStrategy;
 use Arxy\FilesBundle\Tests\File;
 
@@ -26,25 +25,5 @@ class IdToPathStrategyTest extends AbstractStrategyTest
         $file->setId(12345);
 
         return $file;
-    }
-
-    public function testInvalidDirectoryFile(): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage(
-            'Expected argument of type "Arxy\FilesBundle\Model\IdentifiableFile"'
-        );
-
-        $this->getStrategy()->getDirectoryName($this->createMock(\Arxy\FilesBundle\Model\File::class));
-    }
-
-    public function testInvalidFileName(): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage(
-            'Expected argument of type "Arxy\FilesBundle\Model\IdentifiableFile"'
-        );
-
-        $this->getStrategy()->getFileName($this->createMock(\Arxy\FilesBundle\Model\File::class));
     }
 }

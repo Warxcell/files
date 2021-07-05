@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Arxy\FilesBundle\Tests;
 
 use Arxy\FilesBundle\DelegatingManager;
-use Arxy\FilesBundle\InvalidArgumentException;
 use Arxy\FilesBundle\ManagerInterface;
+use InvalidArgumentException;
 use LogicException;
 use PHPUnit\Framework\TestCase;
 use SplFileInfo;

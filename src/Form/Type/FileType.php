@@ -38,7 +38,7 @@ class FileType extends AbstractType
     {
         $resolver->setDefault(
             'data_class',
-            static fn(Options $options): ?string => $options['multiple'] ? null : $options['manager']->getClass()
+            static fn (Options $options): ?string => $options['multiple'] ? null : $options['manager']->getClass()
         );
         $resolver->setDefault('empty_data', null);
         $resolver->setDefault('input_options', []);

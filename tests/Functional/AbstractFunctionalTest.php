@@ -14,10 +14,9 @@ use Symfony\Component\Console\Output\ConsoleOutput;
 
 abstract class AbstractFunctionalTest extends KernelTestCase
 {
-    protected ?EntityManagerInterface $entityManager;
-    protected ?ManagerInterface $manager;
-
-    protected ?FilesystemOperator $flysystem;
+    protected EntityManagerInterface $entityManager;
+    protected ManagerInterface $manager;
+    protected FilesystemOperator $flysystem;
 
     protected static function getKernelClass()
     {
@@ -35,6 +34,7 @@ abstract class AbstractFunctionalTest extends KernelTestCase
     }
 
     abstract protected static function getConfig(): string;
+
     abstract protected static function getBundles(): array;
 
     protected function setUp(): void
@@ -52,6 +52,19 @@ abstract class AbstractFunctionalTest extends KernelTestCase
         $this->flysystem = self::$container->get('in_memory');
     }
 
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+
+        $this->entityManager->close();
+        unset($this->entityManager);
+
+        $this->manager->clear();
+        unset($this->manager);
+
+        unset($this->flysystem);
+    }
+
     private function buildDb($kernel)
     {
         $application = new Application($kernel);
@@ -65,18 +78,5 @@ abstract class AbstractFunctionalTest extends KernelTestCase
             ),
             new ConsoleOutput()
         );
-    }
-
-    protected function tearDown(): void
-    {
-        parent::tearDown();
-
-        $this->entityManager->close();
-        $this->entityManager = null;
-
-        $this->manager->clear();
-        $this->manager = null;
-
-        $this->flysystem = null;
     }
 }
