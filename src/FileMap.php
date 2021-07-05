@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Arxy\FilesBundle;
 
 use Arxy\FilesBundle\Model\File;
+use Arxy\FilesBundle\Utility\FileUtility;
 use OutOfBoundsException;
 use SplFileInfo;
-use function method_exists;
 use function spl_object_id;
 use function sprintf;
 
@@ -77,7 +77,7 @@ final class FileMap
             throw new OutOfBoundsException(
                 sprintf(
                     'File %s not found in map',
-                    method_exists($file, '__toString') ? (string)$file : (string)spl_object_id($file)
+                    FileUtility::toString($file)
                 )
             );
         }
