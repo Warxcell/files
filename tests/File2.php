@@ -10,12 +10,12 @@ class File2 extends AbstractFile
 {
     private ?int $id = null;
 
-    public function getId()
+    public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function setId($id): void
+    public function setId(?int $id): void
     {
         $this->id = $id;
     }

@@ -10,7 +10,7 @@ class MutableFile extends AbstractFile
 {
     private ?int $id = null;
 
-    public function getId()
+    public function getId(): ?int
     {
         return $this->id;
     }
