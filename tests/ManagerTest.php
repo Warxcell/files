@@ -17,6 +17,7 @@ use Arxy\FilesBundle\Model\MutableFile;
 use Arxy\FilesBundle\NamingStrategy;
 use Arxy\FilesBundle\Repository;
 use DateTimeImmutable;
+use ErrorException;
 use Exception;
 use League\Flysystem\Filesystem;
 use League\Flysystem\FilesystemOperator;
@@ -24,7 +25,6 @@ use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
 use OutOfBoundsException;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
-use RuntimeException;
 use SplFileObject;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Throwable;
@@ -50,7 +50,7 @@ class ManagerTest extends TestCase
 
         $dispatcher->expects(self::once())->method('dispatch')->with(
             self::callback(
-                static fn(PostUpload $fileUploaded): bool => $fileUploaded->getFile(
+                static fn (PostUpload $fileUploaded): bool => $fileUploaded->getFile(
                     ) instanceof File && $fileUploaded->getManager() === $manager
             )
         );
@@ -75,19 +75,19 @@ class ManagerTest extends TestCase
         $dispatcher->expects(self::exactly(3))->method('dispatch')->withConsecutive(
             [
                 self::callback(
-                    static fn(PostUpload $fileUploaded): bool => $fileUploaded->getFile(
+                    static fn (PostUpload $fileUploaded): bool => $fileUploaded->getFile(
                         ) instanceof File && $fileUploaded->getManager() === $manager
                 ),
             ],
             [
                 self::callback(
-                    static fn(PreMove $preRemove): bool => $preRemove->getFile(
+                    static fn (PreMove $preRemove): bool => $preRemove->getFile(
                         ) instanceof File && $preRemove->getManager() === $manager
                 ),
             ],
             [
                 self::callback(
-                    static fn(PostMove $preRemove): bool => $preRemove->getFile(
+                    static fn (PostMove $preRemove): bool => $preRemove->getFile(
                         ) instanceof File && $preRemove->getManager() === $manager
                 ),
             ]
@@ -115,7 +115,7 @@ class ManagerTest extends TestCase
         $dispatcher->expects(self::exactly(0))->method('dispatch')->withConsecutive(
             [
                 self::callback(
-                    static fn(PostUpload $fileUploaded): bool => $fileUploaded->getFile(
+                    static fn (PostUpload $fileUploaded): bool => $fileUploaded->getFile(
                         ) instanceof File && $fileUploaded->getManager() === $manager
                 ),
             ]
@@ -145,13 +145,13 @@ class ManagerTest extends TestCase
         $dispatcher->expects(self::exactly(2))->method('dispatch')->withConsecutive(
             [
                 self::callback(
-                    static fn(PostUpload $fileUploaded): bool => $fileUploaded->getFile(
+                    static fn (PostUpload $fileUploaded): bool => $fileUploaded->getFile(
                         ) instanceof File && $fileUploaded->getManager() === $manager
                 ),
             ],
             [
                 self::callback(
-                    static fn(PreRemove $preRemove): bool => $preRemove->getFile(
+                    static fn (PreRemove $preRemove): bool => $preRemove->getFile(
                         ) instanceof File && $preRemove->getManager() === $manager
                 ),
             ]
@@ -383,8 +383,11 @@ class ManagerTest extends TestCase
             $this->assertInstanceOf(FileException::class, $exception);
             $this->assertEquals('Unable to move file', $exception->getMessage());
 
-            $this->assertInstanceOf(RuntimeException::class, $exception->getPrevious());
-            $this->assertEquals('Failed to open '.$tmpFile, $exception->getPrevious()->getMessage());
+            $this->assertInstanceOf(ErrorException::class, $exception->getPrevious());
+            $this->assertEquals(
+                sprintf('fopen(%s): Failed to open stream: No such file or directory', $tmpFile),
+                $exception->getPrevious()->getMessage()
+            );
         }
     }
 
@@ -636,13 +639,13 @@ class ManagerTest extends TestCase
         $dispatcher->expects(self::exactly(2))->method('dispatch')->withConsecutive(
             [
                 self::callback(
-                    static fn(PreUpdate $preRemove): bool => $preRemove->getFile() === $file && $preRemove->getManager(
+                    static fn (PreUpdate $preRemove): bool => $preRemove->getFile() === $file && $preRemove->getManager(
                         ) === $manager
                 ),
             ],
             [
                 self::callback(
-                    static fn(PostUpdate $postUpdate): bool => $postUpdate->getFile(
+                    static fn (PostUpdate $postUpdate): bool => $postUpdate->getFile(
                         ) === $file && $postUpdate->getManager() === $manager
                 ),
             ]
@@ -670,13 +673,13 @@ class ManagerTest extends TestCase
         $dispatcher->expects(self::exactly(2))->method('dispatch')->withConsecutive(
             [
                 self::callback(
-                    static fn(PreUpdate $preRemove): bool => $preRemove->getFile() === $file && $preRemove->getManager(
+                    static fn (PreUpdate $preRemove): bool => $preRemove->getFile() === $file && $preRemove->getManager(
                         ) === $manager
                 ),
             ],
             [
                 self::callback(
-                    static fn(PostUpdate $postUpdate): bool => $postUpdate->getFile(
+                    static fn (PostUpdate $postUpdate): bool => $postUpdate->getFile(
                         ) === $file && $postUpdate->getManager() === $manager
                 ),
             ]

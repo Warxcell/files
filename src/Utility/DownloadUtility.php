@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Arxy\FilesBundle\Utility;
 
+use Arxy\FilesBundle\ErrorHandler;
 use Arxy\FilesBundle\ManagerInterface;
 use Arxy\FilesBundle\Model\File;
 use DateTimeImmutable;
@@ -56,12 +57,12 @@ class DownloadUtility
         $stream = $this->manager->readStream($file);
         $response->setCallback(
             static function () use ($stream): void {
-                $out = fopen('php://output', 'wb');
+                $out = ErrorHandler::wrap(static fn () => fopen('php://output', 'wb'));
 
-                stream_copy_to_stream($stream, $out);
+                ErrorHandler::wrap(static fn () => stream_copy_to_stream($stream, $out));
 
-                fclose($out);
-                fclose($stream);
+                ErrorHandler::wrap(static fn () => fclose($out));
+                ErrorHandler::wrap(static fn () => fclose($stream));
             }
         );
 

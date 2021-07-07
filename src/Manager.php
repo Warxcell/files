@@ -14,16 +14,15 @@ use Arxy\FilesBundle\Model\File;
 use Arxy\FilesBundle\Model\MutableFile;
 use Arxy\FilesBundle\Utility\NamingStrategyUtility;
 use DateTimeImmutable;
+use Exception;
 use InvalidArgumentException;
 use League\Flysystem\FilesystemOperator;
 use League\MimeTypeDetection\FinfoMimeTypeDetector;
 use League\MimeTypeDetection\MimeTypeDetector;
 use Psr\EventDispatcher\EventDispatcherInterface;
-use RuntimeException;
 use SplFileInfo;
 use SplFileObject;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Throwable;
 use function clearstatcache;
 use function fclose;
 use function file_get_contents;
@@ -112,7 +111,7 @@ final class Manager implements ManagerInterface
                     $remoteFile = $file->openFile();
                 }
 
-                $tempFilename = tempnam($this->temporaryDirectory, 'file_manager');
+                $tempFilename = ErrorHandler::wrap(fn () => tempnam($this->temporaryDirectory, 'file_manager'));
                 $file = new SplFileObject($tempFilename, 'r+');
                 while ($content = $remoteFile->fread(self::CHUNK_SIZE)) {
                     $file->fwrite($content);
@@ -157,7 +156,7 @@ final class Manager implements ManagerInterface
             }
 
             return $fileEntity;
-        } catch (Throwable $exception) {
+        } catch (Exception $exception) {
             throw new UnableToUpload($file, $exception);
         }
     }
@@ -180,21 +179,19 @@ final class Manager implements ManagerInterface
                 $this->filesystem->createDirectory($directory);
             }
 
-            $stream = @fopen($splFileInfo->getPathname(), 'r');
-            if (!$stream) {
-                throw new RuntimeException('Failed to open '.$splFileInfo->getPathname());
-            }
+            $stream = ErrorHandler::wrap(static fn () => fopen($splFileInfo->getPathname(), 'r'));
+
             $this->filesystem->writeStream($path, $stream);
 
             /** @psalm-suppress RedundantCondition */
             if (is_resource($stream)) {
-                fclose($stream);
+                ErrorHandler::wrap(static fn () => fclose($stream));
             }
 
             if ($this->eventDispatcher !== null) {
                 $this->eventDispatcher->dispatch(new PostMove($this, $file));
             }
-        } catch (Throwable $throwable) {
+        } catch (Exception $throwable) {
             throw FileException::unableToMove($file, $throwable);
         }
     }
@@ -216,7 +213,7 @@ final class Manager implements ManagerInterface
             }
 
             $this->filesystem->delete($this->getPathname($file));
-        } catch (Throwable $exception) {
+        } catch (Exception $exception) {
             throw FileException::unableToRemove($file, $exception);
         }
     }
@@ -226,11 +223,11 @@ final class Manager implements ManagerInterface
         try {
             $pathname = $this->getPathname($file);
             if ($this->fileMap->has($file)) {
-                return file_get_contents($pathname);
+                return ErrorHandler::wrap(static fn () => file_get_contents($pathname));
             } else {
                 return $this->filesystem->read($pathname);
             }
-        } catch (Throwable $exception) {
+        } catch (Exception $exception) {
             throw FileException::unableToRead($file, $exception);
         }
     }
@@ -240,11 +237,11 @@ final class Manager implements ManagerInterface
         try {
             $pathname = $this->getPathname($file);
             if ($this->fileMap->has($file)) {
-                return fopen($pathname, 'rb');
+                return ErrorHandler::wrap(static fn () => fopen($pathname, 'rb'));
             } else {
                 return $this->filesystem->readStream($pathname);
             }
-        } catch (Throwable $exception) {
+        } catch (Exception $exception) {
             throw FileException::unableToRead($file, $exception);
         }
     }
@@ -258,7 +255,7 @@ final class Manager implements ManagerInterface
 
             $pathname = $this->getPathname($file);
             if ($this->fileMap->has($file)) {
-                file_put_contents($pathname, $contents);
+                ErrorHandler::wrap(static fn () => file_put_contents($pathname, $contents));
                 clearstatcache(true, $pathname);
             } else {
                 $this->filesystem->write($pathname, $contents);
@@ -266,13 +263,13 @@ final class Manager implements ManagerInterface
 
             $file->setMimeType($this->mimeTypeDetector->detectMimeTypeFromBuffer($contents));
             $file->setSize(strlen($contents));
-            $file->setHash(hash($this->hashingAlgorithm, $contents));
+            $file->setHash(ErrorHandler::wrap(fn () => hash($this->hashingAlgorithm, $contents)));
             $file->setModifiedAt(new DateTimeImmutable());
 
             if ($this->eventDispatcher !== null) {
                 $this->eventDispatcher->dispatch(new PostUpdate($this, $file));
             }
-        } catch (Throwable $exception) {
+        } catch (Exception $exception) {
             throw FileException::unableToWrite($file, $exception);
         }
     }
@@ -287,9 +284,9 @@ final class Manager implements ManagerInterface
             $pathname = $this->getPathname($file);
             if ($this->fileMap->has($file)) {
                 $splFile = $this->fileMap->get($file);
-                $stream = fopen($pathname, 'w+b');
-                stream_copy_to_stream($resource, $stream);
-                fclose($stream);
+                $stream = ErrorHandler::wrap(static fn () => fopen($pathname, 'w+b'));
+                ErrorHandler::wrap(static fn () => stream_copy_to_stream($resource, $stream));
+                ErrorHandler::wrap(static fn () => fclose($stream));
                 clearstatcache(true, $pathname);
 
                 $file->setMimeType($this->getMimeTypeByFile($splFile));
@@ -308,7 +305,7 @@ final class Manager implements ManagerInterface
             if ($this->eventDispatcher !== null) {
                 $this->eventDispatcher->dispatch(new PostUpdate($this, $file));
             }
-        } catch (Throwable $exception) {
+        } catch (Exception $exception) {
             throw FileException::unableToWrite($file, $exception);
         }
     }
@@ -325,7 +322,7 @@ final class Manager implements ManagerInterface
 
     private function hashFile(SplFileInfo $file): string
     {
-        return hash_file($this->hashingAlgorithm, $file->getPathname());
+        return ErrorHandler::wrap(fn () => hash_file($this->hashingAlgorithm, $file->getPathname()));
     }
 
     /**
