@@ -8,6 +8,8 @@ use Exception;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Exception\ConstraintDefinitionException;
 use function ByteUnits\parse;
+use function is_array;
+use function is_string;
 
 /**
  * @Annotation
