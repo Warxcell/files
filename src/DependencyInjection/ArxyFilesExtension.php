@@ -13,6 +13,7 @@ use Arxy\FilesBundle\ModelFactory;
 use Arxy\FilesBundle\NamingStrategy;
 use Arxy\FilesBundle\Repository;
 use Arxy\FilesBundle\Twig\FilesExtension;
+use Arxy\FilesBundle\Twig\FilesRuntime;
 use League\Flysystem\FilesystemOperator;
 use League\MimeTypeDetection\MimeTypeDetector;
 use LogicException;
@@ -42,7 +43,12 @@ class ArxyFilesExtension extends Extension
         if ($config['twig']) {
             $filesExtension = new Definition(FilesExtension::class);
             $filesExtension->setAutowired(true);
+            $filesExtension->setAutoconfigured(true);
             $container->setDefinition(FilesExtension::class, $filesExtension);
+
+            $filesExtension = new Definition(FilesRuntime::class);
+            $filesExtension->setAutowired(true);
+            $container->setDefinition(FilesRuntime::class, $filesExtension);
         }
 
         $totalManagers = count($config['managers']);
