@@ -48,9 +48,9 @@ final class DelegatingManager implements ManagerInterface
         return $this->managers[$class];
     }
 
-    public function upload(SplFileInfo $file): File
+    public function upload(SplFileInfo $splFileInfo): File
     {
-        return $this->manager->upload($file);
+        return $this->manager->upload($splFileInfo);
     }
 
     public function getPathname(File $file): string
