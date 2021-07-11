@@ -19,9 +19,9 @@ final class PathResolverManager implements ManagerInterface, PathResolver
         $this->pathResolver = $pathResolver;
     }
 
-    public function upload(SplFileInfo $file): File
+    public function upload(SplFileInfo $splFileInfo): File
     {
-        return $this->manager->upload($file);
+        return $this->manager->upload($splFileInfo);
     }
 
     public function getPathname(File $file): string
