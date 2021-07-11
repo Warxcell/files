@@ -25,7 +25,9 @@ use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
 use OutOfBoundsException;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use SplFileInfo;
 use SplFileObject;
+use SplTempFileObject;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Throwable;
 
@@ -554,25 +556,7 @@ class ManagerTest extends TestCase
         self::assertEquals('image/jpeg', $file->getMimeType());
 
         assert($file instanceof MutableFile);
-        $this->manager->write($file, file_get_contents(__DIR__.'/files/image2.jpg'));
-
-        self::assertEquals('59aeac36ae75786be1b573baad0e77c0', $file->getHash());
-        self::assertEquals(22518, $file->getSize());
-        self::assertEquals('image/jpeg', $file->getMimeType());
-    }
-
-    public function testWriteStream(): void
-    {
-        $forUpload = __DIR__.'/files/image1.jpg';
-        $file = $this->manager->upload(new SplFileObject($forUpload));
-        $this->manager->moveFile($file);
-
-        self::assertEquals('9aa1c5fc7c9388166d7ce7fd46648dd1', $file->getHash());
-        self::assertEquals(24053, $file->getSize());
-        self::assertEquals('image/jpeg', $file->getMimeType());
-
-        assert($file instanceof MutableFile);
-        $this->manager->writeStream($file, fopen(__DIR__.'/files/image2.jpg', 'r'));
+        $this->manager->write($file, new SplFileInfo(__DIR__.'/files/image2.jpg'));
 
         self::assertEquals('59aeac36ae75786be1b573baad0e77c0', $file->getHash());
         self::assertEquals(22518, $file->getSize());
@@ -592,27 +576,7 @@ class ManagerTest extends TestCase
         self::assertEquals('image/jpeg', $file->getMimeType());
 
         assert($file instanceof MutableFile);
-        $this->manager->write($file, file_get_contents(__DIR__.'/files/image2.jpg'));
-
-        self::assertEquals('59aeac36ae75786be1b573baad0e77c0', $file->getHash());
-        self::assertEquals(22518, $file->getSize());
-        self::assertEquals('image/jpeg', $file->getMimeType());
-    }
-
-    public function testWriteStreamTemporaryFile(): void
-    {
-        $tmp = tempnam(sys_get_temp_dir(), 'files');
-        $forUpload = __DIR__.'/files/image1.jpg';
-
-        copy($forUpload, $tmp);
-        $file = $this->manager->upload(new SplFileObject($tmp));
-
-        self::assertEquals('9aa1c5fc7c9388166d7ce7fd46648dd1', $file->getHash());
-        self::assertEquals(24053, $file->getSize());
-        self::assertEquals('image/jpeg', $file->getMimeType());
-
-        assert($file instanceof MutableFile);
-        $this->manager->writeStream($file, fopen(__DIR__.'/files/image2.jpg', 'r'));
+        $this->manager->write($file, new SplFileInfo(__DIR__.'/files/image2.jpg'));
 
         self::assertEquals('59aeac36ae75786be1b573baad0e77c0', $file->getHash());
         self::assertEquals(22518, $file->getSize());
@@ -650,43 +614,10 @@ class ManagerTest extends TestCase
                 ),
             ]
         );
-        $manager->write($file, 'test');
-    }
 
-    public function testWriteStreamEvents(): void
-    {
-        $dispatcher = $this->createMock(EventDispatcherInterface::class);
-
-        $manager = new Manager(
-            File::class,
-            $this->createMock(FilesystemOperator::class),
-            $this->createMock(NamingStrategy::class),
-            null,
-            null,
-            null,
-            $dispatcher
-        );
-        /** @var File $file */
-        $file = $manager->upload(new SplFileObject(__DIR__.'/files/image1.jpg'));
-        $manager->moveFile($file);
-
-        $dispatcher->expects(self::exactly(2))->method('dispatch')->withConsecutive(
-            [
-                self::callback(
-                    static fn (PreUpdate $preRemove): bool => $preRemove->getFile() === $file && $preRemove->getManager(
-                        ) === $manager
-                ),
-            ],
-            [
-                self::callback(
-                    static fn (PostUpdate $postUpdate): bool => $postUpdate->getFile(
-                        ) === $file && $postUpdate->getManager() === $manager
-                ),
-            ]
-        );
-
-        $stream = fopen('data://text/plain,'.'test', 'r');
-        $manager->writeStream($file, $stream);
+        $splTemp = new SplTempFileObject();
+        $splTemp->fwrite('test');
+        $manager->write($file, $splTemp);
     }
 
     public function testClear(): void

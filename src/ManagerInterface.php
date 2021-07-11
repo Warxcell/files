@@ -18,7 +18,7 @@ interface ManagerInterface
      * @return T
      * @throws UnableToUpload
      */
-    public function upload(SplFileInfo $file): File;
+    public function upload(SplFileInfo $splFileInfo): File;
 
     /**
      * Get underlying path of file
@@ -45,15 +45,7 @@ interface ManagerInterface
      * @param W $file
      * @throws FileException
      */
-    public function write(MutableFile $file, string $contents): void;
-
-    /**
-     * @template W of T&MutableFile
-     * @param W $file
-     * @param resource $resource
-     * @throws FileException
-     */
-    public function writeStream(MutableFile $file, $resource): void;
+    public function write(MutableFile $file, SplFileInfo $splFileInfo): void;
 
     /**
      * Move underlying file to it's final location.

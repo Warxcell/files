@@ -8,22 +8,13 @@ use Arxy\FilesBundle\ManagerInterface;
 use Arxy\FilesBundle\PathResolver;
 use Arxy\FilesBundle\PathResolverManager;
 use PHPUnit\Framework\TestCase;
+use SplTempFileObject;
 
 class PathResolverManagerTest extends TestCase
 {
     private ManagerInterface $decorated;
     private PathResolver $pathResolver;
     private ManagerInterface $decorator;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->decorated = $this->createMock(ManagerInterface::class);
-        $this->pathResolver = $this->createMock(PathResolver::class);
-
-        $this->decorator = new PathResolverManager($this->decorated, $this->pathResolver);
-    }
 
     public function testUpload(): void
     {
@@ -80,17 +71,11 @@ class PathResolverManagerTest extends TestCase
     public function testWrite(): void
     {
         $file = new MutableFile('filename', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg');
-        $this->decorated->expects(self::once())->method('write')->with($file, 'test');
+        $splTemp = new SplTempFileObject();
+        $splTemp->fwrite('test');
+        $this->decorated->expects(self::once())->method('write')->with($file, $splTemp);
 
-        $this->decorator->write($file, 'test');
-    }
-
-    public function testWriteStream(): void
-    {
-        $stream = fopen('data://text/plain,'.'test', 'r');
-        $file = new MutableFile('filename', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg');
-        $this->decorated->expects(self::once())->method('writeStream')->with($file, $stream);
-        $this->decorator->writeStream($file, $stream);
+        $this->decorator->write($file, $splTemp);
     }
 
     public function testGetClass(): void
@@ -116,5 +101,15 @@ class PathResolverManagerTest extends TestCase
         $actual = $this->decorator->getPath($file);
 
         self::assertSame('!!!', $actual);
+    }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->decorated = $this->createMock(ManagerInterface::class);
+        $this->pathResolver = $this->createMock(PathResolver::class);
+
+        $this->decorator = new PathResolverManager($this->decorated, $this->pathResolver);
     }
 }

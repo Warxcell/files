@@ -10,6 +10,7 @@ use InvalidArgumentException;
 use LogicException;
 use PHPUnit\Framework\TestCase;
 use SplFileInfo;
+use SplTempFileObject;
 use stdClass;
 
 class DelegatingManagerTest extends TestCase
@@ -17,24 +18,6 @@ class DelegatingManagerTest extends TestCase
     private ManagerInterface $manager1;
     private ManagerInterface $manager2;
     private ManagerInterface $manager;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->manager1 = $this->createMock(ManagerInterface::class);
-        $this->manager1->method('getClass')->willReturn(File::class);
-
-        $this->manager2 = $this->createMock(ManagerInterface::class);
-        $this->manager2->method('getClass')->willReturn(File2::class);
-
-        $this->manager = new DelegatingManager(
-            [
-                $this->manager1,
-                $this->manager2,
-            ]
-        );
-    }
 
     public function testZeroManagers(): void
     {
@@ -87,19 +70,11 @@ class DelegatingManagerTest extends TestCase
     {
         $file1 = new File('original_filename.jpg', 125, '1234567', 'image/jpeg');
 
-        $this->manager1->expects(self::once())->method('write')->with($file1, 'test');
+        $splTemp = new SplTempFileObject();
+        $splTemp->fwrite('test');
+        $this->manager1->expects(self::once())->method('write');
 
-        $this->manager->write($file1, 'test');
-    }
-
-    public function testWriteStream(): void
-    {
-        $file1 = new File('original_filename.jpg', 125, '1234567', 'image/jpeg');
-        $stream = fopen('data://text/plain,test', 'r');
-
-        $this->manager1->expects(self::once())->method('writeStream')->with($file1, $stream);
-
-        $this->manager->writeStream($file1, $stream);
+        $this->manager->write($file1, $splTemp);
     }
 
     public function testNoManagerForFileRead(): void
@@ -230,5 +205,23 @@ class DelegatingManagerTest extends TestCase
 
         $manager = new DelegatingManager([$manager1, $manager2, $manager3], $manager3);
         $manager->clear();
+    }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->manager1 = $this->createMock(ManagerInterface::class);
+        $this->manager1->method('getClass')->willReturn(File::class);
+
+        $this->manager2 = $this->createMock(ManagerInterface::class);
+        $this->manager2->method('getClass')->willReturn(File2::class);
+
+        $this->manager = new DelegatingManager(
+            [
+                $this->manager1,
+                $this->manager2,
+            ]
+        );
     }
 }

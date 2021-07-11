@@ -58,16 +58,6 @@ final class DelegatingManager implements ManagerInterface
         return $this->getManagerForFile($file)->getPathname($file);
     }
 
-    private function getManagerForFile(File $file): ManagerInterface
-    {
-        foreach ($this->managers as $class => $manager) {
-            if ($file instanceof $class) {
-                return $manager;
-            }
-        }
-        throw new LogicException('No manager for '.get_class($file));
-    }
-
     public function read(File $file): string
     {
         return $this->getManagerForFile($file)->read($file);
@@ -78,14 +68,9 @@ final class DelegatingManager implements ManagerInterface
         return $this->getManagerForFile($file)->readStream($file);
     }
 
-    public function write(MutableFile $file, string $contents): void
+    public function write(MutableFile $file, SplFileInfo $fileInfo): void
     {
-        $this->getManagerForFile($file)->write($file, $contents);
-    }
-
-    public function writeStream(MutableFile $file, $resource): void
-    {
-        $this->getManagerForFile($file)->writeStream($file, $resource);
+        $this->getManagerForFile($file)->write($file, $fileInfo);
     }
 
     public function moveFile(File $file): void
@@ -108,5 +93,15 @@ final class DelegatingManager implements ManagerInterface
         foreach (array_merge($this->managers, [$this->manager->getClass() => $this->manager]) as $manager) {
             $manager->clear();
         }
+    }
+
+    private function getManagerForFile(File $file): ManagerInterface
+    {
+        foreach ($this->managers as $class => $manager) {
+            if ($file instanceof $class) {
+                return $manager;
+            }
+        }
+        throw new LogicException('No manager for '.get_class($file));
     }
 }
