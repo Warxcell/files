@@ -36,7 +36,7 @@ class MigrateNamingStrategyCommand extends Command
         $totalFailed = 0;
 
         $files = $this->repository->findAllForBatchProcessing();
-        foreach ($files as $file) {
+        foreach ($progressBar->iterate($files) as $file) {
             $migrated = $this->migrator->migrate($file);
             if ($migrated) {
                 $totalMigrated++;
@@ -45,11 +45,7 @@ class MigrateNamingStrategyCommand extends Command
                 $totalFailed++;
                 $io->warning('File '.$file->getHash().' not migrated');
             }
-
-            $progressBar->advance();
         }
-
-        $progressBar->finish();
 
         $io->note('Migrated: '.(string)$totalMigrated.'. Failures: '.(string)$totalFailed.'.');
 

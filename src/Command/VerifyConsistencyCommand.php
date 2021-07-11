@@ -17,8 +17,6 @@ use function fclose;
 use function hash_algos;
 use function in_array;
 use function sprintf;
-use function stream_get_contents;
-use function var_dump;
 
 class VerifyConsistencyCommand extends Command
 {
@@ -52,7 +50,7 @@ class VerifyConsistencyCommand extends Command
 
         $totalErrors = 0;
         $files = $this->repository->findAllForBatchProcessing();
-        foreach ($files as $file) {
+        foreach ($progressBar->iterate($files) as $file) {
             $errors = [];
 
             $pathname = $this->manager->getPathname($file);
@@ -100,11 +98,7 @@ class VerifyConsistencyCommand extends Command
                 $io->error($error);
                 $totalErrors++;
             }
-
-            $progressBar->advance();
         }
-
-        $progressBar->finish();
 
         if ($totalErrors === 0) {
             $io->success('No inconsistencies detected');
