@@ -99,9 +99,9 @@ final class Manager implements ManagerInterface
 
     public function upload(SplFileInfo $splFileInfo): File
     {
-        try {
-            $handledSplFile = $this->handleSplFile($splFileInfo);
+        $handledSplFile = $this->handleSplFile($splFileInfo);
 
+        try {
             if ($handledSplFile !== $splFileInfo) {
                 $originalFilename = $splFileInfo->getFilename();
             } else {
