@@ -10,11 +10,11 @@ use LogicException;
 
 class DelegatingPathResolver implements PathResolver
 {
-    /** @var array<class-string<PathResolver>, PathResolver> */
+    /** @var array<class-string<File>, PathResolver> */
     private array $resolvers;
 
     /**
-     * @param array<class-string<PathResolver>, PathResolver> $resolvers
+     * @param array<class-string<File>, PathResolver> $resolvers
      */
     public function __construct(array $resolvers)
     {
@@ -27,6 +27,9 @@ class DelegatingPathResolver implements PathResolver
     }
 
     /**
+     * @template T of File
+     * @param T $file
+     * @return PathResolver<T>
      * @throws LogicException if no Resolver is found for $file
      */
     private function getResolver(File $file): PathResolver
