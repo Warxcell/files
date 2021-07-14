@@ -37,7 +37,10 @@ final class DelegatingManager implements ManagerInterface
     }
 
     /**
+     * @param class-string<T> $class
+     * @return ManagerInterface<T>
      * @throws LogicException if not manager is found for $class
+     * @template T of File
      */
     public function getManagerFor(string $class): ManagerInterface
     {
@@ -95,6 +98,12 @@ final class DelegatingManager implements ManagerInterface
         }
     }
 
+    /**
+     * @param T $file
+     * @return ManagerInterface<T>
+     * @throws LogicException if not manager is found for $file
+     * @template T of File
+     */
     private function getManagerForFile(File $file): ManagerInterface
     {
         foreach ($this->managers as $class => $manager) {
