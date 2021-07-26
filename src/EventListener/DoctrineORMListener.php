@@ -42,6 +42,27 @@ final class DoctrineORMListener
         $this->handleEmbeddable($entityManager, $entity, $this->move);
     }
 
+    public function preRemove(LifecycleEventArgs $eventArgs): void
+    {
+        $this->postRemove($eventArgs);
+    }
+
+    public function postRemove(LifecycleEventArgs $eventArgs): void
+    {
+        $entity = $eventArgs->getEntity();
+        $entityManager = $eventArgs->getEntityManager();
+
+        if ($this->supports($entity)) {
+            ($this->remove)($entity);
+        }
+        $this->handleEmbeddable($entityManager, $entity, $this->remove);
+    }
+
+    public function onClear(): void
+    {
+        $this->manager->clear();
+    }
+
     private function supports(object $entity): bool
     {
         return $entity instanceof $this->class;
@@ -70,26 +91,5 @@ final class DoctrineORMListener
             }
             $action($file);
         }
-    }
-
-    public function preRemove(LifecycleEventArgs $eventArgs): void
-    {
-        $this->postRemove($eventArgs);
-    }
-
-    public function postRemove(LifecycleEventArgs $eventArgs): void
-    {
-        $entity = $eventArgs->getEntity();
-        $entityManager = $eventArgs->getEntityManager();
-
-        if ($this->supports($entity)) {
-            ($this->remove)($entity);
-        }
-        $this->handleEmbeddable($entityManager, $entity, $this->remove);
-    }
-
-    public function onClear(): void
-    {
-        $this->manager->clear();
     }
 }

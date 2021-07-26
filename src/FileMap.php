@@ -61,14 +61,6 @@ final class FileMap
 
     /**
      * @param T $file
-     */
-    private function getObjectId(File $file): int
-    {
-        return spl_object_id($file);
-    }
-
-    /**
-     * @param T $file
      * @return S
      */
     public function get(File $file): SplFileInfo
@@ -101,5 +93,13 @@ final class FileMap
         $id = $this->getObjectId($file);
         unset($this->map[$id]);
         unset($this->pendingFiles[$id]);
+    }
+
+    /**
+     * @param T $file
+     */
+    private function getObjectId(File $file): int
+    {
+        return spl_object_id($file);
     }
 }

@@ -47,8 +47,6 @@
 # Embedded web-server pid file
 /.web-server-pid
 
-/.idea
-
 composer.lock
 
 .phpunit.result.cache

@@ -34,20 +34,20 @@ class PreviewGeneratorListener implements EventSubscriberInterface
         }
     }
 
-    private function generatePreview(PreviewableFile $file): void
-    {
-        try {
-            $file->setPreview($this->previewGenerator->generate($file));
-        } catch (NoPreviewGeneratorFound $exception) {
-        }
-    }
-
     public function postUpdate(PostUpdate $event): void
     {
         $entity = $event->getFile();
 
         if ($entity instanceof PreviewableFile) {
             $this->generatePreview($entity);
+        }
+    }
+
+    private function generatePreview(PreviewableFile $file): void
+    {
+        try {
+            $file->setPreview($this->previewGenerator->generate($file));
+        } catch (NoPreviewGeneratorFound $exception) {
         }
     }
 }

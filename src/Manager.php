@@ -206,7 +206,7 @@ final class Manager implements ManagerInterface
         try {
             $pathname = $this->getPathname($file);
             if ($this->uploadFileMap->has($file)) {
-                return ErrorHandler::wrap(static fn () => file_get_contents($pathname));
+                return ErrorHandler::wrap(static fn() => file_get_contents($pathname));
             } else {
                 return $this->filesystem->read($pathname);
             }
@@ -220,7 +220,7 @@ final class Manager implements ManagerInterface
         try {
             $pathname = $this->getPathname($file);
             if ($this->uploadFileMap->has($file)) {
-                return ErrorHandler::wrap(static fn () => fopen($pathname, 'rb'));
+                return ErrorHandler::wrap(static fn() => fopen($pathname, 'rb'));
             } else {
                 return $this->filesystem->readStream($pathname);
             }
@@ -240,10 +240,10 @@ final class Manager implements ManagerInterface
 
             $pathname = $this->getPathname($file);
             if ($this->uploadFileMap->has($file)) {
-                ErrorHandler::wrap(static fn () => copy($splFileInfo->getRealPath(), $pathname));
+                ErrorHandler::wrap(static fn() => copy($splFileInfo->getRealPath(), $pathname));
                 clearstatcache(true, $pathname);
             } else {
-                $stream = ErrorHandler::wrap(static fn () => fopen($splFileInfo->getRealPath(), 'r'));
+                $stream = ErrorHandler::wrap(static fn() => fopen($splFileInfo->getRealPath(), 'r'));
                 $this->filesystem->writeStream($pathname, $stream);
                 /** @psalm-suppress RedundantCondition */
                 if (is_resource($stream)) {
@@ -289,7 +289,7 @@ final class Manager implements ManagerInterface
             $remoteFile = $file->openFile();
         }
 
-        $tempFilename = ErrorHandler::wrap(fn () => tempnam($this->temporaryDirectory, 'file_manager'));
+        $tempFilename = ErrorHandler::wrap(fn() => tempnam($this->temporaryDirectory, 'file_manager'));
         $file = new SplFileObject($tempFilename, 'r+');
         while ($content = $remoteFile->fread(self::CHUNK_SIZE)) {
             $file->fwrite($content);
@@ -302,7 +302,7 @@ final class Manager implements ManagerInterface
 
     private function hashFile(SplFileInfo $file): string
     {
-        return ErrorHandler::wrap(fn () => hash_file($this->hashingAlgorithm, $file->getRealPath()));
+        return ErrorHandler::wrap(fn() => hash_file($this->hashingAlgorithm, $file->getRealPath()));
     }
 
     /**
@@ -312,7 +312,7 @@ final class Manager implements ManagerInterface
     {
         $mimeType = $this->mimeTypeDetector->detectMimeTypeFromFile($file->getRealPath());
         if ($mimeType === null) {
-            throw new InvalidArgumentException('Failed to detect mimeType for '.$file->getRealPath());
+            throw new InvalidArgumentException('Failed to detect mimeType for ' . $file->getRealPath());
         }
 
         return $mimeType;
