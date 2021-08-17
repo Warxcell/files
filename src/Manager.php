@@ -16,7 +16,6 @@ use Arxy\FilesBundle\Utility\NamingStrategyUtility;
 use DateTimeImmutable;
 use Exception;
 use InvalidArgumentException;
-use League\Flysystem\FilesystemOperator;
 use League\MimeTypeDetection\FinfoMimeTypeDetector;
 use League\MimeTypeDetection\MimeTypeDetector;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -45,7 +44,7 @@ final class Manager implements ManagerInterface
     private const CHUNK_SIZE = 1024 * 1024;
     /** @var class-string<T> */
     private string $class;
-    private FilesystemOperator $filesystem;
+    private Storage $storage;
     /** @var NamingStrategy<T> */
     private NamingStrategy $namingStrategy;
     /** @var Repository<T>|null */
@@ -61,7 +60,7 @@ final class Manager implements ManagerInterface
 
     /**
      * @param class-string<T> $class
-     * @param FilesystemOperator $filesystem
+     * @param Storage $storage
      * @param NamingStrategy<T> $namingStrategy
      * @param Repository<T>|null $repository
      * @param MimeTypeDetector|null $mimeTypeDetector
@@ -72,7 +71,7 @@ final class Manager implements ManagerInterface
      */
     public function __construct(
         string $class,
-        FilesystemOperator $filesystem,
+        Storage $storage,
         NamingStrategy $namingStrategy,
         Repository $repository = null,
         MimeTypeDetector $mimeTypeDetector = null,
@@ -86,7 +85,7 @@ final class Manager implements ManagerInterface
         }
 
         $this->class = $class;
-        $this->filesystem = $filesystem;
+        $this->storage = $storage;
         $this->namingStrategy = $namingStrategy;
         $this->repository = $repository;
         $this->mimeTypeDetector = $mimeTypeDetector ?? new FinfoMimeTypeDetector();
@@ -157,14 +156,8 @@ final class Manager implements ManagerInterface
 
             $path = $this->getPathname($file);
 
-            $directory = $this->namingStrategy->getDirectoryName($file);
-            if ($directory !== null) {
-                $this->filesystem->createDirectory($directory);
-            }
-
             $stream = ErrorHandler::wrap(static fn () => fopen($splFileInfo->getPathname(), 'r'));
-
-            $this->filesystem->writeStream($path, $stream);
+            $this->storage->write($file, $path, $stream);
 
             /** @psalm-suppress RedundantCondition */
             if (is_resource($stream)) {
@@ -195,7 +188,7 @@ final class Manager implements ManagerInterface
                 $this->eventDispatcher->dispatch(new PreRemove($this, $file));
             }
 
-            $this->filesystem->delete($this->getPathname($file));
+            $this->storage->remove($file, $this->getPathname($file));
         } catch (Exception $exception) {
             throw FileException::unableToRemove($file, $exception);
         }
@@ -206,9 +199,9 @@ final class Manager implements ManagerInterface
         try {
             $pathname = $this->getPathname($file);
             if ($this->uploadFileMap->has($file)) {
-                return ErrorHandler::wrap(static fn() => file_get_contents($pathname));
+                return ErrorHandler::wrap(static fn () => file_get_contents($pathname));
             } else {
-                return $this->filesystem->read($pathname);
+                return $this->storage->read($file, $pathname);
             }
         } catch (Exception $exception) {
             throw FileException::unableToRead($file, $exception);
@@ -220,9 +213,9 @@ final class Manager implements ManagerInterface
         try {
             $pathname = $this->getPathname($file);
             if ($this->uploadFileMap->has($file)) {
-                return ErrorHandler::wrap(static fn() => fopen($pathname, 'rb'));
+                return ErrorHandler::wrap(static fn () => fopen($pathname, 'rb'));
             } else {
-                return $this->filesystem->readStream($pathname);
+                return $this->storage->readStream($file, $pathname);
             }
         } catch (Exception $exception) {
             throw FileException::unableToRead($file, $exception);
@@ -240,11 +233,11 @@ final class Manager implements ManagerInterface
 
             $pathname = $this->getPathname($file);
             if ($this->uploadFileMap->has($file)) {
-                ErrorHandler::wrap(static fn() => copy($splFileInfo->getRealPath(), $pathname));
+                ErrorHandler::wrap(static fn () => copy($splFileInfo->getRealPath(), $pathname));
                 clearstatcache(true, $pathname);
             } else {
-                $stream = ErrorHandler::wrap(static fn() => fopen($splFileInfo->getRealPath(), 'r'));
-                $this->filesystem->writeStream($pathname, $stream);
+                $stream = ErrorHandler::wrap(static fn () => fopen($splFileInfo->getRealPath(), 'r'));
+                $this->storage->write($file, $pathname, $stream);
                 /** @psalm-suppress RedundantCondition */
                 if (is_resource($stream)) {
                     fclose($stream);
@@ -289,7 +282,7 @@ final class Manager implements ManagerInterface
             $remoteFile = $file->openFile();
         }
 
-        $tempFilename = ErrorHandler::wrap(fn() => tempnam($this->temporaryDirectory, 'file_manager'));
+        $tempFilename = ErrorHandler::wrap(fn () => tempnam($this->temporaryDirectory, 'file_manager'));
         $file = new SplFileObject($tempFilename, 'r+');
         while ($content = $remoteFile->fread(self::CHUNK_SIZE)) {
             $file->fwrite($content);
@@ -302,7 +295,7 @@ final class Manager implements ManagerInterface
 
     private function hashFile(SplFileInfo $file): string
     {
-        return ErrorHandler::wrap(fn() => hash_file($this->hashingAlgorithm, $file->getRealPath()));
+        return ErrorHandler::wrap(fn () => hash_file($this->hashingAlgorithm, $file->getRealPath()));
     }
 
     /**
@@ -312,7 +305,7 @@ final class Manager implements ManagerInterface
     {
         $mimeType = $this->mimeTypeDetector->detectMimeTypeFromFile($file->getRealPath());
         if ($mimeType === null) {
-            throw new InvalidArgumentException('Failed to detect mimeType for ' . $file->getRealPath());
+            throw new InvalidArgumentException('Failed to detect mimeType for '.$file->getRealPath());
         }
 
         return $mimeType;

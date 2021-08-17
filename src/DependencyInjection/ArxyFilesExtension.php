@@ -9,13 +9,9 @@ use Arxy\FilesBundle\EventListener\DoctrineORMListener;
 use Arxy\FilesBundle\Form\Type\FileType;
 use Arxy\FilesBundle\Manager;
 use Arxy\FilesBundle\ManagerInterface;
-use Arxy\FilesBundle\ModelFactory;
-use Arxy\FilesBundle\NamingStrategy;
-use Arxy\FilesBundle\Repository;
+use Arxy\FilesBundle\Storage;
 use Arxy\FilesBundle\Twig\FilesExtension;
 use Arxy\FilesBundle\Twig\FilesRuntime;
-use League\Flysystem\FilesystemOperator;
-use League\MimeTypeDetection\MimeTypeDetector;
 use LogicException;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -23,10 +19,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Reference;
+use function array_key_first;
+use function count;
 
-/**
- * @psalm-suppress all
- */
 class ArxyFilesExtension extends Extension
 {
     public function load(array $configs, ContainerBuilder $container): void
@@ -37,6 +32,7 @@ class ArxyFilesExtension extends Extension
         if ($config['form']) {
             $formDefinition = new Definition(FileType::class);
             $formDefinition->setAutowired(true);
+            $formDefinition->setAutoconfigured(true);
             $container->setDefinition(FileType::class, $formDefinition);
         }
 
@@ -48,6 +44,7 @@ class ArxyFilesExtension extends Extension
 
             $filesExtension = new Definition(FilesRuntime::class);
             $filesExtension->setAutowired(true);
+            $filesExtension->setAutoconfigured(true);
             $container->setDefinition(FilesRuntime::class, $filesExtension);
         }
 
@@ -56,17 +53,18 @@ class ArxyFilesExtension extends Extension
             return;
         }
 
-        $autowired = $totalManagers === 1;
+        $references = [];
 
-        foreach ($config['managers'] as $serviceId => &$managerConfig) {
+        foreach ($config['managers'] as $serviceId => $managerConfig) {
             $definition = $this->createManagerDefinition(
                 $managerConfig['class'],
-                $managerConfig['flysystem'] ?? ($autowired ? FilesystemOperator::class : null),
-                $managerConfig['naming_strategy'] ?? ($autowired ? NamingStrategy::class : null),
-                $managerConfig['repository'] ?? ($autowired ? Repository::class : null),
-                $managerConfig['mime_type_detector'] ?? ($autowired ? MimeTypeDetector::class : null),
-                $managerConfig['model_factory'] ?? ($autowired ? ModelFactory::class : null)
+                $managerConfig['storage']['service_id'],
+                $managerConfig['naming_strategy']['service_id'],
+                $managerConfig['repository'],
+                $managerConfig['mime_type_detector'],
+                $managerConfig['model_factory'],
             );
+            $definition->addTag('arxy_files.manager', ['storage' => $serviceId]);
             $container->setDefinition($serviceId, $definition);
 
             $container->setDefinition(
@@ -75,40 +73,41 @@ class ArxyFilesExtension extends Extension
             );
 
             $container->registerAliasForArgument($serviceId, ManagerInterface::class);
-
-            $managerConfig['reference'] = new Reference($serviceId);
+            $references[] = new Reference($serviceId);
         }
 
-        if ($autowired) {
-            $container->setAlias(ManagerInterface::class, array_key_first($config['managers']));
-        } else {
+        if ($totalManagers > 1) {
             $container->setDefinition(
                 'arxy_files.delegating_manager',
                 new Definition(
                     DelegatingManager::class,
                     [
-                        '$managers' => array_map(
-                            static fn (array $config): Reference => $config['reference'],
-                            $config['managers']
-                        ),
+                        '$managers' => $references,
                     ]
                 )
             );
             $container->setAlias(ManagerInterface::class, 'arxy_files.delegating_manager');
+        } else {
+            /** @psalm-suppress PossiblyNullArgument */
+            $container->setAlias(ManagerInterface::class, array_key_first($config['managers']));
         }
     }
 
     private function createManagerDefinition(
         string $class,
-        ?string $flysystem,
-        ?string $namingStrategy,
+        string $storage,
+        string $namingStrategy,
         ?string $repository,
         ?string $mimeTypeDetector,
         ?string $modelFactory
     ): Definition {
+        $storageDefinition = new Definition(Storage::class);
+        $storageDefinition->setFactory([StorageFactory::class, 'factory']);
+        $storageDefinition->setArgument(0, new Reference($storage));
+
         $definition = new Definition(Manager::class, ['$class' => $class]);
-        $definition->setArgument('$filesystem', $flysystem ? new Reference($flysystem) : null);
-        $definition->setArgument('$namingStrategy', $namingStrategy ? new Reference($namingStrategy) : null);
+        $definition->setArgument('$storage', $storageDefinition);
+        $definition->setArgument('$namingStrategy', new Reference($namingStrategy));
         $definition->setArgument(
             '$repository',
             $repository ? new Reference($repository, ContainerInterface::NULL_ON_INVALID_REFERENCE) : null

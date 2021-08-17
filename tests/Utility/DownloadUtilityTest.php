@@ -7,6 +7,7 @@ namespace Arxy\FilesBundle\Tests\Utility;
 use Arxy\FilesBundle\Manager;
 use Arxy\FilesBundle\ManagerInterface;
 use Arxy\FilesBundle\NamingStrategy;
+use Arxy\FilesBundle\Storage\FlysystemStorage;
 use Arxy\FilesBundle\Tests\File;
 use Arxy\FilesBundle\Tests\MutableFile;
 use Arxy\FilesBundle\Utility\DownloadableFile;
@@ -31,7 +32,7 @@ class DownloadUtilityTest extends TestCase
         $flysystem->method('readStream')->willReturn(fopen($this->pathname, 'r'));
 
         $namingStrategy = $this->createMock(NamingStrategy::class);
-        $this->manager = new Manager(File::class, $flysystem, $namingStrategy);
+        $this->manager = new Manager(File::class, new FlysystemStorage($flysystem), $namingStrategy);
         $this->downloadUtility = new DownloadUtility($this->manager);
     }
 

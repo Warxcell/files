@@ -41,7 +41,7 @@ class AwsS3PreSignedPathResolver implements PathResolver
         );
 
         $now = new DateTimeImmutable();
-        $request = $this->s3Client->createPresignedRequest($cmd, $now->add($this->expiry));
+        $request = $this->s3Client->createPresignedRequest($cmd, $now->add($this->expiry)->getTimestamp());
 
         return (string)$request->getUri();
     }

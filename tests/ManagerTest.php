@@ -16,6 +16,8 @@ use Arxy\FilesBundle\ManagerInterface;
 use Arxy\FilesBundle\Model\MutableFile;
 use Arxy\FilesBundle\NamingStrategy;
 use Arxy\FilesBundle\Repository;
+use Arxy\FilesBundle\Storage;
+use Arxy\FilesBundle\Storage\FlysystemStorage;
 use DateTimeImmutable;
 use ErrorException;
 use Exception;
@@ -42,7 +44,7 @@ class ManagerTest extends TestCase
 
         $manager = new Manager(
             File::class,
-            $this->createMock(FilesystemOperator::class),
+            $this->createMock(Storage::class),
             $this->createMock(NamingStrategy::class),
             null,
             null,
@@ -52,8 +54,8 @@ class ManagerTest extends TestCase
 
         $dispatcher->expects(self::once())->method('dispatch')->with(
             self::callback(
-                static fn (PostUpload $fileUploaded): bool => $fileUploaded->getFile(
-                    ) instanceof File && $fileUploaded->getManager() === $manager
+                static fn(PostUpload $fileUploaded): bool => $fileUploaded->getFile() instanceof File
+                    && $fileUploaded->getManager() === $manager
             )
         );
 
@@ -66,7 +68,7 @@ class ManagerTest extends TestCase
 
         $manager = new Manager(
             File::class,
-            $this->createMock(FilesystemOperator::class),
+            $this->createMock(Storage::class),
             $this->createMock(NamingStrategy::class),
             null,
             null,
@@ -77,20 +79,20 @@ class ManagerTest extends TestCase
         $dispatcher->expects(self::exactly(3))->method('dispatch')->withConsecutive(
             [
                 self::callback(
-                    static fn (PostUpload $fileUploaded): bool => $fileUploaded->getFile(
-                        ) instanceof File && $fileUploaded->getManager() === $manager
+                    static fn(PostUpload $fileUploaded): bool => $fileUploaded->getFile() instanceof File
+                        && $fileUploaded->getManager() === $manager
                 ),
             ],
             [
                 self::callback(
-                    static fn (PreMove $preRemove): bool => $preRemove->getFile(
-                        ) instanceof File && $preRemove->getManager() === $manager
+                    static fn(PreMove $preRemove): bool => $preRemove->getFile() instanceof File
+                        && $preRemove->getManager() === $manager
                 ),
             ],
             [
                 self::callback(
-                    static fn (PostMove $preRemove): bool => $preRemove->getFile(
-                        ) instanceof File && $preRemove->getManager() === $manager
+                    static fn(PostMove $preRemove): bool => $preRemove->getFile() instanceof File
+                        && $preRemove->getManager() === $manager
                 ),
             ]
         );
@@ -106,7 +108,7 @@ class ManagerTest extends TestCase
 
         $manager = new Manager(
             File::class,
-            $this->createMock(FilesystemOperator::class),
+            $this->createMock(Storage::class),
             $this->createMock(NamingStrategy::class),
             null,
             null,
@@ -117,8 +119,8 @@ class ManagerTest extends TestCase
         $dispatcher->expects(self::exactly(0))->method('dispatch')->withConsecutive(
             [
                 self::callback(
-                    static fn (PostUpload $fileUploaded): bool => $fileUploaded->getFile(
-                        ) instanceof File && $fileUploaded->getManager() === $manager
+                    static fn(PostUpload $fileUploaded): bool => $fileUploaded->getFile() instanceof File
+                        && $fileUploaded->getManager() === $manager
                 ),
             ]
         );
@@ -136,7 +138,7 @@ class ManagerTest extends TestCase
 
         $manager = new Manager(
             File::class,
-            $this->createMock(FilesystemOperator::class),
+            $this->createMock(Storage::class),
             $this->createMock(NamingStrategy::class),
             null,
             null,
@@ -147,14 +149,14 @@ class ManagerTest extends TestCase
         $dispatcher->expects(self::exactly(2))->method('dispatch')->withConsecutive(
             [
                 self::callback(
-                    static fn (PostUpload $fileUploaded): bool => $fileUploaded->getFile(
-                        ) instanceof File && $fileUploaded->getManager() === $manager
+                    static fn(PostUpload $fileUploaded): bool => $fileUploaded->getFile() instanceof File
+                        && $fileUploaded->getManager() === $manager
                 ),
             ],
             [
                 self::callback(
-                    static fn (PreRemove $preRemove): bool => $preRemove->getFile(
-                        ) instanceof File && $preRemove->getManager() === $manager
+                    static fn(PreRemove $preRemove): bool => $preRemove->getFile() instanceof File
+                        && $preRemove->getManager() === $manager
                 ),
             ]
         );
@@ -229,7 +231,7 @@ class ManagerTest extends TestCase
 
         $manager = new Manager(
             File::class,
-            $this->filesystem,
+            new FlysystemStorage($this->filesystem),
             $this->createMock(NamingStrategy::class),
             $repository,
         );
@@ -248,7 +250,7 @@ class ManagerTest extends TestCase
     {
         $manager = new Manager(
             File::class,
-            $this->filesystem,
+            new FlysystemStorage($this->filesystem),
             $this->createMock(NamingStrategy::class),
         );
 
@@ -260,63 +262,11 @@ class ManagerTest extends TestCase
         self::assertNotSame($file1, $file2);
     }
 
-    public function testCreateDirectoryCalled(): void
-    {
-        $filesystem = $this->createMock(FilesystemOperator::class);
-        $filesystem->expects($this->once())->method('createDirectory')->with('directory');
-
-        $manager = new Manager(
-            File::class,
-            $filesystem,
-            new class implements NamingStrategy {
-                public function getDirectoryName(\Arxy\FilesBundle\Model\File $file): ?string
-                {
-                    return 'directory';
-                }
-
-                public function getFileName(\Arxy\FilesBundle\Model\File $file): string
-                {
-                    return 'file';
-                }
-            },
-            new FileRepository(),
-        );
-
-        $upload = $manager->upload(new SplFileObject(__DIR__.'/files/image1.jpg'));
-        $manager->moveFile($upload);
-    }
-
-    public function testCreateDirectoryNotCalled(): void
-    {
-        $filesystem = $this->createMock(FilesystemOperator::class);
-        $filesystem->expects($this->never())->method('createDirectory');
-
-        $manager = new Manager(
-            File::class,
-            $filesystem,
-            new class implements NamingStrategy {
-                public function getDirectoryName(\Arxy\FilesBundle\Model\File $file): ?string
-                {
-                    return null;
-                }
-
-                public function getFileName(\Arxy\FilesBundle\Model\File $file): string
-                {
-                    return 'file';
-                }
-            },
-            new FileRepository(),
-        );
-
-        $upload = $manager->upload(new SplFileObject(__DIR__.'/files/image1.jpg'));
-        $manager->moveFile($upload);
-    }
-
     public function testNamingStrategyWithDirectory(): void
     {
         $manager = new Manager(
             File::class,
-            $this->filesystem,
+            new FlysystemStorage($this->filesystem),
             new class implements NamingStrategy {
                 public function getDirectoryName(\Arxy\FilesBundle\Model\File $file): ?string
                 {
@@ -344,7 +294,7 @@ class ManagerTest extends TestCase
     {
         $manager = new Manager(
             File::class,
-            $this->filesystem,
+            new FlysystemStorage($this->filesystem),
             new class implements NamingStrategy {
                 public function getDirectoryName(\Arxy\FilesBundle\Model\File $file): ?string
                 {
@@ -589,7 +539,7 @@ class ManagerTest extends TestCase
 
         $manager = new Manager(
             File::class,
-            $this->createMock(FilesystemOperator::class),
+            $this->createMock(Storage::class),
             $this->createMock(NamingStrategy::class),
             null,
             null,
@@ -603,14 +553,14 @@ class ManagerTest extends TestCase
         $dispatcher->expects(self::exactly(2))->method('dispatch')->withConsecutive(
             [
                 self::callback(
-                    static fn (PreUpdate $preRemove): bool => $preRemove->getFile() === $file && $preRemove->getManager(
-                        ) === $manager
+                    static fn(PreUpdate $preRemove): bool => $preRemove->getFile() === $file
+                        && $preRemove->getManager() === $manager
                 ),
             ],
             [
                 self::callback(
-                    static fn (PostUpdate $postUpdate): bool => $postUpdate->getFile(
-                        ) === $file && $postUpdate->getManager() === $manager
+                    static fn(PostUpdate $postUpdate): bool => $postUpdate->getFile() === $file
+                        && $postUpdate->getManager() === $manager
                 ),
             ]
         );
@@ -649,7 +599,8 @@ class ManagerTest extends TestCase
 
         $this->manager = new Manager(
             File::class,
-            $this->filesystem,
+            new FlysystemStorage($this->filesystem),
+            /** @implements NamingStrategy<File> */
             new class implements NamingStrategy {
                 public function getDirectoryName(\Arxy\FilesBundle\Model\File $file): ?string
                 {

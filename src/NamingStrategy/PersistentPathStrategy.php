@@ -5,12 +5,13 @@ declare(strict_types=1);
 namespace Arxy\FilesBundle\NamingStrategy;
 
 use Arxy\FilesBundle\Model\File;
+use Arxy\FilesBundle\Model\PathAwareFile;
 use Arxy\FilesBundle\NamingStrategy;
 use function basename;
 use function dirname;
 
 /**
- * @implements NamingStrategy<\Arxy\FilesBundle\Model\PathAwareFile>
+ * @implements NamingStrategy<PathAwareFile>
  */
 final class PersistentPathStrategy implements NamingStrategy
 {

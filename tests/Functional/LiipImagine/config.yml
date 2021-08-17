@@ -3,7 +3,8 @@ arxy_files:
         public:
             driver: orm
             class: 'Arxy\FilesBundle\Tests\Functional\Entity\File'
-            flysystem: 'in_memory'
+            storage: 'in_memory'
+            naming_strategy: 'Arxy\FilesBundle\NamingStrategy\SplitHashStrategy'
 
 services:
     _defaults:
@@ -13,7 +14,6 @@ services:
 
     Arxy\FilesBundle\Tests\Functional\Repository\FileRepository: ~
     Arxy\FilesBundle\NamingStrategy\SplitHashStrategy: ~
-    Arxy\FilesBundle\NamingStrategy: '@Arxy\FilesBundle\NamingStrategy\SplitHashStrategy'
     Arxy\FilesBundle\LiipImagine\FileFilterPathResolver: ~
 
 liip_imagine:

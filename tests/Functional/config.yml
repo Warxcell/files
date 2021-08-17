@@ -3,13 +3,13 @@ arxy_files:
         public:
             driver: orm
             class: 'Arxy\FilesBundle\Tests\Functional\Entity\File'
-            flysystem: 'in_memory'
+            storage: 'in_memory'
             naming_strategy: 'Arxy\FilesBundle\NamingStrategy\SplitHashStrategy'
             repository: 'Arxy\FilesBundle\Tests\Functional\Repository\FileRepository'
         embeddable_manager:
             driver: orm
             class: 'Arxy\FilesBundle\Entity\EmbeddableFile'
-            flysystem: 'in_memory'
+            storage: 'in_memory'
             naming_strategy: 'Arxy\FilesBundle\NamingStrategy\SplitHashStrategy'
 
 services:

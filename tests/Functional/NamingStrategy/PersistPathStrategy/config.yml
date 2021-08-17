@@ -3,12 +3,12 @@ arxy_files:
         public:
             driver: orm
             class: 'Arxy\FilesBundle\Tests\Functional\Entity\PersistentPathFile'
-            flysystem: 'in_memory'
+            storage: 'in_memory'
             naming_strategy: 'Arxy\FilesBundle\NamingStrategy\PersistentPathStrategy'
         embeddable:
             driver: orm
             class: 'Arxy\FilesBundle\Tests\Functional\Entity\EmbeddableFilePersistentPath'
-            flysystem: 'in_memory'
+            storage: 'in_memory'
             naming_strategy: 'Arxy\FilesBundle\NamingStrategy\PersistentPathStrategy'
 
 services:

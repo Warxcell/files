@@ -21,12 +21,12 @@ class Kernel extends SymfonyBaseKernel
         parent::__construct('test', false);
     }
 
-    public function config(string $config)
+    public function config(string $config): void
     {
         $this->config = realpath($config);
     }
 
-    public function bundles(array $bundles)
+    public function bundles(array $bundles): void
     {
         $this->additionalBundles = $bundles;
     }
@@ -36,9 +36,9 @@ class Kernel extends SymfonyBaseKernel
         return __DIR__;
     }
 
-    private function getVarDir()
+    private function getVarDir(): string
     {
-        return sys_get_temp_dir().'/'.md5($this->config);
+        return sys_get_temp_dir().'/files-bundle-'.md5($this->config);
     }
 
     public function getCacheDir()
@@ -57,14 +57,14 @@ class Kernel extends SymfonyBaseKernel
             [
                 new FrameworkBundle(),
                 new DoctrineBundle(),
-                new ArxyFilesBundle(),
                 new FlysystemBundle(),
+                new ArxyFilesBundle(),
             ],
             $this->additionalBundles
         );
     }
 
-    public function registerContainerConfiguration(LoaderInterface $loader)
+    public function registerContainerConfiguration(LoaderInterface $loader): void
     {
         $loader->load(__DIR__.'/config_base.yml');
         $loader->load($this->config);
