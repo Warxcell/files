@@ -391,13 +391,10 @@ class ManagerTest extends TestCase
         try {
             $this->manager->moveFile($file);
         } catch (Throwable $exception) {
-            $this->assertInstanceOf(FileException::class, $exception);
-            $this->assertEquals('Unable to move file', $exception->getMessage());
-
-            $this->assertInstanceOf(OutOfBoundsException::class, $exception->getPrevious());
+            $this->assertInstanceOf(OutOfBoundsException::class, $exception);
             $this->assertEquals(
                 'File '.(string)spl_object_id($file).' not found in map',
-                $exception->getPrevious()->getMessage()
+                $exception->getMessage()
             );
         }
     }
@@ -410,11 +407,8 @@ class ManagerTest extends TestCase
         try {
             $this->manager->moveFile($file);
         } catch (Throwable $exception) {
-            $this->assertInstanceOf(FileException::class, $exception);
-            $this->assertEquals('Unable to move file', $exception->getMessage());
-
-            $this->assertInstanceOf(OutOfBoundsException::class, $exception->getPrevious());
-            $this->assertEquals('File 25 not found in map', $exception->getPrevious()->getMessage());
+            $this->assertInstanceOf(OutOfBoundsException::class, $exception);
+            $this->assertEquals('File 25 not found in map', $exception->getMessage());
         }
     }
 
@@ -621,13 +615,10 @@ class ManagerTest extends TestCase
         try {
             $this->manager->moveFile($file);
         } catch (Throwable $exception) {
-            $this->assertInstanceOf(FileException::class, $exception);
-            $this->assertEquals('Unable to move file', $exception->getMessage());
-
-            $this->assertInstanceOf(OutOfBoundsException::class, $exception->getPrevious());
+            $this->assertInstanceOf(OutOfBoundsException::class, $exception);
             $this->assertEquals(
                 'File '.(string)spl_object_id($file).' not found in map',
-                $exception->getPrevious()->getMessage()
+                $exception->getMessage()
             );
         }
     }

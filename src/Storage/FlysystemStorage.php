@@ -22,22 +22,38 @@ class FlysystemStorage implements Storage, MigrateableStorage
 
     public function read(File $file, string $pathname): string
     {
-        return $this->flysystem->read($pathname);
+        try {
+            return $this->flysystem->read($pathname);
+        } catch (FilesystemException $exception) {
+            throw FileException::unableToRead($file, $exception);
+        }
     }
 
     public function readStream(File $file, string $pathname)
     {
-        return $this->flysystem->readStream($pathname);
+        try {
+            return $this->flysystem->readStream($pathname);
+        } catch (FilesystemException $exception) {
+            throw FileException::unableToRead($file, $exception);
+        }
     }
 
     public function write(File $file, string $pathname, $stream): void
     {
-        $this->flysystem->writeStream($pathname, $stream);
+        try {
+            $this->flysystem->writeStream($pathname, $stream);
+        } catch (FilesystemException $exception) {
+            throw FileException::unableToWrite($file, $exception);
+        }
     }
 
     public function remove(File $file, string $pathname): void
     {
-        $this->flysystem->delete($pathname);
+        try {
+            $this->flysystem->delete($pathname);
+        } catch (FilesystemException $exception) {
+            throw FileException::unableToMove($file, $exception);
+        }
     }
 
     public function migrate(File $file, string $oldPathname, string $newPathname): bool

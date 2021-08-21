@@ -14,6 +14,7 @@ use Arxy\FilesBundle\Model\File;
 use Arxy\FilesBundle\Model\MutableFile;
 use Arxy\FilesBundle\Utility\NamingStrategyUtility;
 use DateTimeImmutable;
+use ErrorException;
 use Exception;
 use InvalidArgumentException;
 use League\MimeTypeDetection\FinfoMimeTypeDetector;
@@ -98,77 +99,90 @@ final class Manager implements ManagerInterface
 
     public function upload(SplFileInfo $splFileInfo): File
     {
-        $handledSplFile = $this->handleSplFile($splFileInfo);
-
         try {
-            if ($handledSplFile !== $splFileInfo) {
-                $originalFilename = $splFileInfo->getFilename();
+            $handledSplFile = $this->handleSplFile($splFileInfo);
+        } catch (ErrorException $exception) {
+            throw new UnableToUpload($splFileInfo, $exception);
+        }
+
+        if ($handledSplFile !== $splFileInfo) {
+            $originalFilename = $splFileInfo->getFilename();
+        } else {
+            if ($handledSplFile instanceof UploadedFile) {
+                $originalFilename = $handledSplFile->getClientOriginalName();
             } else {
-                if ($handledSplFile instanceof UploadedFile) {
-                    $originalFilename = $handledSplFile->getClientOriginalName();
-                } else {
-                    $originalFilename = $handledSplFile->getFilename();
-                }
+                $originalFilename = $handledSplFile->getFilename();
             }
+        }
 
-            $fileSize = $handledSplFile->getSize();
+        $fileSize = $handledSplFile->getSize();
+        try {
             $hash = $this->hashFile($handledSplFile);
-
-            $fileEntity = null;
-            if ($this->repository !== null) {
-                $fileEntity = $this->uploadFileMap->findByHashAndSize($hash, $fileSize);
-
-                if ($fileEntity === null) {
-                    $fileEntity = $this->repository->findByHashAndSize($hash, $fileSize);
-                }
-            }
-            if ($fileEntity === null) {
-                $fileEntity = $this->modelFactory->create(
-                    $handledSplFile,
-                    $originalFilename,
-                    $fileSize,
-                    $hash,
-                    $this->getMimeTypeByFile($handledSplFile)
-                );
-                $this->uploadFileMap->put($fileEntity, $handledSplFile);
-
-                if ($this->eventDispatcher !== null) {
-                    $this->eventDispatcher->dispatch(new PostUpload($this, $fileEntity));
-                }
-            }
-
-            return $fileEntity;
-        } catch (Exception $exception) {
+        } catch (ErrorException $exception) {
             throw new UnableToUpload($handledSplFile, $exception);
         }
+
+        $fileEntity = null;
+        if ($this->repository !== null) {
+            $fileEntity = $this->uploadFileMap->findByHashAndSize($hash, $fileSize);
+
+            if ($fileEntity === null) {
+                $fileEntity = $this->repository->findByHashAndSize($hash, $fileSize);
+            }
+        }
+        if ($fileEntity === null) {
+            try {
+                $mimeType = $this->getMimeTypeByFile($handledSplFile);
+            } catch (InvalidArgumentException $exception) {
+                throw new UnableToUpload($handledSplFile, $exception);
+            }
+            $fileEntity = $this->modelFactory->create(
+                $handledSplFile,
+                $originalFilename,
+                $fileSize,
+                $hash,
+                $mimeType
+            );
+            $this->uploadFileMap->put($fileEntity, $handledSplFile);
+
+            if ($this->eventDispatcher !== null) {
+                $this->eventDispatcher->dispatch(new PostUpload($this, $fileEntity));
+            }
+        }
+
+        return $fileEntity;
     }
 
     public function moveFile(File $file): void
     {
+        $splFileInfo = $this->uploadFileMap->get($file);
+
+        if ($this->eventDispatcher !== null) {
+            $this->eventDispatcher->dispatch(new PreMove($this, $file));
+        }
+
+        $this->uploadFileMap->remove($file);
+
+        $path = $this->getPathname($file);
+
         try {
-            $splFileInfo = $this->uploadFileMap->get($file);
-
-            if ($this->eventDispatcher !== null) {
-                $this->eventDispatcher->dispatch(new PreMove($this, $file));
-            }
-
-            $this->uploadFileMap->remove($file);
-
-            $path = $this->getPathname($file);
-
             $stream = ErrorHandler::wrap(static fn () => fopen($splFileInfo->getPathname(), 'r'));
-            $this->storage->write($file, $path, $stream);
+        } catch (ErrorException $exception) {
+            throw FileException::unableToMove($file, $exception);
+        }
+        $this->storage->write($file, $path, $stream);
 
-            /** @psalm-suppress RedundantCondition */
-            if (is_resource($stream)) {
+        /** @psalm-suppress RedundantCondition */
+        if (is_resource($stream)) {
+            try {
                 ErrorHandler::wrap(static fn () => fclose($stream));
+            } catch (ErrorException $e) {
+                // nothing we can do
             }
+        }
 
-            if ($this->eventDispatcher !== null) {
-                $this->eventDispatcher->dispatch(new PostMove($this, $file));
-            }
-        } catch (Exception $throwable) {
-            throw FileException::unableToMove($file, $throwable);
+        if ($this->eventDispatcher !== null) {
+            $this->eventDispatcher->dispatch(new PostMove($this, $file));
         }
     }
 
@@ -196,64 +210,76 @@ final class Manager implements ManagerInterface
 
     public function read(File $file): string
     {
-        try {
-            $pathname = $this->getPathname($file);
-            if ($this->uploadFileMap->has($file)) {
+        $pathname = $this->getPathname($file);
+        if ($this->uploadFileMap->has($file)) {
+            try {
                 return ErrorHandler::wrap(static fn () => file_get_contents($pathname));
-            } else {
-                return $this->storage->read($file, $pathname);
+            } catch (ErrorException $exception) {
+                throw FileException::unableToRead($file, $exception);
             }
-        } catch (Exception $exception) {
-            throw FileException::unableToRead($file, $exception);
+        } else {
+            return $this->storage->read($file, $pathname);
         }
     }
 
     public function readStream(File $file)
     {
-        try {
-            $pathname = $this->getPathname($file);
-            if ($this->uploadFileMap->has($file)) {
+        $pathname = $this->getPathname($file);
+        if ($this->uploadFileMap->has($file)) {
+            try {
                 return ErrorHandler::wrap(static fn () => fopen($pathname, 'rb'));
-            } else {
-                return $this->storage->readStream($file, $pathname);
+            } catch (ErrorException $exception) {
+                throw FileException::unableToRead($file, $exception);
             }
-        } catch (Exception $exception) {
-            throw FileException::unableToRead($file, $exception);
+        } else {
+            return $this->storage->readStream($file, $pathname);
         }
     }
 
     public function write(MutableFile $file, SplFileInfo $splFileInfo): void
     {
+        if ($this->eventDispatcher !== null) {
+            $this->eventDispatcher->dispatch(new PreUpdate($this, $file));
+        }
+
         try {
-            if ($this->eventDispatcher !== null) {
-                $this->eventDispatcher->dispatch(new PreUpdate($this, $file));
-            }
-
             $splFileInfo = $this->handleSplFile($splFileInfo);
-
-            $pathname = $this->getPathname($file);
-            if ($this->uploadFileMap->has($file)) {
-                ErrorHandler::wrap(static fn () => copy($splFileInfo->getRealPath(), $pathname));
-                clearstatcache(true, $pathname);
-            } else {
-                $stream = ErrorHandler::wrap(static fn () => fopen($splFileInfo->getRealPath(), 'r'));
-                $this->storage->write($file, $pathname, $stream);
-                /** @psalm-suppress RedundantCondition */
-                if (is_resource($stream)) {
-                    fclose($stream);
-                }
-            }
-
-            $file->setMimeType($this->getMimeTypeByFile($splFileInfo));
-            $file->setSize($splFileInfo->getSize());
-            $file->setHash($this->hashFile($splFileInfo));
-            $file->setModifiedAt(new DateTimeImmutable());
-
-            if ($this->eventDispatcher !== null) {
-                $this->eventDispatcher->dispatch(new PostUpdate($this, $file));
-            }
-        } catch (Exception $exception) {
+        } catch (ErrorException $exception) {
             throw FileException::unableToWrite($file, $exception);
+        }
+
+        $pathname = $this->getPathname($file);
+        if ($this->uploadFileMap->has($file)) {
+            try {
+                ErrorHandler::wrap(static fn () => copy($splFileInfo->getRealPath(), $pathname));
+            } catch (ErrorException $exception) {
+                throw FileException::unableToWrite($file, $exception);
+            }
+            clearstatcache(true, $pathname);
+        } else {
+            try {
+                $stream = ErrorHandler::wrap(static fn () => fopen($splFileInfo->getRealPath(), 'r'));
+            } catch (ErrorException $exception) {
+                throw FileException::unableToWrite($file, $exception);
+            }
+            $this->storage->write($file, $pathname, $stream);
+            /** @psalm-suppress RedundantCondition */
+            if (is_resource($stream)) {
+                fclose($stream);
+            }
+        }
+
+        $file->setMimeType($this->getMimeTypeByFile($splFileInfo));
+        $file->setSize($splFileInfo->getSize());
+        try {
+            $file->setHash($this->hashFile($splFileInfo));
+        } catch (ErrorException $exception) {
+            throw FileException::unableToWrite($file, $exception);
+        }
+        $file->setModifiedAt(new DateTimeImmutable());
+
+        if ($this->eventDispatcher !== null) {
+            $this->eventDispatcher->dispatch(new PostUpdate($this, $file));
         }
     }
 
@@ -267,6 +293,9 @@ final class Manager implements ManagerInterface
         $this->uploadFileMap = new FileMap();
     }
 
+    /**
+     * @throws ErrorException
+     */
     private function handleSplFile(SplFileInfo $file): SplFileInfo
     {
         $isRemote = $file->getRealPath() === false;
@@ -293,6 +322,9 @@ final class Manager implements ManagerInterface
         return $file;
     }
 
+    /**
+     * @throws ErrorException
+     */
     private function hashFile(SplFileInfo $file): string
     {
         return ErrorHandler::wrap(fn () => hash_file($this->hashingAlgorithm, $file->getRealPath()));
