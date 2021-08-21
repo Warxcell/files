@@ -18,12 +18,15 @@ use Arxy\FilesBundle\NamingStrategy;
 use Arxy\FilesBundle\Repository;
 use Arxy\FilesBundle\Storage;
 use Arxy\FilesBundle\Storage\FlysystemStorage;
+use Arxy\FilesBundle\UnableToUpload;
 use DateTimeImmutable;
 use ErrorException;
 use Exception;
+use InvalidArgumentException;
 use League\Flysystem\Filesystem;
 use League\Flysystem\FilesystemOperator;
 use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
+use League\MimeTypeDetection\MimeTypeDetector;
 use OutOfBoundsException;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -32,11 +35,49 @@ use SplFileObject;
 use SplTempFileObject;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Throwable;
+use function sprintf;
 
 class ManagerTest extends TestCase
 {
     private ManagerInterface $manager;
     private FilesystemOperator $filesystem;
+
+    public function testNotSupportedHashAlgorithm(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('The algorithm "not_existing" is not supported.');
+
+        $manager = new Manager(
+            File::class,
+            $this->createMock(Storage::class),
+            $this->createMock(NamingStrategy::class),
+            null,
+            null,
+            null,
+            null,
+            null,
+            'not_existing'
+        );
+    }
+
+    public function testFailedToDetermineMimeType(): void
+    {
+        $manager = new Manager(
+            File::class,
+            $this->createMock(Storage::class),
+            $this->createMock(NamingStrategy::class),
+            $this->createMock(Repository::class),
+            $this->createMock(MimeTypeDetector::class)
+        );
+
+        try {
+            $manager->upload(new SplFileObject(__DIR__.'/files/image1.jpg'));
+        } catch (UnableToUpload $exception) {
+            self::assertNotNull($exception->getPrevious());
+            self::assertInstanceOf(InvalidArgumentException::class, $exception->getPrevious());
+            self::assertStringContainsString('Failed to detect mimeType for ', $exception->getPrevious()->getMessage());
+        }
+    }
 
     public function testUploadEvent(): void
     {
@@ -54,7 +95,7 @@ class ManagerTest extends TestCase
 
         $dispatcher->expects(self::once())->method('dispatch')->with(
             self::callback(
-                static fn(PostUpload $fileUploaded): bool => $fileUploaded->getFile() instanceof File
+                static fn (PostUpload $fileUploaded): bool => $fileUploaded->getFile() instanceof File
                     && $fileUploaded->getManager() === $manager
             )
         );
@@ -79,19 +120,19 @@ class ManagerTest extends TestCase
         $dispatcher->expects(self::exactly(3))->method('dispatch')->withConsecutive(
             [
                 self::callback(
-                    static fn(PostUpload $fileUploaded): bool => $fileUploaded->getFile() instanceof File
+                    static fn (PostUpload $fileUploaded): bool => $fileUploaded->getFile() instanceof File
                         && $fileUploaded->getManager() === $manager
                 ),
             ],
             [
                 self::callback(
-                    static fn(PreMove $preRemove): bool => $preRemove->getFile() instanceof File
+                    static fn (PreMove $preRemove): bool => $preRemove->getFile() instanceof File
                         && $preRemove->getManager() === $manager
                 ),
             ],
             [
                 self::callback(
-                    static fn(PostMove $preRemove): bool => $preRemove->getFile() instanceof File
+                    static fn (PostMove $preRemove): bool => $preRemove->getFile() instanceof File
                         && $preRemove->getManager() === $manager
                 ),
             ]
@@ -119,7 +160,7 @@ class ManagerTest extends TestCase
         $dispatcher->expects(self::exactly(0))->method('dispatch')->withConsecutive(
             [
                 self::callback(
-                    static fn(PostUpload $fileUploaded): bool => $fileUploaded->getFile() instanceof File
+                    static fn (PostUpload $fileUploaded): bool => $fileUploaded->getFile() instanceof File
                         && $fileUploaded->getManager() === $manager
                 ),
             ]
@@ -149,13 +190,13 @@ class ManagerTest extends TestCase
         $dispatcher->expects(self::exactly(2))->method('dispatch')->withConsecutive(
             [
                 self::callback(
-                    static fn(PostUpload $fileUploaded): bool => $fileUploaded->getFile() instanceof File
+                    static fn (PostUpload $fileUploaded): bool => $fileUploaded->getFile() instanceof File
                         && $fileUploaded->getManager() === $manager
                 ),
             ],
             [
                 self::callback(
-                    static fn(PreRemove $preRemove): bool => $preRemove->getFile() instanceof File
+                    static fn (PreRemove $preRemove): bool => $preRemove->getFile() instanceof File
                         && $preRemove->getManager() === $manager
                 ),
             ]
@@ -553,13 +594,13 @@ class ManagerTest extends TestCase
         $dispatcher->expects(self::exactly(2))->method('dispatch')->withConsecutive(
             [
                 self::callback(
-                    static fn(PreUpdate $preRemove): bool => $preRemove->getFile() === $file
+                    static fn (PreUpdate $preRemove): bool => $preRemove->getFile() === $file
                         && $preRemove->getManager() === $manager
                 ),
             ],
             [
                 self::callback(
-                    static fn(PostUpdate $postUpdate): bool => $postUpdate->getFile() === $file
+                    static fn (PostUpdate $postUpdate): bool => $postUpdate->getFile() === $file
                         && $postUpdate->getManager() === $manager
                 ),
             ]

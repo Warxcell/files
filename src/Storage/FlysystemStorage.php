@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace Arxy\FilesBundle\Storage;
 
+use Arxy\FilesBundle\FileException;
+use Arxy\FilesBundle\MigrateableStorage;
 use Arxy\FilesBundle\Model\File;
 use Arxy\FilesBundle\Storage;
+use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
 
-class FlysystemStorage implements Storage
+class FlysystemStorage implements Storage, MigrateableStorage
 {
     private FilesystemOperator $flysystem;
 
@@ -35,6 +38,21 @@ class FlysystemStorage implements Storage
     public function remove(File $file, string $pathname): void
     {
         $this->flysystem->delete($pathname);
+    }
+
+    public function migrate(File $file, string $oldPathname, string $newPathname): bool
+    {
+        try {
+            if (!$this->flysystem->fileExists($oldPathname)) {
+                return false;
+            }
+
+            $this->flysystem->move($oldPathname, $newPathname);
+
+            return true;
+        } catch (FilesystemException $exception) {
+            throw new FileException($file, 'Unable to migrate file', $exception);
+        }
     }
 }
 

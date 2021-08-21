@@ -6,6 +6,7 @@ namespace Arxy\FilesBundle\Tests;
 
 use Arxy\FilesBundle\Migrator;
 use Arxy\FilesBundle\NamingStrategy;
+use Arxy\FilesBundle\Storage\FlysystemStorage;
 use League\Flysystem\FilesystemOperator;
 use PHPUnit\Framework\TestCase;
 
@@ -46,7 +47,7 @@ class MigratorTest extends TestCase
             }
         };
 
-        $this->migrator = new Migrator($this->filesystem, $this->oldNamingStrategy, $this->newNamingStrategy);
+        $this->migrator = new Migrator(new FlysystemStorage($this->filesystem), $this->oldNamingStrategy, $this->newNamingStrategy);
     }
 
     public function testNotMigrated(): void
