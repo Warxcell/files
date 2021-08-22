@@ -515,11 +515,6 @@ Naming strategy is responsible to converting File object to filepath. Several bu
 
 Use file's createdAt property. Default format: Y/m/d/hash. Example: 2021/05/17/59aeac36ae75786be1b573baad0e77c0
 
-### IdToPathStrategy
-
-Use file's method `getId` and splits it by characters. Expect instanceof `Arxy\FilesBundle\Model\IdentifiableFile`
-Example: ID=123456 will result in filepath: `1/2/3/4/5/6/123456`
-
 ### SplitHashStrategy
 
 Use file's md5hash and split it into chucks. Example: `098f6bcd4621d373cade4e832627b4f6` will result

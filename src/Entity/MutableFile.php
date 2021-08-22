@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace Arxy\FilesBundle\Entity;
 
-use Arxy\FilesBundle\Model\IdentifiableFile;
 use DateTimeImmutable;
 
-abstract class MutableFile extends File implements IdentifiableFile, \Arxy\FilesBundle\Model\MutableFile
+abstract class MutableFile extends File implements \Arxy\FilesBundle\Model\MutableFile
 {
     protected DateTimeImmutable $modifiedAt;
 
@@ -16,8 +15,6 @@ abstract class MutableFile extends File implements IdentifiableFile, \Arxy\Files
         parent::__construct($originalFilename, $size, $hash, $mimeType);
         $this->modifiedAt = new DateTimeImmutable();
     }
-
-    abstract public function getId();
 
     public function setOriginalFilename(string $originalFilename): void
     {
