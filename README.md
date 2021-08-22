@@ -2,15 +2,6 @@
 
 Provides easy file management (with persistence layer for metadata).
 
-[![Build Status](https://travis-ci.org/Warxcell/files.svg?branch=master)](https://travis-ci.org/Warxcell/files)
-
-[![codecov](https://codecov.io/gh/Warxcell/files/branch/master/graph/badge.svg)](https://codecov.io/gh/Warxcell/files)
-
-Dependency Matrix:
-
-Versions 1.X.X uses FlySystem ^1.0 (not maintained)  
-Versions 2.X.X uses FlySystem ^2.0
-
 - Uses FlySystem for File management (this allows you to use existing adapters to save files anywhere)
 - Persist file information in database
 - Uses checksums (md5) to prevent double upload (thus saving space). If same file is found - it's reused
