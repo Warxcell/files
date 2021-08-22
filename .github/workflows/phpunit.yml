@@ -10,10 +10,15 @@ jobs:
                 include:
                     -   php: '7.4'
                     -   php: '8.0'
+        env:
+            extensions: bcmath gd
         steps:
             -   uses: actions/checkout@v2
             -   uses: php-actions/composer@v6
                 with:
                     php_version: '${{ matrix.php }}'
-                    php_extensions: bcmath gd
+                    php_extensions: "${{ env.extensions }}"
             -   uses: php-actions/phpunit@v3
+                with:
+                    php_version: '${{ matrix.php }}'
+                    php_extensions: "${{ env.extensions }}"
