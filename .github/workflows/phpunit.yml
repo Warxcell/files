@@ -12,9 +12,8 @@ jobs:
                     -   php: '8.0'
         steps:
             -   uses: actions/checkout@v2
-            -   uses: shivammathur/setup-php@v2
-                with:
-                    php-version: '${{ matrix.php }}'
-                    extensions: bcmath,gd
             -   uses: php-actions/composer@v6
+                with:
+                    php_version: '${{ matrix.php }}'
+                    php_extensions: bcmath gd
             -   uses: php-actions/phpunit@v3
