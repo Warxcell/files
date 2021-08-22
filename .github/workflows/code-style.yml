@@ -1,0 +1,16 @@
+name: phpcs
+on:
+    push:
+        branches: [ master ]
+    pull_request:
+        branches: [ master ]
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            -   uses: actions/checkout@v2
+
+            -   name: PHP Code Style (phpcs)
+                uses: chindit/actions-phpcs@master
+                with:
+                    dir: src/
