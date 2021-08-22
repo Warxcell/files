@@ -114,7 +114,7 @@ arxy_files:
         public:
             driver: orm
             class: 'App\Entity\File'
-            flysystem: 'in_memory'
+            storage: 'in_memory'
             naming_strategy: 'Arxy\FilesBundle\NamingStrategy\SplitHashStrategy'
             repository: 'App\Repository\FileRepository'
 ```
@@ -137,7 +137,7 @@ services:
 
     Arxy\FilesBundle\Twig\FilesExtension:
         tags:
-            - {name: twig.extension}
+            - { name: twig.extension }
 
     Arxy\FilesBundle\NamingStrategy\IdToPathStrategy: ~
     Arxy\FilesBundle\NamingStrategy\AppendExtensionStrategy:
@@ -155,15 +155,15 @@ services:
         alias: Arxy\FilesBundle\Manager
 
     Arxy\FilesBundle\EventListener\DoctrineORMListener:
-        arguments: ["@Arxy\\FilesBundle\\ManagerInterface"] # This can be omit, if using autowiring.
+        arguments: [ "@Arxy\\FilesBundle\\ManagerInterface" ] # This can be omit, if using autowiring.
         tags:
-            - {name: doctrine.event_listener, event: 'postPersist'}
-            - {name: doctrine.event_listener, event: 'preRemove'}
+            - { name: doctrine.event_listener, event: 'postPersist' }
+            - { name: doctrine.event_listener, event: 'preRemove' }
 
     Arxy\FilesBundle\Form\Type\FileType:
-        arguments: ["@Arxy\\FilesBundle\\ManagerInterface"] # This can be omit, if using autowiring.
+        arguments: [ "@Arxy\\FilesBundle\\ManagerInterface" ] # This can be omit, if using autowiring.
         tags: # This can be omit, if using autowiring.
-            - {name: form.type}
+            - { name: form.type }
 ```
 
 or using pure PHP
@@ -172,11 +172,13 @@ or using pure PHP
 $adapter = new \League\Flysystem\Local\LocalFilesystemAdapter;
 $filesystem = new \League\Flysystem\Filesystem($adapter);
 
+$storage = new \Arxy\FilesBundle\Storage\FlysystemStorage($filesystem);
+
 $namingStrategy = new \Arxy\FilesBundle\NamingStrategy\SplitHashStrategy();
 
 $repository = new FileRepository();
 
-$fileManager = new \Arxy\FilesBundle\Manager(\App\Entity\File::class, $filesystem, $namingStrategy, $repository);
+$fileManager = new \Arxy\FilesBundle\Manager(\App\Entity\File::class, $storage, $namingStrategy, $repository);
 ```
 
 ## Upload file
@@ -270,6 +272,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Arxy\FilesBundle\Utility\DownloadUtility;
+use Symfony\Component\HttpFoundation\Response;
 
 class FileController extends AbstractController
 {
@@ -277,11 +280,10 @@ class FileController extends AbstractController
      * @Route(path="/file/{id}", name="file_download")
      */
     public function download(
-        $id, 
+        string $id, 
         EntityManagerInterface $em, 
         DownloadUtility $downloadUtility
-    )
-    {
+    ): Response {
         $file = $em->getRepository(File::class)->findOneBy(
             [
                 'md5Hash' => $id,
@@ -312,6 +314,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Arxy\FilesBundle\Utility\DownloadUtility;
 use Arxy\FilesBundle\Utility\DownloadableFile;
+use Symfony\Component\HttpFoundation\Response;
 
 class FileController extends AbstractController
 {
@@ -319,11 +322,10 @@ class FileController extends AbstractController
      * @Route(path="/file/{id}", name="file_download")
      */
     public function download(
-        $id,
+        string $id,
         EntityManagerInterface $em, 
         DownloadUtility $downloadUtility
-    )
-    {
+    ): Response {
         $file = $em->getRepository(File::class)->findOneBy(
             [
                 'md5Hash' => $id,
@@ -410,10 +412,10 @@ You will receive following json as response:
 
 ```json
 {
-  "id": 145,
-  "mimeType": "application/pdf",
-  "size": 532423,
-  "url": "https://example.com/link-to-image.pdf"
+    "id": 145,
+    "mimeType": "application/pdf",
+    "size": 532423,
+    "url": "https://example.com/link-to-image.pdf"
 }
 ```
 
@@ -500,10 +502,10 @@ You will receive following json as response:
 
 ```json
 {
-  "id": 145,
-  "formats": {
-    "squared_thumbnail": "https:\/\/host.com\/media\/cache\/resolve\/squared_thumbnail\/1\/4\/5\/145"
-  }
+    "id": 145,
+    "formats": {
+        "squared_thumbnail": "https:\/\/host.com\/media\/cache\/resolve\/squared_thumbnail\/1\/4\/5\/145"
+    }
 }
 ```
 
@@ -555,15 +557,13 @@ Register Migrator service and command:
 ```yaml
 services:
     Arxy\FilesBundle\Migrator:
-        arguments:
-            $filesystem: '@League\Flysystem\FilesystemOperator'
-            $oldNamingStrategy: '@old_naming_strategy'
-            $newNamingStrategy: '@new_naming_strategy'
+        $filesystem: '@League\Flysystem\FilesystemOperator'
+        $oldNamingStrategy: '@old_naming_strategy'
+        $newNamingStrategy: '@new_naming_strategy'
 
     Arxy\FilesBundle\Command\MigrateNamingStrategyCommand:
-        arguments:
-            $migrator: '@Arxy\FilesBundle\Migrator'
-            $repository: '@repository' 
+        $migrator: '@Arxy\FilesBundle\Migrator'
+        $repository: '@repository' 
 ```
 
 then run it.
@@ -578,9 +578,8 @@ bin/console arxy:files:migrate-naming-strategy
 
 ```yaml
     Arxy\FilesBundle\PathResolver\AssetsPathResolver:
-        arguments:
-            $manager: '@Arxy\FilesBundle\ManagerInterface'
-            $package: 'packageName' # https://symfony.com/doc/current/components/asset.html#asset-packages
+        $manager: '@Arxy\FilesBundle\ManagerInterface'
+        $package: 'packageName' # https://symfony.com/doc/current/components/asset.html#asset-packages
 
     Arxy\FilesBundle\PathResolver:
         alias: Arxy\FilesBundle\PathResolver\AssetsPathResolver
@@ -616,7 +615,7 @@ bin/console arxy:files:migrate-naming-strategy
 
 ```yaml
     MicrosoftAzure\Storage\Blob\BlobRestProxy:
-        factory: ['MicrosoftAzure\Storage\Blob\BlobRestProxy', 'createBlobService']
+        factory: [ 'MicrosoftAzure\Storage\Blob\BlobRestProxy', 'createBlobService' ]
         arguments:
             $connectionString: 'DefaultEndpointsProtocol=https;AccountName=xxxxxxxx;EndpointSuffix=core.windows.net'
 
@@ -698,19 +697,17 @@ Used when your system have multiple file entities:
 
 ```yaml
     Arxy\FilesBundle\PathResolver\DelegatingPathResolver:
-        arguments:
-            $resolvers:
-                'App\Entity\File': '@path_resolver'
-                'App\Entity\OtherFile': '@other_path_resolver'
+        $resolvers:
+            'App\Entity\File': '@path_resolver'
+            'App\Entity\OtherFile': '@other_path_resolver'
 ```
 
 ### You can also combine Manager and PathResolver into one, using PathResolverManager decorator, so you can use singe instance for both operations:
 
 ```yaml
     Arxy\FilesBundle\PathResolverManager:
-        arguments:
-            $manager: '@manager'
-            $pathResolver: '@path_resolver'
+        $manager: '@manager'
+        $pathResolver: '@path_resolver'
 
     Arxy\FilesBundle\ManagerInterface:
         alias: Arxy\FilesBundle\PathResolverManager
@@ -720,16 +717,15 @@ Used when your system have multiple file entities:
 ```
 
 There is also DelegatingManager, which can be used as router to different other managers, supporting different classes.
+
 ```yaml
     Arxy\FilesBundle\DelegatingManager:
-        arguments:
-            $managers: ['@manager_1', '@manager_2']
+        $managers: [ '@manager_1', '@manager_2' ]
 ```
 
-
-Then you can do: `$manager->getManagerFor(File::class)->upload($file)`. 
-Note: If you do directly `$manager->upload($file)` - it will call first manager's upload method.
-Reading is even easier: Just pass the `$file` directly, it will determine the correct inner manager for that file. 
+Then you can do: `$manager->getManagerFor(File::class)->upload($file)`. Note: If you do
+directly `$manager->upload($file)` - it will call first manager's upload method. Reading is even easier: Just pass
+the `$file` directly, it will determine the correct inner manager for that file.
 `$manager->read($file)`
 
 ### Sending additional parameters to path resolver.
@@ -759,7 +755,7 @@ class VirtualFile extends \Arxy\FilesBundle\Model\DecoratedFile {
 ```php
 class VirtualFilePathResolver implements \Arxy\FilesBundle\PathResolver 
 {
-    public function getPath(\Arxy\FilesBundle\Model\File $file) : string {
+    public function getPath(\Arxy\FilesBundle\Model\File $file): string {
         assert($file instanceof VirtualFile);
         
         return sprintf('url?download_filename=%s', $file->getDownloadFilename());
