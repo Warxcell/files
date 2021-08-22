@@ -35,6 +35,7 @@ use SplFileObject;
 use SplTempFileObject;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Throwable;
+use function mb_strtolower;
 use function sprintf;
 
 class ManagerTest extends TestCase
@@ -378,8 +379,8 @@ class ManagerTest extends TestCase
 
             $this->assertInstanceOf(ErrorException::class, $exception->getPrevious());
             $this->assertEquals(
-                sprintf('fopen(%s): Failed to open stream: No such file or directory', $tmpFile),
-                $exception->getPrevious()->getMessage()
+                sprintf('fopen(%s): failed to open stream: no such file or directory', $tmpFile),
+                mb_strtolower($exception->getPrevious()->getMessage())
             );
         }
     }
