@@ -3,13 +3,18 @@ name: PhpUnit
 on: [ push ]
 
 jobs:
-    build-test:
+    tests:
         runs-on: ubuntu-latest
-
+        strategy:
+            matrix:
+                include:
+                    -   php: '7.4'
+                    -   php: '8.0'
         steps:
             -   uses: actions/checkout@v2
-            -   uses: php-actions/composer@v6
+            -   uses: shivammathur/setup-php@v2
                 with:
-                    php_version: '7.4'
-                    php_extensions: 'bcmath gd'
+                    php-version: '${{ matrix.php }}'
+                    extensions: bcmath,gd
+            -   uses: php-actions/composer@v6
             -   uses: php-actions/phpunit@v3
