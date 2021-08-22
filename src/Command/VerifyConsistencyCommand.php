@@ -6,9 +6,10 @@ namespace Arxy\FilesBundle\Command;
 
 use Arxy\FilesBundle\ErrorHandler;
 use Arxy\FilesBundle\ManagerInterface;
+use Arxy\FilesBundle\MetadataStorage;
 use Arxy\FilesBundle\Repository;
+use ErrorException;
 use InvalidArgumentException;
-use League\Flysystem\FilesystemReader;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -22,13 +23,13 @@ class VerifyConsistencyCommand extends Command
 {
     protected static $defaultName = 'arxy:files:verify-consistency';
 
-    private FilesystemReader $flysystem;
+    private MetadataStorage $storage;
     private ManagerInterface $manager;
     private Repository $repository;
     private string $hashingAlgorithm;
 
     public function __construct(
-        FilesystemReader $flysystem,
+        MetadataStorage $storage,
         ManagerInterface $manager,
         Repository $repository,
         string $hashingAlgorithm = 'md5'
@@ -37,12 +38,15 @@ class VerifyConsistencyCommand extends Command
             throw new InvalidArgumentException(sprintf('The algorithm "%s" is not supported.', $hashingAlgorithm));
         }
         parent::__construct();
-        $this->flysystem = $flysystem;
+        $this->storage = $storage;
         $this->manager = $manager;
         $this->repository = $repository;
         $this->hashingAlgorithm = $hashingAlgorithm;
     }
 
+    /**
+     * @throws ErrorException
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
@@ -54,10 +58,10 @@ class VerifyConsistencyCommand extends Command
             $errors = [];
 
             $pathname = $this->manager->getPathname($file);
-            if (!$this->flysystem->fileExists($pathname)) {
+            if (!$this->storage->fileExists($file, $pathname)) {
                 $errors[] = sprintf('File %s missing!', $pathname);
             } else {
-                $size = $this->flysystem->fileSize($pathname);
+                $size = $this->storage->fileSize($file, $pathname);
                 if ($file->getSize() !== $size) {
                     $errors[] = sprintf(
                         'File %s wrong size! Actual size: %s bytes, expected %s bytes!',
@@ -67,7 +71,7 @@ class VerifyConsistencyCommand extends Command
                     );
                 }
 
-                $stream = $this->flysystem->readStream($pathname);
+                $stream = $this->storage->readStream($file, $pathname);
 
                 $handle = hash_init($this->hashingAlgorithm);
                 hash_update_stream($handle, $stream);
@@ -83,7 +87,7 @@ class VerifyConsistencyCommand extends Command
                     );
                 }
 
-                $mimeType = $this->flysystem->mimeType($pathname);
+                $mimeType = $this->storage->mimeType($file, $pathname);
                 if ($file->getMimeType() !== $mimeType) {
                     $errors[] = sprintf(
                         'File %s wrong mimeType! Actual mimeType: %s, expected %s!',

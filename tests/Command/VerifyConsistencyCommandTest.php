@@ -7,7 +7,9 @@ namespace Arxy\FilesBundle\Tests\Command;
 use Arxy\FilesBundle\Command\VerifyConsistencyCommand;
 use Arxy\FilesBundle\ManagerInterface;
 use Arxy\FilesBundle\Repository;
+use Arxy\FilesBundle\Storage\FlysystemStorage;
 use Arxy\FilesBundle\Tests\File;
+use League\Flysystem\FilesystemOperator;
 use League\Flysystem\FilesystemReader;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -87,9 +89,13 @@ class VerifyConsistencyCommandTest extends TestCase
         parent::setUp();
 
         $this->manager = $this->createMock(ManagerInterface::class);
-        $this->flysystem = $this->createMock(FilesystemReader::class);
+        $this->flysystem = $this->createMock(FilesystemOperator::class);
         $this->repository = $this->createMock(Repository::class);
 
-        $this->command = new VerifyConsistencyCommand($this->flysystem, $this->manager, $this->repository);
+        $this->command = new VerifyConsistencyCommand(
+            new FlysystemStorage($this->flysystem),
+            $this->manager,
+            $this->repository
+        );
     }
 }

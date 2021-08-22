@@ -33,7 +33,6 @@ interface Storage
 
     /**
      * @param T $file
-     * @param string $pathname
      * @throws FileException
      */
     public function remove(File $file, string $pathname): void;

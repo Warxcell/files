@@ -5,13 +5,14 @@ declare(strict_types=1);
 namespace Arxy\FilesBundle\Storage;
 
 use Arxy\FilesBundle\FileException;
+use Arxy\FilesBundle\MetadataStorage;
 use Arxy\FilesBundle\MigrateableStorage;
 use Arxy\FilesBundle\Model\File;
 use Arxy\FilesBundle\Storage;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
 
-class FlysystemStorage implements Storage, MigrateableStorage
+class FlysystemStorage implements Storage, MigrateableStorage, MetadataStorage
 {
     private FilesystemOperator $flysystem;
 
@@ -70,5 +71,34 @@ class FlysystemStorage implements Storage, MigrateableStorage
             throw new FileException($file, 'Unable to migrate file', $exception);
         }
     }
+
+    public function fileSize(File $file, string $pathname): int
+    {
+        try {
+            return $this->flysystem->fileSize($pathname);
+        } catch (FilesystemException $e) {
+            throw new FileException($file, 'Unable to calculate filesize', $e);
+        }
+    }
+
+    public function mimeType(File $file, string $pathname): string
+    {
+        try {
+            return $this->flysystem->mimeType($pathname);
+        } catch (FilesystemException $e) {
+            throw new FileException($file, 'Unable to determine mimeType', $e);
+        }
+    }
+
+    public function fileExists(File $file, string $pathname): bool
+    {
+        try {
+            return $this->flysystem->fileExists($pathname);
+        } catch (FilesystemException $e) {
+            throw new FileException($file, 'Unable to determine if file exists', $e);
+        }
+    }
+
+
 }
 
