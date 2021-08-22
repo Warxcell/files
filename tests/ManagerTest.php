@@ -379,7 +379,7 @@ class ManagerTest extends TestCase
 
             $this->assertInstanceOf(ErrorException::class, $exception->getPrevious());
             $this->assertEquals(
-                sprintf('fopen(%s): failed to open stream: no such file or directory', $tmpFile),
+                mb_strtolower(sprintf('fopen(%s): failed to open stream: no such file or directory', $tmpFile)),
                 mb_strtolower($exception->getPrevious()->getMessage())
             );
         }
