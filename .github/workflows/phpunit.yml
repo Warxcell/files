@@ -9,7 +9,7 @@ jobs:
         steps:
             -   uses: actions/checkout@v2
                 with:
-                    php-version: '7.4'
-                    extensions: 'bcmath'
+                    php_version: '7.4'
+                    php_extensions: 'bcmath'
             -   uses: php-actions/composer@v6
             -   uses: php-actions/phpunit@v3
