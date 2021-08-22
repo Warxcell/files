@@ -11,5 +11,5 @@ jobs:
             -   uses: php-actions/composer@v6
                 with:
                     php_version: '7.4'
-                    php_extensions: 'bcmath'
+                    php_extensions: 'bcmath gd'
             -   uses: php-actions/phpunit@v3
