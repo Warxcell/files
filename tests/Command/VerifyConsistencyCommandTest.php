@@ -15,7 +15,10 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Tester\CommandTester;
 use function array_map;
 use function base64_encode;
+use function preg_replace;
+use function str_replace;
 use function strlen;
+use const PHP_EOL;
 
 class VerifyConsistencyCommandTest extends TestCase
 {
@@ -67,13 +70,14 @@ class VerifyConsistencyCommandTest extends TestCase
             ->will(self::onConsecutiveCalls('text/plain'));
 
         $commandTester = new CommandTester($this->command);
-        self::assertSame(0, $commandTester->execute([], ['decorated' => true]));
+        self::assertSame(0, $commandTester->execute([]));
 
-        $output = $commandTester->getDisplay();
+        $output = str_replace(PHP_EOL, '', $commandTester->getDisplay());
+        $output = preg_replace('/  +/', ' ', $output);
 
         self::assertStringContainsString('File file1path wrong size! Actual size: 4 bytes, expected 5 bytes!', $output);
         self::assertStringContainsString(
-            'File file1path wrong hash! Actual hash: 098f6bcd4621d373cade4e832627b4f6, expected',
+            'File file1path wrong hash! Actual hash: 098f6bcd4621d373cade4e832627b4f6, expected 5a105e8b9d40e1329780d62ea2265d8a!',
             $output
         );
         self::assertStringContainsString(
