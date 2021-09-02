@@ -671,7 +671,7 @@ class MyFactory implements \Arxy\FilesBundle\PathResolver\AzureBlobStorageSASPar
         alias: Arxy\FilesBundle\PathResolver\AzureBlobStorageSASPathResolver
 ```
 
-### SymfonyCachePathResolver:
+### CachePathResolver:
 
 Used to cache the result from decorated Path Resolver. Useful for example in conjunction with AwsS3PathResolver, where
 to get the path to uploaded file, an API call is made. This resolver will cache the response from AWS S3 servers and
@@ -684,13 +684,13 @@ Uses https://symfony.com/doc/current/components/cache.html
             $bucket: '%env(AWS_S3_BUCKET)%'
             $manager: '@Arxy\FilesBundle\ManagerInterface'
 
-    Arxy\FilesBundle\PathResolver\SymfonyCachePathResolver:
+    Arxy\FilesBundle\PathResolver\CachePathResolver:
         arguments:
             $pathResolver: '@Arxy\FilesBundle\PathResolver\AwsS3PathResolver'
             $cache: '@cache.app'
 
     Arxy\FilesBundle\PathResolver:
-        alias: Arxy\FilesBundle\PathResolver\SymfonyCachePathResolver
+        alias: Arxy\FilesBundle\PathResolver\CachePathResolver
 ```
 
 ### DelegatingPathResolver:
