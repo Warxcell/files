@@ -13,6 +13,7 @@ use ErrorException;
 use InvalidArgumentException;
 use League\MimeTypeDetection\FinfoMimeTypeDetector;
 use League\MimeTypeDetection\MimeTypeDetector;
+use RuntimeException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -110,6 +111,10 @@ class VerifyConsistencyCommand extends Command
 
             rewind($stream);
             $mimeType = $this->mimeTypeDetector->detectMimeTypeFromBuffer(fread($stream, 1024));
+            if ($mimeType === null) {
+                throw new RuntimeException(sprintf('Cannot detect mimeType for %s', $file->getHash()));
+            }
+
             if ($file->getMimeType() !== $mimeType) {
                 $error(
                     sprintf(
