@@ -61,8 +61,6 @@ class VerifyConsistencyCommand extends Command
         };
         $files = $this->repository->findAllForBatchProcessing();
         foreach ($progressBar->iterate($files) as $file) {
-            $errors = [];
-
             $pathname = $this->manager->getPathname($file);
 
             try {
