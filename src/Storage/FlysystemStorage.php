@@ -89,13 +89,4 @@ class FlysystemStorage implements Storage, MigrateableStorage, MetadataStorage
             throw new FileException($file, 'Unable to determine mimeType', $e);
         }
     }
-
-    public function fileExists(File $file, string $pathname): bool
-    {
-        try {
-            return $this->flysystem->fileExists($pathname);
-        } catch (FilesystemException $e) {
-            throw new FileException($file, 'Unable to determine if file exists', $e);
-        }
-    }
 }
