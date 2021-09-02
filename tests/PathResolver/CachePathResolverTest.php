@@ -7,14 +7,14 @@ namespace Arxy\FilesBundle\Tests\PathResolver;
 use Arxy\FilesBundle\PathResolver;
 use Arxy\FilesBundle\Tests\File;
 use PHPUnit\Framework\TestCase;
+use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
-use Symfony\Contracts\Cache\CacheInterface;
 
-class SymfonyCachePathResolverTest extends TestCase
+class CachePathResolverTest extends TestCase
 {
-    private PathResolver\SymfonyCachePathResolver $pathResolver;
+    private PathResolver\CachePathResolver $pathResolver;
     private PathResolver $decoratedPathResolver;
-    private CacheInterface $cache;
+    private CacheItemPoolInterface $cache;
 
     protected function setUp(): void
     {
@@ -22,7 +22,7 @@ class SymfonyCachePathResolverTest extends TestCase
 
         $this->cache = new ArrayAdapter();
         $this->decoratedPathResolver = $this->createMock(PathResolver::class);
-        $this->pathResolver = new PathResolver\SymfonyCachePathResolver(
+        $this->pathResolver = new PathResolver\CachePathResolver(
             $this->decoratedPathResolver,
             $this->cache
         );
