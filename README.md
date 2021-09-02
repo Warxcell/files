@@ -129,8 +129,7 @@ services:
             - "/directory/for/files/"
 
     League\Flysystem\Filesystem:
-        arguments:
-            - "@files_local_adapter"
+        - "@files_local_adapter"
 
     League\Flysystem\FilesystemOperator:
         alias: League\Flysystem\Filesystem
@@ -141,15 +140,18 @@ services:
 
     Arxy\FilesBundle\NamingStrategy\IdToPathStrategy: ~
     Arxy\FilesBundle\NamingStrategy\AppendExtensionStrategy:
-        arguments:
-            - '@Arxy\FilesBundle\NamingStrategy\IdToPathStrategy'
+        - '@Arxy\FilesBundle\NamingStrategy\IdToPathStrategy'
 
     Arxy\FilesBundle\NamingStrategy:
         alias: Arxy\FilesBundle\NamingStrategy\AppendExtensionStrategy
 
+    Arxy\FilesBundle\Storage\FlysystemStorage: ~
+
+    Arxy\FilesBundle\Storage: 
+        alias: 'Arxy\FilesBundle\Storage\FlysystemStorage'
+        
     Arxy\FilesBundle\Manager:
-        arguments:
-            $class: 'App\Entity\File'
+        $class: 'App\Entity\File'
 
     Arxy\FilesBundle\ManagerInterface:
         alias: Arxy\FilesBundle\Manager
