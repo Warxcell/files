@@ -18,7 +18,6 @@ use function array_map;
 use function base64_encode;
 use function preg_replace;
 use function str_replace;
-use function strlen;
 use const PHP_EOL;
 
 class VerifyConsistencyCommandTest extends TestCase
@@ -56,18 +55,6 @@ class VerifyConsistencyCommandTest extends TestCase
                     self::throwException(new FileException($file2, 'File not found'))
                 )
             );
-
-        $this->flysystem
-            ->expects(self::exactly(1))
-            ->method('fileSize')
-            ->withConsecutive(['file1path'])
-            ->will(self::onConsecutiveCalls(strlen($content)));
-
-        $this->flysystem
-            ->expects(self::exactly(1))
-            ->method('mimeType')
-            ->withConsecutive(['file1path'])
-            ->will(self::onConsecutiveCalls('text/plain'));
 
         $commandTester = new CommandTester($this->command);
         self::assertSame(0, $commandTester->execute([]));

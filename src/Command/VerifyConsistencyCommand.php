@@ -7,32 +7,39 @@ namespace Arxy\FilesBundle\Command;
 use Arxy\FilesBundle\ErrorHandler;
 use Arxy\FilesBundle\FileException;
 use Arxy\FilesBundle\ManagerInterface;
-use Arxy\FilesBundle\MetadataStorage;
 use Arxy\FilesBundle\Repository;
+use Arxy\FilesBundle\Storage;
 use ErrorException;
 use InvalidArgumentException;
+use League\MimeTypeDetection\FinfoMimeTypeDetector;
+use League\MimeTypeDetection\MimeTypeDetector;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use function fclose;
+use function fread;
+use function fstat;
 use function hash_algos;
 use function in_array;
+use function rewind;
 use function sprintf;
 
 class VerifyConsistencyCommand extends Command
 {
     protected static $defaultName = 'arxy:files:verify-consistency';
 
-    private MetadataStorage $storage;
+    private Storage $storage;
     private ManagerInterface $manager;
     private Repository $repository;
+    private MimeTypeDetector $mimeTypeDetector;
     private string $hashingAlgorithm;
 
     public function __construct(
-        MetadataStorage $storage,
+        Storage $storage,
         ManagerInterface $manager,
         Repository $repository,
+        MimeTypeDetector $mimeTypeDetector = null,
         string $hashingAlgorithm = 'md5'
     ) {
         if (!in_array($hashingAlgorithm, hash_algos(), true)) {
@@ -42,6 +49,7 @@ class VerifyConsistencyCommand extends Command
         $this->storage = $storage;
         $this->manager = $manager;
         $this->repository = $repository;
+        $this->mimeTypeDetector = $mimeTypeDetector ?? new FinfoMimeTypeDetector();
         $this->hashingAlgorithm = $hashingAlgorithm;
     }
 
@@ -70,13 +78,14 @@ class VerifyConsistencyCommand extends Command
                 continue;
             }
 
-            $size = $this->storage->fileSize($file, $pathname);
-            if ($file->getSize() !== $size) {
+            $stats = fstat($stream);
+
+            if ($file->getSize() !== $stats['size']) {
                 $error(
                     sprintf(
                         'File %s wrong size! Actual size: %s bytes, expected %s bytes!',
                         $pathname,
-                        $size,
+                        $stats['size'],
                         $file->getSize()
                     )
                 );
@@ -86,7 +95,7 @@ class VerifyConsistencyCommand extends Command
             $handle = hash_init($this->hashingAlgorithm);
             hash_update_stream($handle, $stream);
             $hash = hash_final($handle);
-            ErrorHandler::wrap(static fn (): bool => fclose($stream));
+
 
             if ($file->getHash() !== $hash) {
                 $error(
@@ -99,7 +108,8 @@ class VerifyConsistencyCommand extends Command
                 );
             }
 
-            $mimeType = $this->storage->mimeType($file, $pathname);
+            rewind($stream);
+            $mimeType = $this->mimeTypeDetector->detectMimeTypeFromBuffer(fread($stream, 1024));
             if ($file->getMimeType() !== $mimeType) {
                 $error(
                     sprintf(
@@ -110,6 +120,8 @@ class VerifyConsistencyCommand extends Command
                     )
                 );
             }
+
+            ErrorHandler::wrap(static fn (): bool => fclose($stream));
         }
 
         if ($totalErrors === 0) {
