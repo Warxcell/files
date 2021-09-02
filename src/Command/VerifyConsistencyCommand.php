@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Arxy\FilesBundle\Command;
 
 use Arxy\FilesBundle\ErrorHandler;
+use Arxy\FilesBundle\FileException;
 use Arxy\FilesBundle\ManagerInterface;
 use Arxy\FilesBundle\MetadataStorage;
 use Arxy\FilesBundle\Repository;
@@ -53,54 +54,63 @@ class VerifyConsistencyCommand extends Command
         $progressBar = $io->createProgressBar();
 
         $totalErrors = 0;
+
+        $error = function (string $message) use (&$totalErrors, $io): void {
+            $totalErrors++;
+            $io->error($message);
+        };
         $files = $this->repository->findAllForBatchProcessing();
         foreach ($progressBar->iterate($files) as $file) {
             $errors = [];
 
             $pathname = $this->manager->getPathname($file);
-            if (!$this->storage->fileExists($file, $pathname)) {
-                $errors[] = sprintf('File %s missing!', $pathname);
-            } else {
-                $size = $this->storage->fileSize($file, $pathname);
-                if ($file->getSize() !== $size) {
-                    $errors[] = sprintf(
+
+            try {
+                $stream = $this->storage->readStream($file, $pathname);
+            } catch (FileException $exception) {
+                $error(sprintf('File %s missing!', $pathname));
+                continue;
+            }
+
+            $size = $this->storage->fileSize($file, $pathname);
+            if ($file->getSize() !== $size) {
+                $error(
+                    sprintf(
                         'File %s wrong size! Actual size: %s bytes, expected %s bytes!',
                         $pathname,
                         $size,
                         $file->getSize()
-                    );
-                }
+                    )
+                );
+            }
 
-                $stream = $this->storage->readStream($file, $pathname);
 
-                $handle = hash_init($this->hashingAlgorithm);
-                hash_update_stream($handle, $stream);
-                $hash = hash_final($handle);
-                ErrorHandler::wrap(static fn (): bool => fclose($stream));
+            $handle = hash_init($this->hashingAlgorithm);
+            hash_update_stream($handle, $stream);
+            $hash = hash_final($handle);
+            ErrorHandler::wrap(static fn (): bool => fclose($stream));
 
-                if ($file->getHash() !== $hash) {
-                    $errors[] = sprintf(
+            if ($file->getHash() !== $hash) {
+                $error(
+                    sprintf(
                         'File %s wrong hash! Actual hash: %s, expected %s!',
                         $pathname,
                         $hash,
                         $file->getHash()
-                    );
-                }
+                    )
+                );
+            }
 
-                $mimeType = $this->storage->mimeType($file, $pathname);
-                if ($file->getMimeType() !== $mimeType) {
-                    $errors[] = sprintf(
+            $mimeType = $this->storage->mimeType($file, $pathname);
+            if ($file->getMimeType() !== $mimeType) {
+                $error(
+                    sprintf(
                         'File %s wrong mimeType! Actual mimeType: %s, expected %s!',
                         $pathname,
                         $mimeType,
                         $file->getMimeType()
-                    );
-                }
-            }
-
-            foreach ($errors as $error) {
-                $io->error($error);
-                $totalErrors++;
+                    )
+                );
             }
         }
 

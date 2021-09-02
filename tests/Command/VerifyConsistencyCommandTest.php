@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Arxy\FilesBundle\Tests\Command;
 
 use Arxy\FilesBundle\Command\VerifyConsistencyCommand;
+use Arxy\FilesBundle\FileException;
 use Arxy\FilesBundle\ManagerInterface;
 use Arxy\FilesBundle\Repository;
 use Arxy\FilesBundle\Storage\FlysystemStorage;
@@ -44,18 +45,17 @@ class VerifyConsistencyCommandTest extends TestCase
             ->withConsecutive(...array_map(static fn (File $file): array => [self::identicalTo($file)], $files))
             ->will(self::onConsecutiveCalls('file1path', 'file2path'));
 
-        $this->flysystem
-            ->expects(self::exactly(2))
-            ->method('fileExists')
-            ->withConsecutive(['file1path'], ['file2path'])
-            ->will(self::onConsecutiveCalls(true, false));
-
         $content = 'test';
         $this->flysystem
-            ->expects(self::exactly(1))
+            ->expects(self::exactly(2))
             ->method('readStream')
             ->withConsecutive(['file1path'])
-            ->will(self::onConsecutiveCalls(fopen('data://text/plain;base64,'.base64_encode($content), 'r')));
+            ->will(
+                self::onConsecutiveCalls(
+                    fopen('data://text/plain;base64,' . base64_encode($content), 'r'),
+                    self::throwException(new FileException($file2, 'File not found'))
+                )
+            );
 
         $this->flysystem
             ->expects(self::exactly(1))

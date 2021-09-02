@@ -23,10 +23,4 @@ interface MetadataStorage extends Storage
      * @throws FileException
      */
     public function mimeType(File $file, string $pathname): string;
-
-    /**
-     * @param T $file
-     * @throws FileException
-     */
-    public function fileExists(File $file, string $pathname): bool;
 }
