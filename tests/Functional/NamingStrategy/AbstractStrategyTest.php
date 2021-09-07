@@ -7,6 +7,7 @@ namespace Arxy\FilesBundle\Tests\Functional\NamingStrategy;
 use Arxy\FilesBundle\Model\File;
 use Arxy\FilesBundle\NamingStrategy;
 use Arxy\FilesBundle\Tests\Functional\AbstractFunctionalTest;
+use Arxy\FilesBundle\Utility\NamingStrategyUtility;
 use SplFileObject;
 
 abstract class AbstractStrategyTest extends AbstractFunctionalTest
@@ -39,19 +40,18 @@ abstract class AbstractStrategyTest extends AbstractFunctionalTest
         return $file;
     }
 
-    // not working because Doctrine unsets the ID after deletion
-    //    final public function testFileAfterDeletion()
-    //    {
-    //        $file = $this->testFileAfterCreation();
-    //
-    //        $file = $this->entityManager->find($this->manager->getClass(), $file->getId());
-    //
-    //        $filepath = ($this->namingStrategy->getDirectoryName($file) ?? "").$this->namingStrategy->getFileName($file);
-    //
-    //        $this->entityManager->remove($file);
-    ////        $this->assertTrue($this->flysystem->fileExists($filepath));
-    //
-    //        $this->entityManager->flush();
-    //        self::assertFalse($this->flysystem->fileExists($filepath));
-    //    }
+    final public function testFileAfterDeletion(): void
+    {
+        $file = $this->testFileAfterCreation();
+
+        $file = $this->entityManager->find($this->manager->getClass(), $file->getId());
+
+        $filepath = NamingStrategyUtility::getPathnameFromStrategy($this->namingStrategy, $file);
+
+        $this->entityManager->remove($file);
+        $this->assertTrue($this->flysystem->fileExists($filepath));
+
+        $this->entityManager->flush();
+        self::assertFalse($this->flysystem->fileExists($filepath));
+    }
 }
