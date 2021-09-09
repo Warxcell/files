@@ -175,7 +175,7 @@ final class Manager implements ManagerInterface
         /** @psalm-suppress RedundantCondition */
         if (is_resource($stream)) {
             try {
-                ErrorHandler::wrap(static fn () => fclose($stream));
+                ErrorHandler::wrap(static fn (): bool => fclose($stream));
             } catch (ErrorException $e) {
                 // nothing we can do
             }
@@ -213,7 +213,7 @@ final class Manager implements ManagerInterface
         $pathname = $this->getPathname($file);
         if ($this->uploadFileMap->has($file)) {
             try {
-                return ErrorHandler::wrap(static fn () => file_get_contents($pathname));
+                return ErrorHandler::wrap(static fn (): string => file_get_contents($pathname));
             } catch (ErrorException $exception) {
                 throw FileException::unableToRead($file, $exception);
             }
@@ -251,7 +251,7 @@ final class Manager implements ManagerInterface
         $pathname = $this->getPathname($file);
         if ($this->uploadFileMap->has($file)) {
             try {
-                ErrorHandler::wrap(static fn () => copy($splFileInfo->getRealPath(), $pathname));
+                ErrorHandler::wrap(static fn (): bool => copy($splFileInfo->getRealPath(), $pathname));
             } catch (ErrorException $exception) {
                 throw FileException::unableToWrite($file, $exception);
             }
@@ -311,7 +311,7 @@ final class Manager implements ManagerInterface
             $remoteFile = $file->openFile();
         }
 
-        $tempFilename = ErrorHandler::wrap(fn () => tempnam($this->temporaryDirectory, 'file_manager'));
+        $tempFilename = ErrorHandler::wrap(fn (): string => tempnam($this->temporaryDirectory, 'file_manager'));
         $file = new SplFileObject($tempFilename, 'r+');
         while ($content = $remoteFile->fread(self::CHUNK_SIZE)) {
             $file->fwrite($content);
@@ -327,7 +327,7 @@ final class Manager implements ManagerInterface
      */
     private function hashFile(SplFileInfo $file): string
     {
-        return ErrorHandler::wrap(fn () => hash_file($this->hashingAlgorithm, $file->getRealPath()));
+        return ErrorHandler::wrap(fn (): string => hash_file($this->hashingAlgorithm, $file->getRealPath()));
     }
 
     /**
@@ -337,7 +337,7 @@ final class Manager implements ManagerInterface
     {
         $mimeType = $this->mimeTypeDetector->detectMimeTypeFromFile($file->getRealPath());
         if ($mimeType === null) {
-            throw new InvalidArgumentException('Failed to detect mimeType for '.$file->getRealPath());
+            throw new InvalidArgumentException('Failed to detect mimeType for ' . $file->getRealPath());
         }
 
         return $mimeType;
