@@ -12,11 +12,11 @@ use SplTempFileObject;
 
 class ManagerTest extends AbstractFunctionalTest
 {
-    protected ?ManagerInterface $embeddableManager;
+    protected ManagerInterface $embeddableManager;
 
     protected static function getConfig(): string
     {
-        return __DIR__.'/config.yml';
+        return __DIR__ . '/config.yml';
     }
 
     protected static function getBundles(): array
@@ -36,12 +36,12 @@ class ManagerTest extends AbstractFunctionalTest
         parent::tearDown();
 
         $this->embeddableManager->clear();
-        $this->embeddableManager = null;
+        unset($this->embeddableManager);
     }
 
     public function testSimpleUpload(): File
     {
-        $file = $this->manager->upload(new SplFileObject(__DIR__.'/../files/image1.jpg'));
+        $file = $this->manager->upload(new SplFileObject(__DIR__ . '/../files/image1.jpg'));
 
         $this->entityManager->persist($file);
         $this->entityManager->flush();
@@ -58,7 +58,7 @@ class ManagerTest extends AbstractFunctionalTest
         return $file;
     }
 
-    public function testTempFileUpload()
+    public function testTempFileUpload(): void
     {
         $content = 'this is temporary file upload test';
         $tmpFile = new SplTempFileObject(0);
@@ -82,7 +82,7 @@ class ManagerTest extends AbstractFunctionalTest
 
     public function testSimpleUploadRelation(): News
     {
-        $file = $this->manager->upload(new SplFileObject(__DIR__.'/../files/image1.jpg'));
+        $file = $this->manager->upload(new SplFileObject(__DIR__ . '/../files/image1.jpg'));
 
         $news = new News();
         $news->setFile($file);
@@ -111,6 +111,7 @@ class ManagerTest extends AbstractFunctionalTest
 
         $news = $this->entityManager->find(News::class, $news->getId());
 
+        self::assertNotNull($news);
         $this->entityManager->remove($news);
         $this->entityManager->flush();
 
@@ -119,10 +120,10 @@ class ManagerTest extends AbstractFunctionalTest
         );
     }
 
-    public function testSimpleUploadEmbeddable()
+    public function testSimpleUploadEmbeddable(): News
     {
-        $file = $this->embeddableManager->upload(new SplFileObject(__DIR__.'/../files/image1.jpg'));
-        $file2 = $this->embeddableManager->upload(new SplFileObject(__DIR__.'/../files/image2.jpg'));
+        $file = $this->embeddableManager->upload(new SplFileObject(__DIR__ . '/../files/image1.jpg'));
+        $file2 = $this->embeddableManager->upload(new SplFileObject(__DIR__ . '/../files/image2.jpg'));
 
         $news = new News();
         $news->setEmbeddableFile($file);
@@ -151,7 +152,7 @@ class ManagerTest extends AbstractFunctionalTest
         return $news;
     }
 
-    public function testDeleteEmbeddable()
+    public function testDeleteEmbeddable(): void
     {
         $news = $this->testSimpleUploadEmbeddable();
 
@@ -161,6 +162,7 @@ class ManagerTest extends AbstractFunctionalTest
 
         $news = $this->entityManager->find(News::class, $news->getId());
 
+        self::assertNotNull($news);
         $this->entityManager->remove($news);
         $this->entityManager->flush();
 
@@ -172,91 +174,77 @@ class ManagerTest extends AbstractFunctionalTest
     /**
      * @depends testSimpleUpload
      */
-    public function testSimpleDelete()
+    public function testSimpleDelete(): void
     {
         $file = $this->testSimpleUpload();
 
-        self::assertTrue(
-            $this->flysystem->fileExists('9aa1c5fc7c9388166d7ce7fd46648dd1')
-        );
+        $pathname = '9aa1c5fc7c9388166d7ce7fd46648dd1';
+
+        self::assertTrue($this->flysystem->fileExists($pathname));
 
         $this->entityManager->remove($file);
 
-//
-//        self::assertTrue(
-//            $this->flysystem->fileExists('9aa1c5fc/7c938816/6d7ce7fd/46648dd1/9aa1c5fc7c9388166d7ce7fd46648dd1')
-//        );
+        self::assertTrue($this->flysystem->fileExists($pathname));
 
         $this->entityManager->flush();
 
-        self::assertFalse(
-            $this->flysystem->fileExists('9aa1c5fc7c9388166d7ce7fd46648dd1')
-        );
+        self::assertFalse($this->flysystem->fileExists($pathname));
     }
 
-//    /**
-//     * @depends testSimpleUpload
-//     */
-//    public function testFileNotDeletedWithRollback()
-//    {
-//        $file = $this->testSimpleUpload();
-//
-//        self::assertTrue(
-//            $this->flysystem->fileExists('9aa1c5fc/7c938816/6d7ce7fd/46648dd1/9aa1c5fc7c9388166d7ce7fd46648dd1')
-//        );
-//
-//        $this->entityManager->beginTransaction();
-//
-//        $this->entityManager->remove($file);
-//
-//        self::assertTrue(
-//            $this->flysystem->fileExists('9aa1c5fc/7c938816/6d7ce7fd/46648dd1/9aa1c5fc7c9388166d7ce7fd46648dd1')
-//        );
-//
-//        $this->entityManager->flush();
-//
-//        self::assertTrue(
-//            $this->flysystem->fileExists('9aa1c5fc/7c938816/6d7ce7fd/46648dd1/9aa1c5fc7c9388166d7ce7fd46648dd1')
-//        );
-//
-//        $this->entityManager->rollback();
-//
-//        self::assertTrue(
-//            $this->flysystem->fileExists('9aa1c5fc/7c938816/6d7ce7fd/46648dd1/9aa1c5fc7c9388166d7ce7fd46648dd1')
-//        );
-//    }
-//
-//    /**
-//     * @depends testSimpleUpload
-//     */
-//    public function testFileDeletedWithCommit()
-//    {
-//        $file = $this->testSimpleUpload();
-//
-//        self::assertTrue(
-//            $this->flysystem->fileExists('9aa1c5fc/7c938816/6d7ce7fd/46648dd1/9aa1c5fc7c9388166d7ce7fd46648dd1')
-//        );
-//
-//        $this->entityManager->beginTransaction();
-//
-//        $this->entityManager->remove($file);
-//
-//        self::assertTrue(
-//            $this->flysystem->fileExists('9aa1c5fc/7c938816/6d7ce7fd/46648dd1/9aa1c5fc7c9388166d7ce7fd46648dd1')
-//        );
-//
-//        $this->entityManager->flush();
-//
-//        self::assertTrue(
-//            $this->flysystem->fileExists('9aa1c5fc/7c938816/6d7ce7fd/46648dd1/9aa1c5fc7c9388166d7ce7fd46648dd1')
-//        );
-//
-//        $this->entityManager->commit();
-//
-//        self::assertFalse(
-//            $this->flysystem->fileExists('9aa1c5fc/7c938816/6d7ce7fd/46648dd1/9aa1c5fc7c9388166d7ce7fd46648dd1')
-//        );
-//    }
+    /**
+     * @depends testSimpleUpload
+     */
+    public function testFileNotDeletedWithRollback(): void
+    {
+        self::markTestSkipped('Not implemented yet. Waiting DBAL 3.2.X Release');
+
+        $file = $this->testSimpleUpload();
+
+        $filepath = '9aa1c5fc/7c938816/6d7ce7fd/46648dd1/9aa1c5fc7c9388166d7ce7fd46648dd1';
+        self::assertTrue($this->flysystem->fileExists($filepath));
+
+        $this->entityManager->beginTransaction();
+
+        $this->entityManager->remove($file);
+
+        self::assertTrue($this->flysystem->fileExists($filepath));
+
+        $this->entityManager->flush();
+
+        self::assertTrue($this->flysystem->fileExists($filepath));
+
+        $this->entityManager->rollback();
+
+        self::assertTrue($this->flysystem->fileExists($filepath));
+    }
+
+    /**
+     * @depends testSimpleUpload
+     */
+    public function testFileDeletedWithCommit(): void
+    {
+        self::markTestSkipped('Not implemented yet. Waiting DBAL 3.2.X Release');
+
+        $file = $this->testSimpleUpload();
+
+        $filepath = '9aa1c5fc/7c938816/6d7ce7fd/46648dd1/9aa1c5fc7c9388166d7ce7fd46648dd1';
+
+        self::assertTrue($this->flysystem->fileExists($filepath));
+
+        $this->entityManager->beginTransaction();
+
+        $this->entityManager->remove($file);
+
+        self::assertTrue($this->flysystem->fileExists($filepath));
+
+        $this->entityManager->flush();
+
+        self::assertTrue($this->flysystem->fileExists($filepath));
+
+        $this->entityManager->commit();
+
+        self::assertFalse($this->flysystem->fileExists($filepath));
+    }
 
     /**
      * @depends testSimpleUpload
@@ -265,7 +253,7 @@ class ManagerTest extends AbstractFunctionalTest
     {
         $file = $this->testSimpleUpload();
 
-        $file2 = $this->manager->upload(new SplFileObject(__DIR__.'/../files/image1.jpg'));
+        $file2 = $this->manager->upload(new SplFileObject(__DIR__ . '/../files/image1.jpg'));
 
         $this->entityManager->persist($file2);
         $this->entityManager->flush();
@@ -275,17 +263,17 @@ class ManagerTest extends AbstractFunctionalTest
 
     public function testSameFileUploadWithoutFlushInBetween()
     {
-        $file = $this->manager->upload(new SplFileObject(__DIR__.'/../files/image1.jpg'));
+        $file = $this->manager->upload(new SplFileObject(__DIR__ . '/../files/image1.jpg'));
         $this->entityManager->persist($file);
 
-        $file2 = $this->manager->upload(new SplFileObject(__DIR__.'/../files/image1.jpg'));
+        $file2 = $this->manager->upload(new SplFileObject(__DIR__ . '/../files/image1.jpg'));
         $this->entityManager->persist($file2);
 
         self::assertSame($file, $file2);
 
         $this->entityManager->flush();
 
-        $file3 = $this->manager->upload(new SplFileObject(__DIR__.'/../files/image1.jpg'));
+        $file3 = $this->manager->upload(new SplFileObject(__DIR__ . '/../files/image1.jpg'));
 
         self::assertSame($file, $file3);
     }
