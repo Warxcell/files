@@ -7,8 +7,10 @@ namespace Arxy\FilesBundle\Tests\PathResolver;
 use Arxy\FilesBundle\ManagerInterface;
 use Arxy\FilesBundle\PathResolver;
 use Arxy\FilesBundle\Tests\File;
+use Aws\Credentials\Credentials;
 use Aws\S3\S3Client;
 use Aws\S3\S3ClientInterface;
+use GuzzleHttp\Promise\Create;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -26,6 +28,11 @@ class AwsS3PathResolverTest extends TestCase
         $this->s3Client = new S3Client([
             'region' => 'us-west-2',
             'version' => '2006-03-01',
+            'credentials' => function () {
+                return Create::promiseFor(
+                    new Credentials('key', 'secret')
+                );
+            },
         ]);
 
         $this->pathResolver = new PathResolver\AwsS3PathResolver($this->s3Client, 'bucket', $this->manager);
