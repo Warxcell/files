@@ -38,7 +38,7 @@ use function sys_get_temp_dir;
 use function tempnam;
 
 /**
- * @template T of \Arxy\FilesBundle\Model\File
+ * @template T of File
  * @implements ManagerInterface<T>
  */
 final class Manager implements ManagerInterface

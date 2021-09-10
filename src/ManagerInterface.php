@@ -41,7 +41,7 @@ interface ManagerInterface
     public function readStream(File $file);
 
     /**
-     * @template W of T&MutableFile
+     * @template W of T & MutableFile
      * @param W $file
      * @throws FileException
      */

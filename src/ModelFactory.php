@@ -8,7 +8,7 @@ use Arxy\FilesBundle\Model\File;
 use SplFileInfo;
 
 /**
- * @template T of \Arxy\FilesBundle\Model\File
+ * @template T of File
  */
 interface ModelFactory
 {
