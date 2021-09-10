@@ -9,6 +9,12 @@ Provides easy file management (with persistence layer for metadata).
   removed)
 - Different naming strategies for handling files.
 
+[![PHP CodeSniffer](https://github.com/Warxcell/files/actions/workflows/phpcs.yml/badge.svg)](https://github.com/Warxcell/files/actions/workflows/phpcs.yml)
+
+[![PhpUnit](https://github.com/Warxcell/files/actions/workflows/phpunit.yml/badge.svg)](https://github.com/Warxcell/files/actions/workflows/phpunit.yml)
+
+[![Psalm Static analysis](https://github.com/Warxcell/files/actions/workflows/psalm.yml/badge.svg)](https://github.com/Warxcell/files/actions/workflows/psalm.yml)
+
 # Usage
 
 ## Configuring
