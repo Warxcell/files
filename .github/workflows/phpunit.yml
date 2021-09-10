@@ -22,3 +22,8 @@ jobs:
                 with:
                     php_version: '${{ matrix.php }}'
                     php_extensions: "${{ env.extensions }}"
+            - name: Coverage Report
+              uses: actions/upload-artifact@v2
+              with:
+                  name: coverage
+                  path: coverage
