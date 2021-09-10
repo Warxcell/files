@@ -7,15 +7,27 @@ namespace Arxy\FilesBundle\Tests;
 use Arxy\FilesBundle\ManagerInterface;
 use Arxy\FilesBundle\PathResolver;
 use Arxy\FilesBundle\PathResolverManager;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use SplFileObject;
 use SplTempFileObject;
 
 class PathResolverManagerTest extends TestCase
 {
+    /** @var ManagerInterface & MockObject */
     private ManagerInterface $decorated;
+    /** @var PathResolver & MockObject */
     private PathResolver $pathResolver;
-    private ManagerInterface $decorator;
+    private PathResolverManager $decorator;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->decorated = $this->createMock(ManagerInterface::class);
+        $this->pathResolver = $this->createMock(PathResolver::class);
+        $this->decorator = new PathResolverManager($this->decorated, $this->pathResolver);
+    }
 
     public function testUpload(): void
     {
@@ -102,15 +114,5 @@ class PathResolverManagerTest extends TestCase
         $actual = $this->decorator->getPath($file);
 
         self::assertSame('!!!', $actual);
-    }
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->decorated = $this->createMock(ManagerInterface::class);
-        $this->pathResolver = $this->createMock(PathResolver::class);
-
-        $this->decorator = new PathResolverManager($this->decorated, $this->pathResolver);
     }
 }

@@ -12,9 +12,10 @@ use Symfony\Component\Cache\Adapter\ArrayAdapter;
 
 class CachePathResolverTest extends TestCase
 {
-    private PathResolver\CachePathResolver $pathResolver;
-    private PathResolver $decoratedPathResolver;
     private CacheItemPoolInterface $cache;
+    /** @var PathResolver & \PHPUnit\Framework\MockObject\MockObject */
+    private PathResolver $decoratedPathResolver;
+    private PathResolver\CachePathResolver $pathResolver;
 
     protected function setUp(): void
     {

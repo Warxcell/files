@@ -8,6 +8,7 @@ use Arxy\FilesBundle\DelegatingManager;
 use Arxy\FilesBundle\ManagerInterface;
 use InvalidArgumentException;
 use LogicException;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use SplFileInfo;
 use SplTempFileObject;
@@ -15,9 +16,29 @@ use stdClass;
 
 class DelegatingManagerTest extends TestCase
 {
+    /** @var ManagerInterface & MockObject */
     private ManagerInterface $manager1;
+    /** @var ManagerInterface & MockObject */
     private ManagerInterface $manager2;
     private ManagerInterface $manager;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->manager1 = $this->createMock(ManagerInterface::class);
+        $this->manager1->method('getClass')->willReturn(File::class);
+
+        $this->manager2 = $this->createMock(ManagerInterface::class);
+        $this->manager2->method('getClass')->willReturn(File2::class);
+
+        $this->manager = new DelegatingManager(
+            [
+                $this->manager1,
+                $this->manager2,
+            ]
+        );
+    }
 
     public function testZeroManagers(): void
     {
@@ -152,7 +173,7 @@ class DelegatingManagerTest extends TestCase
         self::assertSame($uploadedFile, $actualFile);
     }
 
-    public function testGetManagerFor()
+    public function testGetManagerFor(): void
     {
         $manager1 = $this->createMock(ManagerInterface::class);
         $manager1->method('getClass')->willReturn(File::class);
@@ -205,23 +226,5 @@ class DelegatingManagerTest extends TestCase
 
         $manager = new DelegatingManager([$manager1, $manager2, $manager3], $manager3);
         $manager->clear();
-    }
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->manager1 = $this->createMock(ManagerInterface::class);
-        $this->manager1->method('getClass')->willReturn(File::class);
-
-        $this->manager2 = $this->createMock(ManagerInterface::class);
-        $this->manager2->method('getClass')->willReturn(File2::class);
-
-        $this->manager = new DelegatingManager(
-            [
-                $this->manager1,
-                $this->manager2,
-            ]
-        );
     }
 }

@@ -30,7 +30,7 @@ abstract class AbstractStrategyTest extends TestCase
     }
 
     /** @dataProvider directoryTestData */
-    final public function testDirectoryName(File $file, ?string $expected)
+    final public function testDirectoryName(File $file, ?string $expected): void
     {
         self::assertEquals(
             $expected,
@@ -39,7 +39,7 @@ abstract class AbstractStrategyTest extends TestCase
     }
 
     /** @dataProvider filenameTestData */
-    final public function testFilename(File $file, string $expected)
+    final public function testFilename(File $file, string $expected): void
     {
         self::assertEquals(
             $expected,

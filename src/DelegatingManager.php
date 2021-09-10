@@ -19,7 +19,7 @@ final class DelegatingManager implements ManagerInterface
     private ManagerInterface $manager;
 
     /**
-     * @param array<class-string<File>, ManagerInterface> $managers
+     * @param ManagerInterface[] $managers
      */
     public function __construct(array $managers, ManagerInterface $manager = null)
     {

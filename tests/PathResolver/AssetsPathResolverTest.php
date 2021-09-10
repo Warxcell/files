@@ -7,6 +7,7 @@ namespace Arxy\FilesBundle\Tests\PathResolver;
 use Arxy\FilesBundle\ManagerInterface;
 use Arxy\FilesBundle\PathResolver;
 use Arxy\FilesBundle\Tests\File;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Asset\Packages;
 use Symfony\Component\Asset\PathPackage;
@@ -14,8 +15,9 @@ use Symfony\Component\Asset\VersionStrategy\EmptyVersionStrategy;
 
 class AssetsPathResolverTest extends TestCase
 {
-    private PathResolver\AssetsPathResolver $pathResolver;
+    /** @var ManagerInterface & MockObject */
     private ManagerInterface $manager;
+    private PathResolver\AssetsPathResolver $pathResolver;
 
     protected function setUp(): void
     {

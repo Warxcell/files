@@ -44,6 +44,31 @@ class ManagerTest extends TestCase
     private ManagerInterface $manager;
     private FilesystemOperator $filesystem;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->filesystem = new Filesystem(new InMemoryFilesystemAdapter());
+
+        $this->manager = new Manager(
+            File::class,
+            new FlysystemStorage($this->filesystem),
+            /** @implements NamingStrategy<File> */
+            new class implements NamingStrategy {
+                public function getDirectoryName(\Arxy\FilesBundle\Model\File $file): ?string
+                {
+                    return null;
+                }
+
+                public function getFileName(\Arxy\FilesBundle\Model\File $file): string
+                {
+                    return (string)$file->getId();
+                }
+            },
+            new FileRepository(),
+        );
+    }
+
     public function testNotSupportedHashAlgorithm(): void
     {
         $this->expectException(InvalidArgumentException::class);
@@ -623,30 +648,5 @@ class ManagerTest extends TestCase
                 $exception->getMessage()
             );
         }
-    }
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->filesystem = new Filesystem(new InMemoryFilesystemAdapter());
-
-        $this->manager = new Manager(
-            File::class,
-            new FlysystemStorage($this->filesystem),
-            /** @implements NamingStrategy<File> */
-            new class implements NamingStrategy {
-                public function getDirectoryName(\Arxy\FilesBundle\Model\File $file): ?string
-                {
-                    return null;
-                }
-
-                public function getFileName(\Arxy\FilesBundle\Model\File $file): string
-                {
-                    return (string)$file->getId();
-                }
-            },
-            new FileRepository(),
-        );
     }
 }

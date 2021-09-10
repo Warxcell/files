@@ -7,6 +7,7 @@ namespace Arxy\FilesBundle\Tests\Form\Type;
 use Arxy\FilesBundle\Form\Type\FileType;
 use Arxy\FilesBundle\ManagerInterface;
 use Arxy\FilesBundle\Tests\File;
+use PHPUnit\Framework\MockObject\MockObject;
 use stdClass;
 use Symfony\Component\Form\Extension\HttpFoundation\Type\FormTypeHttpFoundationExtension;
 use Symfony\Component\Form\PreloadedExtension;
@@ -16,6 +17,7 @@ use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 
 class FileTypeTest extends TypeTestCase
 {
+    /** @var ManagerInterface & MockObject */
     private ManagerInterface $manager;
 
     protected function setUp(): void
@@ -97,7 +99,7 @@ class FileTypeTest extends TypeTestCase
         self::assertSame($file2, $actual[1]);
     }
 
-    public function testInvalidManagerPassed()
+    public function testInvalidManagerPassed(): void
     {
         $this->expectException(InvalidOptionsException::class);
         $this->expectExceptionMessage(
@@ -113,7 +115,7 @@ class FileTypeTest extends TypeTestCase
         );
     }
 
-    public function testLabelOfFileIsFalse()
+    public function testLabelOfFileIsFalse(): void
     {
         $form = $this->factory->create(
             FileType::class,
