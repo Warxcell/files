@@ -11,7 +11,8 @@ jobs:
                     -   php: '7.4'
                     -   php: '8.0'
         env:
-            extensions: bcmath gd
+            extensions: bcmath gd xdebug
+            XDEBUG_MODE: coverage
         steps:
             -   uses: actions/checkout@v2
             -   uses: php-actions/composer@v6
