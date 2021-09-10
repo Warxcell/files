@@ -79,7 +79,22 @@
           <section>
             <rule>
               <match>
-                <METHOD>true</METHOD>
+                <AND>
+                  <METHOD>true</METHOD>
+                  <NAME>setUp</NAME>
+                  <PROTECTED>true</PROTECTED>
+                </AND>
+              </match>
+            </rule>
+          </section>
+          <section>
+            <rule>
+              <match>
+                <AND>
+                  <METHOD>true</METHOD>
+                  <NAME>tearDown</NAME>
+                  <PROTECTED>true</PROTECTED>
+                </AND>
               </match>
             </rule>
           </section>

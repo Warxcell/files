@@ -14,16 +14,6 @@ class ManagerTest extends AbstractFunctionalTest
 {
     protected ManagerInterface $embeddableManager;
 
-    protected static function getConfig(): string
-    {
-        return __DIR__ . '/config.yml';
-    }
-
-    protected static function getBundles(): array
-    {
-        return [];
-    }
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -37,6 +27,16 @@ class ManagerTest extends AbstractFunctionalTest
 
         $this->embeddableManager->clear();
         unset($this->embeddableManager);
+    }
+
+    protected static function getConfig(): string
+    {
+        return __DIR__ . '/config.yml';
+    }
+
+    protected static function getBundles(): array
+    {
+        return [];
     }
 
     public function testSimpleUpload(): File

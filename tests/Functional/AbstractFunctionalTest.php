@@ -18,6 +18,33 @@ abstract class AbstractFunctionalTest extends KernelTestCase
     protected ManagerInterface $manager;
     protected FilesystemOperator $flysystem;
 
+    protected function setUp(): void
+    {
+        $kernel = self::bootKernel();
+
+        $this->buildDb($kernel);
+
+        $this->entityManager = static::getContainer()
+            ->get('doctrine')
+            ->getManager();
+
+        $this->manager = static::getContainer()->get('public');
+        $this->flysystem = static::getContainer()->get('in_memory');
+    }
+
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+
+        $this->entityManager->close();
+        unset($this->entityManager);
+
+        $this->manager->clear();
+        unset($this->manager);
+
+        unset($this->flysystem);
+    }
+
     protected static function getKernelClass()
     {
         return Kernel::class;
@@ -37,35 +64,7 @@ abstract class AbstractFunctionalTest extends KernelTestCase
 
     abstract protected static function getBundles(): array;
 
-    protected function setUp(): void
-    {
-        $kernel = self::bootKernel();
-
-        $this->buildDb($kernel);
-
-        $this->entityManager = $kernel->getContainer()
-            ->get('doctrine')
-            ->getManager();
-
-        $this->manager = self::$container->get('public');
-
-        $this->flysystem = self::$container->get('in_memory');
-    }
-
-    protected function tearDown(): void
-    {
-        parent::tearDown();
-
-        $this->entityManager->close();
-        unset($this->entityManager);
-
-        $this->manager->clear();
-        unset($this->manager);
-
-        unset($this->flysystem);
-    }
-
-    private function buildDb($kernel)
+    private function buildDb($kernel): void
     {
         $application = new Application($kernel);
         $application->setAutoExit(false);

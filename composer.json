@@ -40,6 +40,7 @@
         "squizlabs/php_codesniffer": "*"
     },
     "suggest": {
+        "league/flysystem": "Use FlySystem Storage to store contents of file",
         "symfony/validator": "Validate files against constraints",
         "symfony/form": "Integrate file upload with forms",
         "doctrine/orm": "Use Doctrine ORM as persistence layer",

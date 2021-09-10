@@ -6,6 +6,7 @@ namespace Arxy\FilesBundle\Tests\PathResolver;
 
 use Arxy\FilesBundle\PathResolver;
 use Arxy\FilesBundle\Tests\File;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
@@ -13,7 +14,7 @@ use Symfony\Component\Cache\Adapter\ArrayAdapter;
 class CachePathResolverTest extends TestCase
 {
     private CacheItemPoolInterface $cache;
-    /** @var PathResolver & \PHPUnit\Framework\MockObject\MockObject */
+    /** @var PathResolver & MockObject */
     private PathResolver $decoratedPathResolver;
     private PathResolver\CachePathResolver $pathResolver;
 

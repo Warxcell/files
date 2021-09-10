@@ -47,7 +47,6 @@ class FileValidatorTest extends ConstraintValidatorTestCase
         );
     }
 
-
     public function testNull()
     {
         $this->validator->validate(
@@ -82,7 +81,6 @@ class FileValidatorTest extends ConstraintValidatorTestCase
             ->assertRaised();
     }
 
-
     public function testValidExactSize()
     {
         $file = new File('filename', 1000, '12345', 'image/jpeg');
@@ -97,7 +95,6 @@ class FileValidatorTest extends ConstraintValidatorTestCase
         );
         self::assertNoViolation();
     }
-
 
     public function testValidSize()
     {

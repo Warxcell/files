@@ -15,6 +15,14 @@ class FileFilterPathResolverTest extends AbstractFunctionalTest
 {
     private File $file;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->file = $this->manager->upload(new SplFileObject(__DIR__ . '/../../files/image1.jpg'));
+        $this->entityManager->persist($this->file);
+        $this->entityManager->flush();
+    }
+
     protected static function getConfig(): string
     {
         return __DIR__ . '/config.yml';
@@ -23,14 +31,6 @@ class FileFilterPathResolverTest extends AbstractFunctionalTest
     protected static function getBundles(): array
     {
         return [new LiipImagineBundle()];
-    }
-
-    public function setUp(): void
-    {
-        parent::setUp();
-        $this->file = $this->manager->upload(new SplFileObject(__DIR__ . '/../../files/image1.jpg'));
-        $this->entityManager->persist($this->file);
-        $this->entityManager->flush();
     }
 
     public function testFilter(): void
