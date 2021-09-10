@@ -1,4 +1,4 @@
-name: phpcs
+name: PHP CodeSniffer
 
 on: [push, pull_request]
 
