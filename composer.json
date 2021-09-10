@@ -37,7 +37,8 @@
         "imagine/imagine": "^1.2",
         "symfony/messenger": "*",
         "league/flysystem": "^2.0",
-        "squizlabs/php_codesniffer": "*"
+        "squizlabs/php_codesniffer": "*",
+        "slevomat/coding-standard": "^7.0"
     },
     "suggest": {
         "league/flysystem": "Use FlySystem Storage to store contents of file",

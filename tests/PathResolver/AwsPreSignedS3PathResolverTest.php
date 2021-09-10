@@ -12,6 +12,7 @@ use Aws\S3\S3Client;
 use Aws\S3\S3ClientInterface;
 use DateInterval;
 use GuzzleHttp\Promise\Create;
+use GuzzleHttp\Promise\PromiseInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -29,7 +30,7 @@ class AwsPreSignedS3PathResolverTest extends TestCase
         $this->s3Client = new S3Client([
             'region' => 'us-west-2',
             'version' => '2006-03-01',
-            'credentials' => function () {
+            'credentials' => static function (): PromiseInterface {
                 return Create::promiseFor(
                     new Credentials('key', 'secret')
                 );

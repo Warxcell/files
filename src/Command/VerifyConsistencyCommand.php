@@ -65,7 +65,7 @@ class VerifyConsistencyCommand extends Command
 
         $totalErrors = 0;
 
-        $error = function (string $message) use (&$totalErrors, $io): void {
+        $error = static function (string $message) use (&$totalErrors, $io): void {
             $totalErrors++;
             $io->error($message);
         };

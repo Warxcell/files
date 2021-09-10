@@ -7,6 +7,16 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             -   uses: actions/checkout@v2
+            -   name: "Install PHP"
+                uses: "shivammathur/setup-php@v2"
+                with:
+                    coverage: "none"
+                    php-version: "8.0"
+                    tools: "cs2pr"
 
-            -   name: PHP Code Style (phpcs)
-                uses: chindit/actions-phpcs@master
+            -   name: "Install dependencies with Composer"
+                uses: "ramsey/composer-install@v1"
+
+            # https://github.com/doctrine/.github/issues/3
+            -   name: "Run PHP_CodeSniffer"
+                run: "vendor/bin/phpcs -q --no-colors --report=checkstyle | cs2pr"

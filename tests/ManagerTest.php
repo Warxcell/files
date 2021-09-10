@@ -471,7 +471,7 @@ class ManagerTest extends TestCase
         self::assertFalse($this->filesystem->fileExists('2'));
     }
 
-    public function testTemporaryFilePathname()
+    public function testTemporaryFilePathname(): void
     {
         /** @var File $file */
         $file = $this->manager->upload(new SplFileObject(__DIR__ . '/files/image1.jpg'));

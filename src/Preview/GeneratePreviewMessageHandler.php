@@ -15,7 +15,7 @@ class GeneratePreviewMessageHandler implements MessageHandlerInterface
         $this->generator = $generator;
     }
 
-    public function __invoke(GeneratePreviewMessage $message)
+    public function __invoke(GeneratePreviewMessage $message): void
     {
         $file = $message->getFile();
         try {

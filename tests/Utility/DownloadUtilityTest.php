@@ -90,7 +90,7 @@ class DownloadUtilityTest extends TestCase
         string $expectedExpires,
         string $expectedLastModified,
         int $expectedContentLength
-    ) {
+    ): void {
         $response = $this->downloadUtility->createResponse($file);
 
         self::assertInstanceOf(StreamedResponse::class, $response);

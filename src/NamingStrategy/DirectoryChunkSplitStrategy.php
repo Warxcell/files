@@ -7,6 +7,9 @@ namespace Arxy\FilesBundle\NamingStrategy;
 use Arxy\FilesBundle\Model\File;
 use Arxy\FilesBundle\NamingStrategy;
 
+use function chunk_split;
+use function substr;
+
 final class DirectoryChunkSplitStrategy implements NamingStrategy
 {
     private NamingStrategy $originalStrategy;

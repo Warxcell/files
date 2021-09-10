@@ -12,7 +12,6 @@ use function set_error_handler;
 class ErrorHandler
 {
     /**
-     * @param callable $callable
      * @return mixed
      * @throws ErrorException
      */

@@ -249,7 +249,7 @@ class ManagerTest extends AbstractFunctionalTest
     /**
      * @depends testSimpleUpload
      */
-    public function testSameFileUpload()
+    public function testSameFileUpload(): void
     {
         $file = $this->testSimpleUpload();
 
@@ -261,7 +261,7 @@ class ManagerTest extends AbstractFunctionalTest
         self::assertSame($file, $file2);
     }
 
-    public function testSameFileUploadWithoutFlushInBetween()
+    public function testSameFileUploadWithoutFlushInBetween(): void
     {
         $file = $this->manager->upload(new SplFileObject(__DIR__ . '/../files/image1.jpg'));
         $this->entityManager->persist($file);

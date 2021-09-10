@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 
 class AzureBlobStorageSASPathResolverTest extends TestCase
 {
-    public function testGetPath()
+    public function testGetPath(): void
     {
         $file = new File('original_filename.jpg', 125, '1234567', 'image/jpeg');
 

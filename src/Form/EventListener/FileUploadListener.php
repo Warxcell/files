@@ -31,10 +31,10 @@ class FileUploadListener implements EventSubscriberInterface
 
     public function submit(FormEvent $event): void
     {
-        /** @var SplFileInfo|SplFileInfo[] $uploadedFile */
+        /** @var SplFileInfo|SplFileInfo[]|null $uploadedFile */
         $uploadedFile = $event->getForm()->get('file')->getData();
 
-        if (!empty($uploadedFile)) {
+        if ($uploadedFile !== null) {
             $event->setData($this->transform($uploadedFile));
         }
     }

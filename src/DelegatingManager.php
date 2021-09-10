@@ -10,6 +10,8 @@ use InvalidArgumentException;
 use LogicException;
 use SplFileInfo;
 
+use function array_merge;
+use function get_class;
 use function reset;
 
 final class DelegatingManager implements ManagerInterface
