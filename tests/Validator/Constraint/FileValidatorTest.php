@@ -47,7 +47,7 @@ class FileValidatorTest extends ConstraintValidatorTestCase
         );
     }
 
-    public function testNull()
+    public function testNull(): void
     {
         $this->validator->validate(
             null,
@@ -60,7 +60,7 @@ class FileValidatorTest extends ConstraintValidatorTestCase
         self::assertNoViolation();
     }
 
-    public function testInvalidSize()
+    public function testInvalidSize(): void
     {
         $file = new File('filename', 1000, '12345', 'image/jpeg');
 
@@ -81,7 +81,7 @@ class FileValidatorTest extends ConstraintValidatorTestCase
             ->assertRaised();
     }
 
-    public function testValidExactSize()
+    public function testValidExactSize(): void
     {
         $file = new File('filename', 1000, '12345', 'image/jpeg');
 
@@ -96,7 +96,7 @@ class FileValidatorTest extends ConstraintValidatorTestCase
         self::assertNoViolation();
     }
 
-    public function testValidSize()
+    public function testValidSize(): void
     {
         $file = new File('filename', 1000, '12345', 'image/jpeg');
 
@@ -111,7 +111,7 @@ class FileValidatorTest extends ConstraintValidatorTestCase
         self::assertNoViolation();
     }
 
-    public function testInvalidMimeType()
+    public function testInvalidMimeType(): void
     {
         $file = new File('filename', 1000, '12345', 'text/html');
 
@@ -132,7 +132,7 @@ class FileValidatorTest extends ConstraintValidatorTestCase
             ->assertRaised();
     }
 
-    public function testValidMimeType()
+    public function testValidMimeType(): void
     {
         $file = new File('filename', 1000, '12345', 'image/jpeg');
 
@@ -158,7 +158,7 @@ class FileValidatorTest extends ConstraintValidatorTestCase
         self::assertNoViolation();
     }
 
-    public function testInvalidSizeAndMimeType()
+    public function testInvalidSizeAndMimeType(): void
     {
         $file = new File('filename', 1025, '12345', 'text/html');
 

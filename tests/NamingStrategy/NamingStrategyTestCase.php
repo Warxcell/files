@@ -6,7 +6,7 @@ namespace Arxy\FilesBundle\Tests\NamingStrategy;
 
 use Arxy\FilesBundle\Model\File;
 
-class NamingStrategyTestCase
+final class NamingStrategyTestCase
 {
     private File $file;
     private ?string $expectedDirectoryName;
