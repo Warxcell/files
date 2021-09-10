@@ -975,6 +975,4 @@ Currently, only image preview generator exists. You can add your own image previ
 
 # Known issues
 
-- If file entity is deleted within transaction and transaction is rolled back - file will be deleted.
-- Currently, files are deleted on `preRemove` event, since if `postRemove` is used in combination
-  with `IdToPathStrategy` - that results in bug, because Doctrine nulls the `id` after deletion.
+- If file entity is deleted within transaction and transaction is rolled back - file will be deleted. I'm waiting for DBAL 3.2.* release to be able to fix that.
