@@ -10,6 +10,7 @@ use Arxy\FilesBundle\Model\File;
 use DateTimeImmutable;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+
 use function fclose;
 use function fopen;
 use function stream_copy_to_stream;

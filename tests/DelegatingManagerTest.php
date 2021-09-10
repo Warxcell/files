@@ -133,7 +133,7 @@ class DelegatingManagerTest extends TestCase
 
     public function testMainManager(): void
     {
-        $forUpload = new SplFileInfo(__DIR__.'/files/image1.jpg');
+        $forUpload = new SplFileInfo(__DIR__ . '/files/image1.jpg');
         $uploadedFile = new File2('original_filename.jpg', 125, '1234567', 'image/jpeg');
 
         $manager1 = $this->createMock(ManagerInterface::class);

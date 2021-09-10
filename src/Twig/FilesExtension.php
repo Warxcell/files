@@ -6,6 +6,7 @@ namespace Arxy\FilesBundle\Twig;
 
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
+
 use function ByteUnits\bytes;
 
 class FilesExtension extends AbstractExtension

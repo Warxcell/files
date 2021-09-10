@@ -9,6 +9,7 @@ use Arxy\FilesBundle\PathResolver;
 use DateTime;
 use MicrosoftAzure\Storage\Blob\BlobSharedAccessSignatureHelper;
 use MicrosoftAzure\Storage\Common\Internal\Resources;
+
 use function sprintf;
 
 class AzureBlobStorageSASPathResolver implements PathResolver
@@ -29,7 +30,7 @@ class AzureBlobStorageSASPathResolver implements PathResolver
 
     public function getPath(File $file): string
     {
-        return $this->pathResolver->getPath($file).'?'.$this->generateSas($file);
+        return $this->pathResolver->getPath($file) . '?' . $this->generateSas($file);
     }
 
     private function generateSas(File $file): string

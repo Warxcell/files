@@ -37,4 +37,3 @@ interface Storage
      */
     public function remove(File $file, string $pathname): void;
 }
-

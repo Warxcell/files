@@ -11,6 +11,7 @@ use Imagine\Image\Box;
 use Imagine\Image\ImagineInterface;
 use SplFileInfo;
 use SplTempFileObject;
+
 use function str_replace;
 use function stripos;
 

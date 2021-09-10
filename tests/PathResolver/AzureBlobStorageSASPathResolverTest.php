@@ -6,6 +6,8 @@ namespace Arxy\FilesBundle\Tests\PathResolver;
 
 use Arxy\FilesBundle\PathResolver;
 use Arxy\FilesBundle\Tests\File;
+use DateTime;
+use DateTimeImmutable;
 use MicrosoftAzure\Storage\Blob\BlobSharedAccessSignatureHelper;
 use MicrosoftAzure\Storage\Common\Internal\Resources;
 use PHPUnit\Framework\TestCase;
@@ -28,8 +30,8 @@ class AzureBlobStorageSASPathResolverTest extends TestCase
                 Resources::RESOURCE_TYPE_BLOB,
                 'azure-container/azure-blob',
                 'r',
-                new \DateTime('2021-03-25 23:00:00'),
-                new \DateTime('2021-03-25 21:00:00'),
+                new DateTime('2021-03-25 23:00:00'),
+                new DateTime('2021-03-25 21:00:00'),
                 '127.0.0.1',
                 'https',
                 'identifier',
@@ -48,8 +50,8 @@ class AzureBlobStorageSASPathResolverTest extends TestCase
                 public function create(\Arxy\FilesBundle\Model\File $file): PathResolver\AzureBlobStorageSASParameters
                 {
                     return new PathResolver\AzureBlobStorageSASParameters(
-                        new \DateTimeImmutable('2021-03-25 23:00:00'),
-                        new \DateTimeImmutable('2021-03-25 21:00:00'),
+                        new DateTimeImmutable('2021-03-25 23:00:00'),
+                        new DateTimeImmutable('2021-03-25 21:00:00'),
                         '127.0.0.1',
                         'identifier',
                         'cache-control',
@@ -80,7 +82,7 @@ class AzureBlobStorageSASPathResolverTest extends TestCase
                 Resources::RESOURCE_TYPE_BLOB,
                 'azure-container/azure-blob',
                 'r',
-                new \DateTime('2021-03-25 23:00:00'),
+                new DateTime('2021-03-25 23:00:00'),
                 null,
                 null,
                 'https',
@@ -100,7 +102,7 @@ class AzureBlobStorageSASPathResolverTest extends TestCase
                 public function create(\Arxy\FilesBundle\Model\File $file): PathResolver\AzureBlobStorageSASParameters
                 {
                     return new PathResolver\AzureBlobStorageSASParameters(
-                        new \DateTimeImmutable('2021-03-25 23:00:00'),
+                        new DateTimeImmutable('2021-03-25 23:00:00'),
                         null,
                         null,
                         null,

@@ -7,6 +7,7 @@ namespace Arxy\FilesBundle\DependencyInjection;
 use Arxy\FilesBundle\Storage;
 use League\Flysystem\FilesystemOperator;
 use LogicException;
+
 use function get_class;
 
 class StorageFactory
@@ -19,8 +20,7 @@ class StorageFactory
             case $service instanceof FilesystemOperator:
                 return new Storage\FlysystemStorage($service);
             default:
-                throw new LogicException('Class '.get_class($service).' not supported');
+                throw new LogicException('Class ' . get_class($service) . ' not supported');
         }
     }
 }
-

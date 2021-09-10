@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Arxy\FilesBundle\Tests\PathResolver;
 
 use Arxy\FilesBundle\PathResolver;
+use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 
 class AzureBlobStorageSASParametersTest extends TestCase
@@ -14,12 +15,12 @@ class AzureBlobStorageSASParametersTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->parameters = new PathResolver\AzureBlobStorageSASParameters(new \DateTimeImmutable());
+        $this->parameters = new PathResolver\AzureBlobStorageSASParameters(new DateTimeImmutable());
     }
 
     public function testWithExpiry(): void
     {
-        $expiry = new \DateTimeImmutable();
+        $expiry = new DateTimeImmutable();
 
         $new = $this->parameters->withExpiry($expiry);
 
@@ -29,7 +30,7 @@ class AzureBlobStorageSASParametersTest extends TestCase
 
     public function testWithStart(): void
     {
-        $expiry = new \DateTimeImmutable();
+        $expiry = new DateTimeImmutable();
 
         $new = $this->parameters->withStart($expiry);
 

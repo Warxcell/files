@@ -8,6 +8,7 @@ use Arxy\FilesBundle\ManagerInterface;
 use Arxy\FilesBundle\PathResolver;
 use Arxy\FilesBundle\PathResolverManager;
 use PHPUnit\Framework\TestCase;
+use SplFileObject;
 use SplTempFileObject;
 
 class PathResolverManagerTest extends TestCase
@@ -18,7 +19,7 @@ class PathResolverManagerTest extends TestCase
 
     public function testUpload(): void
     {
-        $file = new \SplFileObject(__DIR__.'/files/image1.jpg');
+        $file = new SplFileObject(__DIR__ . '/files/image1.jpg');
         $uploadedFile = new File('filename', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg');
         $this->decorated->expects(self::once())->method('upload')->with($file)->willReturn($uploadedFile);
         $actualFile = $this->decorator->upload($file);

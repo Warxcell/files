@@ -7,6 +7,7 @@ namespace Arxy\FilesBundle\Validator\Constraint;
 use Symfony\Component\Form\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
+
 use function ByteUnits\bytes;
 use function count;
 use function strstr;

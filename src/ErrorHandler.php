@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Arxy\FilesBundle;
 
 use ErrorException;
+
 use function restore_error_handler;
 use function set_error_handler;
 

@@ -9,6 +9,7 @@ use Arxy\FilesBundle\Model\MutableFile;
 use InvalidArgumentException;
 use LogicException;
 use SplFileInfo;
+
 use function reset;
 
 final class DelegatingManager implements ManagerInterface
@@ -45,7 +46,7 @@ final class DelegatingManager implements ManagerInterface
     public function getManagerFor(string $class): ManagerInterface
     {
         if (!isset($this->managers[$class])) {
-            throw new LogicException('No manager for '.$class);
+            throw new LogicException('No manager for ' . $class);
         }
 
         return $this->managers[$class];
@@ -111,6 +112,6 @@ final class DelegatingManager implements ManagerInterface
                 return $manager;
             }
         }
-        throw new LogicException('No manager for '.get_class($file));
+        throw new LogicException('No manager for ' . get_class($file));
     }
 }

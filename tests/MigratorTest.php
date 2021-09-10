@@ -31,7 +31,7 @@ class MigratorTest extends TestCase
 
             public function getFileName(\Arxy\FilesBundle\Model\File $file): string
             {
-                return 'old_'.$file->getHash();
+                return 'old_' . $file->getHash();
             }
         };
 
@@ -43,11 +43,15 @@ class MigratorTest extends TestCase
 
             public function getFileName(\Arxy\FilesBundle\Model\File $file): string
             {
-                return 'new_'.$file->getHash();
+                return 'new_' . $file->getHash();
             }
         };
 
-        $this->migrator = new Migrator(new FlysystemStorage($this->filesystem), $this->oldNamingStrategy, $this->newNamingStrategy);
+        $this->migrator = new Migrator(
+            new FlysystemStorage($this->filesystem),
+            $this->oldNamingStrategy,
+            $this->newNamingStrategy
+        );
     }
 
     public function testNotMigrated(): void

@@ -35,6 +35,7 @@ use SplFileObject;
 use SplTempFileObject;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Throwable;
+
 use function mb_strtolower;
 use function sprintf;
 
@@ -72,7 +73,7 @@ class ManagerTest extends TestCase
         );
 
         try {
-            $manager->upload(new SplFileObject(__DIR__.'/files/image1.jpg'));
+            $manager->upload(new SplFileObject(__DIR__ . '/files/image1.jpg'));
         } catch (UnableToUpload $exception) {
             self::assertNotNull($exception->getPrevious());
             self::assertInstanceOf(InvalidArgumentException::class, $exception->getPrevious());
@@ -101,7 +102,7 @@ class ManagerTest extends TestCase
             )
         );
 
-        $manager->upload(new SplFileObject(__DIR__.'/files/image1.jpg'));
+        $manager->upload(new SplFileObject(__DIR__ . '/files/image1.jpg'));
     }
 
     public function testMoveEvents(): void
@@ -140,7 +141,7 @@ class ManagerTest extends TestCase
         );
 
         /** @var File $file */
-        $file = $manager->upload(new SplFileObject(__DIR__.'/files/image1.jpg'));
+        $file = $manager->upload(new SplFileObject(__DIR__ . '/files/image1.jpg'));
         $manager->moveFile($file);
     }
 
@@ -204,14 +205,14 @@ class ManagerTest extends TestCase
         );
 
         /** @var File $file */
-        $file = $manager->upload(new SplFileObject(__DIR__.'/files/image1.jpg'));
+        $file = $manager->upload(new SplFileObject(__DIR__ . '/files/image1.jpg'));
         $manager->remove($file);
     }
 
     public function testSimpleUpload(): void
     {
         self::assertEquals(File::class, $this->manager->getClass());
-        $file = $this->manager->upload(new SplFileObject(__DIR__.'/files/image1.jpg'));
+        $file = $this->manager->upload(new SplFileObject(__DIR__ . '/files/image1.jpg'));
 
         self::assertTrue($file instanceof File);
         self::assertEquals('9aa1c5fc7c9388166d7ce7fd46648dd1', $file->getHash());
@@ -230,7 +231,7 @@ class ManagerTest extends TestCase
 
     public function testSimpleUploadFromUrl(): void
     {
-        $url = 'file:///'.__DIR__.'/files/image1.jpg';
+        $url = 'file:///' . __DIR__ . '/files/image1.jpg';
 
         self::assertEquals(File::class, $this->manager->getClass());
         /** @var File $file */
@@ -251,7 +252,7 @@ class ManagerTest extends TestCase
 
     public function testUploadedFileUpload(): void
     {
-        $uploadedFile = new UploadedFile(__DIR__.'/files/image1.jpg', 'image_1_uploaded.jpg', 'image/jpg');
+        $uploadedFile = new UploadedFile(__DIR__ . '/files/image1.jpg', 'image_1_uploaded.jpg', 'image/jpg');
         $file = $this->manager->upload($uploadedFile);
 
         self::assertTrue($file instanceof File);
@@ -278,7 +279,7 @@ class ManagerTest extends TestCase
             $repository,
         );
 
-        $actual = $manager->upload(new SplFileObject(__DIR__.'/files/image1.jpg'));
+        $actual = $manager->upload(new SplFileObject(__DIR__ . '/files/image1.jpg'));
 
         self::assertInstanceOf(File::class, $actual);
         self::assertSame($file, $actual);
@@ -296,8 +297,8 @@ class ManagerTest extends TestCase
             $this->createMock(NamingStrategy::class),
         );
 
-        $file1 = $manager->upload(new SplFileObject(__DIR__.'/files/image1.jpg'));
-        $file2 = $manager->upload(new SplFileObject(__DIR__.'/files/image1.jpg'));
+        $file1 = $manager->upload(new SplFileObject(__DIR__ . '/files/image1.jpg'));
+        $file2 = $manager->upload(new SplFileObject(__DIR__ . '/files/image1.jpg'));
 
         self::assertInstanceOf(File::class, $file1);
         self::assertInstanceOf(File::class, $file2);
@@ -323,7 +324,7 @@ class ManagerTest extends TestCase
             new FileRepository(),
         );
 
-        $file = $manager->upload(new SplFileObject(__DIR__.'/files/image1.jpg'));
+        $file = $manager->upload(new SplFileObject(__DIR__ . '/files/image1.jpg'));
         assert($file instanceof File);
         $file->setId(1);
 
@@ -351,7 +352,7 @@ class ManagerTest extends TestCase
             new FileRepository(),
         );
 
-        $file = $manager->upload(new SplFileObject(__DIR__.'/files/image1.jpg'));
+        $file = $manager->upload(new SplFileObject(__DIR__ . '/files/image1.jpg'));
         assert($file instanceof File);
         $file->setId(1);
 
@@ -362,7 +363,7 @@ class ManagerTest extends TestCase
 
     public function testMoveDeletedFile(): void
     {
-        $forUpload = __DIR__.'/files/image1.jpg';
+        $forUpload = __DIR__ . '/files/image1.jpg';
         $tmpFile = tempnam(sys_get_temp_dir(), 'arxy_files');
         copy($forUpload, $tmpFile);
 
@@ -394,7 +395,7 @@ class ManagerTest extends TestCase
         } catch (Throwable $exception) {
             $this->assertInstanceOf(OutOfBoundsException::class, $exception);
             $this->assertEquals(
-                'File '.(string)spl_object_id($file).' not found in map',
+                'File ' . (string)spl_object_id($file) . ' not found in map',
                 $exception->getMessage()
             );
         }
@@ -415,7 +416,7 @@ class ManagerTest extends TestCase
 
     public function testSimpleMoveFile(): void
     {
-        $forUpload = __DIR__.'/files/image1.jpg';
+        $forUpload = __DIR__ . '/files/image1.jpg';
         /** @var File $file */
         $file = $this->manager->upload(new SplFileObject($forUpload));
 
@@ -434,7 +435,7 @@ class ManagerTest extends TestCase
         self::assertFalse($this->filesystem->fileExists('2'));
 
         /** @var File $file */
-        $file = $this->manager->upload(new SplFileObject(__DIR__.'/files/image1.jpg'));
+        $file = $this->manager->upload(new SplFileObject(__DIR__ . '/files/image1.jpg'));
         self::assertTrue($file instanceof File);
         $file->setId(2);
 
@@ -448,25 +449,25 @@ class ManagerTest extends TestCase
     public function testTemporaryFilePathname()
     {
         /** @var File $file */
-        $file = $this->manager->upload(new SplFileObject(__DIR__.'/files/image1.jpg'));
+        $file = $this->manager->upload(new SplFileObject(__DIR__ . '/files/image1.jpg'));
         self::assertTrue($file instanceof File);
         $file->setId(3);
 
         $pathname = $this->manager->getPathname($file);
 
-        self::assertEquals(__DIR__.'/files/image1.jpg', $pathname);
+        self::assertEquals(__DIR__ . '/files/image1.jpg', $pathname);
     }
 
     public function testFinalFilePathname(): void
     {
         /** @var File $file */
-        $file = $this->manager->upload(new SplFileObject(__DIR__.'/files/image1.jpg'));
+        $file = $this->manager->upload(new SplFileObject(__DIR__ . '/files/image1.jpg'));
         self::assertTrue($file instanceof File);
         $file->setId(3);
 
         $pathname = $this->manager->getPathname($file);
 
-        self::assertEquals(__DIR__.'/files/image1.jpg', $pathname);
+        self::assertEquals(__DIR__ . '/files/image1.jpg', $pathname);
 
         $this->manager->moveFile($file);
 
@@ -478,49 +479,49 @@ class ManagerTest extends TestCase
     public function testTemporaryFileRead(): void
     {
         /** @var File $file */
-        $file = $this->manager->upload(new SplFileObject(__DIR__.'/files/image1.jpg'));
+        $file = $this->manager->upload(new SplFileObject(__DIR__ . '/files/image1.jpg'));
         self::assertTrue($file instanceof File);
-        self::assertEquals(file_get_contents(__DIR__.'/files/image1.jpg'), $this->manager->read($file));
+        self::assertEquals(file_get_contents(__DIR__ . '/files/image1.jpg'), $this->manager->read($file));
     }
 
     public function testFinalFileRead(): void
     {
         /** @var File $file */
-        $file = $this->manager->upload(new SplFileObject(__DIR__.'/files/image1.jpg'));
+        $file = $this->manager->upload(new SplFileObject(__DIR__ . '/files/image1.jpg'));
         self::assertTrue($file instanceof File);
         $file->setId(4);
 
         $this->manager->moveFile($file);
-        self::assertEquals(file_get_contents(__DIR__.'/files/image1.jpg'), $this->manager->read($file));
+        self::assertEquals(file_get_contents(__DIR__ . '/files/image1.jpg'), $this->manager->read($file));
     }
 
     public function testTemporaryReadStream(): void
     {
         /** @var File $file */
-        $file = $this->manager->upload(new SplFileObject(__DIR__.'/files/image1.jpg'));
+        $file = $this->manager->upload(new SplFileObject(__DIR__ . '/files/image1.jpg'));
         self::assertTrue($file instanceof File);
 
         $stream = $this->manager->readStream($file);
         self::assertIsResource($stream);
-        self::assertEquals(file_get_contents(__DIR__.'/files/image1.jpg'), stream_get_contents($stream));
+        self::assertEquals(file_get_contents(__DIR__ . '/files/image1.jpg'), stream_get_contents($stream));
     }
 
     public function testFinalFileReadStream(): void
     {
         /** @var File $file */
-        $file = $this->manager->upload(new SplFileObject(__DIR__.'/files/image1.jpg'));
+        $file = $this->manager->upload(new SplFileObject(__DIR__ . '/files/image1.jpg'));
         self::assertTrue($file instanceof File);
         $file->setId(5);
 
         $this->manager->moveFile($file);
         $stream = $this->manager->readStream($file);
         self::assertIsResource($stream);
-        self::assertEquals(file_get_contents(__DIR__.'/files/image1.jpg'), stream_get_contents($stream));
+        self::assertEquals(file_get_contents(__DIR__ . '/files/image1.jpg'), stream_get_contents($stream));
     }
 
     public function testDeleteDeletedFile(): void
     {
-        $forUpload = __DIR__.'/files/image1.jpg';
+        $forUpload = __DIR__ . '/files/image1.jpg';
         $file = $this->manager->upload(new SplFileObject($forUpload));
         $this->manager->moveFile($file);
 
@@ -533,7 +534,7 @@ class ManagerTest extends TestCase
 
     public function testWrite(): void
     {
-        $forUpload = __DIR__.'/files/image1.jpg';
+        $forUpload = __DIR__ . '/files/image1.jpg';
         $file = $this->manager->upload(new SplFileObject($forUpload));
         $this->manager->moveFile($file);
 
@@ -542,7 +543,7 @@ class ManagerTest extends TestCase
         self::assertEquals('image/jpeg', $file->getMimeType());
 
         assert($file instanceof MutableFile);
-        $this->manager->write($file, new SplFileInfo(__DIR__.'/files/image2.jpg'));
+        $this->manager->write($file, new SplFileInfo(__DIR__ . '/files/image2.jpg'));
 
         self::assertEquals('59aeac36ae75786be1b573baad0e77c0', $file->getHash());
         self::assertEquals(22518, $file->getSize());
@@ -552,7 +553,7 @@ class ManagerTest extends TestCase
     public function testWriteTemporaryFile(): void
     {
         $tmp = tempnam(sys_get_temp_dir(), 'files');
-        $forUpload = __DIR__.'/files/image1.jpg';
+        $forUpload = __DIR__ . '/files/image1.jpg';
 
         copy($forUpload, $tmp);
         $file = $this->manager->upload(new SplFileObject($tmp));
@@ -562,7 +563,7 @@ class ManagerTest extends TestCase
         self::assertEquals('image/jpeg', $file->getMimeType());
 
         assert($file instanceof MutableFile);
-        $this->manager->write($file, new SplFileInfo(__DIR__.'/files/image2.jpg'));
+        $this->manager->write($file, new SplFileInfo(__DIR__ . '/files/image2.jpg'));
 
         self::assertEquals('59aeac36ae75786be1b573baad0e77c0', $file->getHash());
         self::assertEquals(22518, $file->getSize());
@@ -583,7 +584,7 @@ class ManagerTest extends TestCase
             $dispatcher
         );
         /** @var File $file */
-        $file = $manager->upload(new SplFileObject(__DIR__.'/files/image1.jpg'));
+        $file = $manager->upload(new SplFileObject(__DIR__ . '/files/image1.jpg'));
         $manager->moveFile($file);
 
         $dispatcher->expects(self::exactly(2))->method('dispatch')->withConsecutive(
@@ -608,7 +609,7 @@ class ManagerTest extends TestCase
 
     public function testClear(): void
     {
-        $file = $this->manager->upload(new SplFileObject(__DIR__.'/files/image1.jpg'));
+        $file = $this->manager->upload(new SplFileObject(__DIR__ . '/files/image1.jpg'));
         assert($file instanceof File);
         $file->setId(1);
         $this->manager->clear();
@@ -618,7 +619,7 @@ class ManagerTest extends TestCase
         } catch (Throwable $exception) {
             $this->assertInstanceOf(OutOfBoundsException::class, $exception);
             $this->assertEquals(
-                'File '.(string)spl_object_id($file).' not found in map',
+                'File ' . (string)spl_object_id($file) . ' not found in map',
                 $exception->getMessage()
             );
         }

@@ -12,7 +12,7 @@ class PreviewGeneratorTest extends AbstractFunctionalTest
 {
     protected static function getConfig(): string
     {
-        return __DIR__.'/config_no_messenger.yml';
+        return __DIR__ . '/config_no_messenger.yml';
     }
 
     protected static function getBundles(): array
@@ -22,32 +22,32 @@ class PreviewGeneratorTest extends AbstractFunctionalTest
 
     public function testImagePreview(): void
     {
-        $file = $this->manager->upload(new SplFileInfo(__DIR__.'/../../files/image1.jpg'));
+        $file = $this->manager->upload(new SplFileInfo(__DIR__ . '/../../files/image1.jpg'));
         assert($file instanceof FileWithPreview);
 
         $this->entityManager->persist($file);
         $this->entityManager->flush();
 
         self::assertNotNull($file->getPreview());
-//        $previewManager = self::$container->get('preview');
-//
-//        $expectedFilename = __DIR__.'/../../files/image1_preview.jpg';
+        //        $previewManager = self::$container->get('preview');
+        //
+        //        $expectedFilename = __DIR__.'/../../files/image1_preview.jpg';
 
-//        $expectedMd5 = md5_file($expectedFilename);
-//        self::assertSame($expectedMd5, md5($previewManager->read($file->getPreview())));
-//        self::assertSame($expectedMd5, $file->getPreview()->getHash());
+        //        $expectedMd5 = md5_file($expectedFilename);
+        //        self::assertSame($expectedMd5, md5($previewManager->read($file->getPreview())));
+        //        self::assertSame($expectedMd5, $file->getPreview()->getHash());
 
 
-//        $expectedFilesize = filesize($expectedFilename);
-//        self::assertSame($expectedFilesize, strlen($previewManager->read($file->getPreview())));
-//        self::assertSame($expectedFilesize, $file->getPreview()->getSize());
+        //        $expectedFilesize = filesize($expectedFilename);
+        //        self::assertSame($expectedFilesize, strlen($previewManager->read($file->getPreview())));
+        //        self::assertSame($expectedFilesize, $file->getPreview()->getSize());
 
-//        self::assertSame('image1_preview.jpg', $file->getPreview()->getOriginalFilename());
+        //        self::assertSame('image1_preview.jpg', $file->getPreview()->getOriginalFilename());
     }
 
     public function testPreviewWrite(): void
     {
-        $file = $this->manager->upload(new SplFileInfo(__DIR__.'/../../files/image1.jpg'));
+        $file = $this->manager->upload(new SplFileInfo(__DIR__ . '/../../files/image1.jpg'));
         assert($file instanceof FileWithPreview);
 
         $this->entityManager->persist($file);
@@ -56,14 +56,14 @@ class PreviewGeneratorTest extends AbstractFunctionalTest
         $preview1 = $file->getPreview();
         self::assertNotNull($preview1);
 
-        $this->manager->write($file, new SplFileInfo(__DIR__.'/../../files/image2.jpg'));
+        $this->manager->write($file, new SplFileInfo(__DIR__ . '/../../files/image2.jpg'));
 
         self::assertNotSame($preview1, $file->getPreview());
     }
 
     public function testNotSupportedFile(): void
     {
-        $file = $this->manager->upload(new SplFileInfo(__DIR__.'/../../files/lorem-ipsum.pdf'));
+        $file = $this->manager->upload(new SplFileInfo(__DIR__ . '/../../files/lorem-ipsum.pdf'));
         assert($file instanceof FileWithPreview);
 
         $this->entityManager->persist($file);

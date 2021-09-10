@@ -27,7 +27,7 @@ class DownloadUtilityTest extends TestCase
     {
         parent::setUp();
 
-        $this->pathname = __DIR__.'/../files/image1.jpg';
+        $this->pathname = __DIR__ . '/../files/image1.jpg';
         $flysystem = $this->createMock(FilesystemOperator::class);
         $flysystem->method('readStream')->willReturn(fopen($this->pathname, 'r'));
 
@@ -45,7 +45,7 @@ class DownloadUtilityTest extends TestCase
             'attachment; filename=image1.jpg',
             'image/jpeg',
             $expiresAt->format('D, d M Y H:i'),
-            $file->getCreatedAt()->format('D, d M Y H:i:s').' GMT',
+            $file->getCreatedAt()->format('D, d M Y H:i:s') . ' GMT',
             1234,
         ];
 
@@ -59,7 +59,7 @@ class DownloadUtilityTest extends TestCase
             'inline; filename=my_name.jpg',
             'image/jpeg',
             'Thu, 29 Apr 2021 15:00:00 GMT',
-            $file->getCreatedAt()->format('D, d M Y H:i:s').' GMT',
+            $file->getCreatedAt()->format('D, d M Y H:i:s') . ' GMT',
             1234,
         ];
 
@@ -75,7 +75,7 @@ class DownloadUtilityTest extends TestCase
             'inline; filename=my_name.jpg',
             'image/jpeg',
             'Sat, 29 May 2021 15:00:00 GMT',
-            $mutableFile->getModifiedAt()->format('D, d M Y H:i:s').' GMT',
+            $mutableFile->getModifiedAt()->format('D, d M Y H:i:s') . ' GMT',
             1234,
         ];
     }

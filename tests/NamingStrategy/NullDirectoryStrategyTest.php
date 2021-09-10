@@ -12,7 +12,7 @@ class NullDirectoryStrategyTest extends AbstractStrategyTest
     public function getStrategy(): NamingStrategy
     {
         return new NamingStrategy\NullDirectoryStrategy(
-            new class() implements NamingStrategy {
+            new class () implements NamingStrategy {
                 public function getDirectoryName(\Arxy\FilesBundle\Model\File $file): string
                 {
                     return '1/2/3/';

@@ -7,6 +7,7 @@ namespace Arxy\FilesBundle\Tests\Form\Type;
 use Arxy\FilesBundle\Form\Type\FileType;
 use Arxy\FilesBundle\ManagerInterface;
 use Arxy\FilesBundle\Tests\File;
+use stdClass;
 use Symfony\Component\Form\Extension\HttpFoundation\Type\FormTypeHttpFoundationExtension;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\TypeTestCase;
@@ -42,7 +43,7 @@ class FileTypeTest extends TypeTestCase
 
     public function testSingleUpload(): void
     {
-        $uploadedFile = new UploadedFile(__DIR__.'/../../files/image1.jpg', 'image1.jpg');
+        $uploadedFile = new UploadedFile(__DIR__ . '/../../files/image1.jpg', 'image1.jpg');
 
         $file = new File('filename', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg');
 
@@ -62,8 +63,8 @@ class FileTypeTest extends TypeTestCase
 
     public function testMultipleUpload(): void
     {
-        $uploadedFile1 = new UploadedFile(__DIR__.'/../../files/image1.jpg', 'image1.jpg');
-        $uploadedFile2 = new UploadedFile(__DIR__.'/../../files/image2.jpg', 'image2.jpg');
+        $uploadedFile1 = new UploadedFile(__DIR__ . '/../../files/image1.jpg', 'image1.jpg');
+        $uploadedFile2 = new UploadedFile(__DIR__ . '/../../files/image2.jpg', 'image2.jpg');
 
         $file1 = new File('filename', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg');
         $file2 = new File('filename', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg');
@@ -107,7 +108,7 @@ class FileTypeTest extends TypeTestCase
             FileType::class,
             null,
             [
-                'manager' => new \stdClass(),
+                'manager' => new stdClass(),
             ]
         );
     }

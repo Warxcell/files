@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Arxy\FilesBundle\Tests\NamingStrategy;
 
 use Arxy\FilesBundle\InvalidArgumentException;
-use Arxy\FilesBundle\Model\File;
 use Arxy\FilesBundle\NamingStrategy;
 use Arxy\FilesBundle\Tests\PersistentPathFile;
 

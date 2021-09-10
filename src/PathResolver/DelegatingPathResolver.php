@@ -36,7 +36,7 @@ class DelegatingPathResolver implements PathResolver
     {
         $class = get_class($file);
         if (!isset($this->resolvers[$class])) {
-            throw new LogicException('No resolver for '.$class);
+            throw new LogicException('No resolver for ' . $class);
         }
 
         return $this->resolvers[$class];

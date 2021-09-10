@@ -40,14 +40,14 @@ class MigrateNamingStrategyCommand extends Command
             $migrated = $this->migrator->migrate($file);
             if ($migrated) {
                 $totalMigrated++;
-                $io->success('File '.$file->getHash().' migrated');
+                $io->success('File ' . $file->getHash() . ' migrated');
             } else {
                 $totalFailed++;
-                $io->warning('File '.$file->getHash().' not migrated');
+                $io->warning('File ' . $file->getHash() . ' not migrated');
             }
         }
 
-        $io->note('Migrated: '.(string)$totalMigrated.'. Failures: '.(string)$totalFailed.'.');
+        $io->note('Migrated: ' . (string)$totalMigrated . '. Failures: ' . (string)$totalFailed . '.');
 
         return 0;
     }

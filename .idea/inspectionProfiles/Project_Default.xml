@@ -68,6 +68,11 @@
       </option>
       <option name="migratedIntoUserSpace" value="true" />
     </inspection_tool>
+    <inspection_tool class="PhpCSValidationInspection" enabled="true" level="WEAK WARNING" enabled_by_default="true">
+      <option name="CODING_STANDARD" value="Custom" />
+      <option name="CUSTOM_RULESET_PATH" value="$PROJECT_DIR$/phpcs.xml" />
+      <option name="EXTENSIONS" value="php,js,css,inc" />
+    </inspection_tool>
     <inspection_tool class="PhpComposerDuplicatedRequirementInspection" enabled="true" level="ERROR" enabled_by_default="true" />
     <inspection_tool class="PhpComposerExtensionStubsInspection" enabled="true" level="ERROR" enabled_by_default="true" />
     <inspection_tool class="PhpDocDuplicateTypeInspection" enabled="true" level="ERROR" enabled_by_default="true" />

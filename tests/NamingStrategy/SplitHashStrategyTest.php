@@ -6,6 +6,7 @@ namespace Arxy\FilesBundle\Tests\NamingStrategy;
 
 use Arxy\FilesBundle\NamingStrategy;
 use Arxy\FilesBundle\Tests\File;
+use InvalidArgumentException;
 
 class SplitHashStrategyTest extends AbstractStrategyTest
 {
@@ -25,7 +26,7 @@ class SplitHashStrategyTest extends AbstractStrategyTest
 
     public function testIncorrectSplitLength(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('$splitLength parameter must be modulus of 32');
 
         new NamingStrategy\SplitHashStrategy(6);

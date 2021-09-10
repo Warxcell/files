@@ -6,6 +6,7 @@ namespace Arxy\FilesBundle\NamingStrategy;
 
 use Arxy\FilesBundle\Model\File;
 use Arxy\FilesBundle\NamingStrategy;
+
 use function rtrim;
 
 final class DirectoryPrefixStrategy implements NamingStrategy
@@ -23,10 +24,10 @@ final class DirectoryPrefixStrategy implements NamingStrategy
     {
         $directory = $this->originalStrategy->getDirectoryName($file);
         if ($directory === null) {
-            return $this->prefix.DIRECTORY_SEPARATOR;
+            return $this->prefix . DIRECTORY_SEPARATOR;
         }
 
-        return rtrim($this->prefix.DIRECTORY_SEPARATOR.$directory, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
+        return rtrim($this->prefix . DIRECTORY_SEPARATOR . $directory, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
     }
 
     public function getFileName(File $file): string

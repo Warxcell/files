@@ -6,6 +6,7 @@ namespace Arxy\FilesBundle\Tests\Validator\Constraint;
 
 use Arxy\FilesBundle\Tests\File;
 use Arxy\FilesBundle\Validator\Constraint\FileValidator;
+use stdClass;
 use Symfony\Component\Form\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
@@ -23,7 +24,7 @@ class FileValidatorTest extends ConstraintValidatorTestCase
         $this->expectExceptionMessage('Expected argument of type "Arxy\FilesBundle\Model\File", "stdClass" given');
 
         $this->validator->validate(
-            new \stdClass(),
+            new stdClass(),
             new \Arxy\FilesBundle\Validator\Constraint\File(
                 [
                     'maxSize' => 10000,

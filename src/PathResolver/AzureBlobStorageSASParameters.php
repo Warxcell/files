@@ -74,7 +74,6 @@ final class AzureBlobStorageSASParameters
         return $new;
     }
 
-
     public function getIp(): ?string
     {
         return $this->ip;

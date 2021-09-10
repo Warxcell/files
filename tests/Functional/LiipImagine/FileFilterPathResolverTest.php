@@ -8,7 +8,6 @@ use Arxy\FilesBundle\LiipImagine\FileFilter;
 use Arxy\FilesBundle\LiipImagine\FileFilterPathResolver;
 use Arxy\FilesBundle\Model\File;
 use Arxy\FilesBundle\Tests\Functional\AbstractFunctionalTest;
-use InvalidArgumentException;
 use Liip\ImagineBundle\LiipImagineBundle;
 use SplFileObject;
 
@@ -18,7 +17,7 @@ class FileFilterPathResolverTest extends AbstractFunctionalTest
 
     protected static function getConfig(): string
     {
-        return __DIR__.'/config.yml';
+        return __DIR__ . '/config.yml';
     }
 
     protected static function getBundles(): array
@@ -29,7 +28,7 @@ class FileFilterPathResolverTest extends AbstractFunctionalTest
     public function setUp(): void
     {
         parent::setUp();
-        $this->file = $this->manager->upload(new SplFileObject(__DIR__.'/../../files/image1.jpg'));
+        $this->file = $this->manager->upload(new SplFileObject(__DIR__ . '/../../files/image1.jpg'));
         $this->entityManager->persist($this->file);
         $this->entityManager->flush();
     }

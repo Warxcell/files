@@ -38,24 +38,24 @@ class News
         return $this->id;
     }
 
-    public function getFile(): ?File
-    {
-        return $this->file;
-    }
-
-    public function getEmbeddableFile(): ?EmbeddableFile
-    {
-        return $this->embeddableFile;
-    }
-
     public function setId(?int $id): void
     {
         $this->id = $id;
     }
 
+    public function getFile(): ?File
+    {
+        return $this->file;
+    }
+
     public function setFile(?File $file): void
     {
         $this->file = $file;
+    }
+
+    public function getEmbeddableFile(): ?EmbeddableFile
+    {
+        return $this->embeddableFile;
     }
 
     public function setEmbeddableFile(?EmbeddableFile $embeddableFile): void

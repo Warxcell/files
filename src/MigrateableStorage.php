@@ -18,4 +18,3 @@ interface MigrateableStorage extends Storage
      */
     public function migrate(File $file, string $oldPathname, string $newPathname): bool;
 }
-

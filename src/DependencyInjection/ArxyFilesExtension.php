@@ -19,6 +19,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Reference;
+
 use function array_key_first;
 use function count;
 
@@ -68,7 +69,7 @@ class ArxyFilesExtension extends Extension
             $container->setDefinition($serviceId, $definition);
 
             $container->setDefinition(
-                'arxy_files.listener.'.$serviceId,
+                'arxy_files.listener.' . $serviceId,
                 $this->createListenerDefinition($managerConfig['driver'], $serviceId)
             );
 
@@ -141,7 +142,7 @@ class ArxyFilesExtension extends Extension
 
                 return $definition;
             default:
-                throw new LogicException('Driver not supported '.$driver);
+                throw new LogicException('Driver not supported ' . $driver);
         }
     }
 }

@@ -7,6 +7,7 @@ namespace Arxy\FilesBundle\NamingStrategy;
 use Arxy\FilesBundle\Model\File;
 use Arxy\FilesBundle\Model\PathAwareFile;
 use Arxy\FilesBundle\NamingStrategy;
+
 use function basename;
 use function dirname;
 
@@ -24,7 +25,7 @@ final class PersistentPathStrategy implements NamingStrategy
             return null;
         }
 
-        return $directory.DIRECTORY_SEPARATOR;
+        return $directory . DIRECTORY_SEPARATOR;
     }
 
     public function getFileName(File $file): string

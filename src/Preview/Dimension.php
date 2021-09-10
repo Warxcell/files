@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Arxy\FilesBundle\Preview;
 
 use InvalidArgumentException;
+
 use function sprintf;
 
 class Dimension implements DimensionInterface

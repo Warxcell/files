@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Arxy\FilesBundle\Utility;
 
 use Arxy\FilesBundle\Model\File;
+
 use function method_exists;
 
 class FileUtility

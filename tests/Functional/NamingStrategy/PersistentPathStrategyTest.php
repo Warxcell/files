@@ -13,7 +13,7 @@ class PersistentPathStrategyTest extends AbstractStrategyTest
 {
     protected static function getConfig(): string
     {
-        return __DIR__.'/PersistPathStrategy/config.yml';
+        return __DIR__ . '/PersistPathStrategy/config.yml';
     }
 
     protected static function getBundles(): array
@@ -27,7 +27,9 @@ class PersistentPathStrategyTest extends AbstractStrategyTest
         $manager = self::$container->get('embeddable');
         $news = new News();
 
-        $news->setEmbeddableFilePersistentPath($manager->upload(new SplFileObject(__DIR__.'/../../files/image1.jpg')));
+        $news->setEmbeddableFilePersistentPath(
+            $manager->upload(new SplFileObject(__DIR__ . '/../../files/image1.jpg'))
+        );
         $this->entityManager->persist($news);
         $this->entityManager->flush();
 

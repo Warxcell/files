@@ -14,10 +14,12 @@ use League\Flysystem\FilesystemOperator;
 use League\Flysystem\FilesystemReader;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Tester\CommandTester;
+
 use function array_map;
 use function base64_encode;
 use function preg_replace;
 use function str_replace;
+
 use const PHP_EOL;
 
 class VerifyConsistencyCommandTest extends TestCase
@@ -26,6 +28,21 @@ class VerifyConsistencyCommandTest extends TestCase
     private Repository $repository;
     private FilesystemReader $flysystem;
     private VerifyConsistencyCommand $command;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->manager = $this->createMock(ManagerInterface::class);
+        $this->flysystem = $this->createMock(FilesystemOperator::class);
+        $this->repository = $this->createMock(Repository::class);
+
+        $this->command = new VerifyConsistencyCommand(
+            new FlysystemStorage($this->flysystem),
+            $this->manager,
+            $this->repository
+        );
+    }
 
     public function testExecute(): void
     {
@@ -73,20 +90,5 @@ class VerifyConsistencyCommandTest extends TestCase
         );
         self::assertStringContainsString('File file2path missing!', $output);
         self::assertStringContainsString('4 errors detected', $output);
-    }
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->manager = $this->createMock(ManagerInterface::class);
-        $this->flysystem = $this->createMock(FilesystemOperator::class);
-        $this->repository = $this->createMock(Repository::class);
-
-        $this->command = new VerifyConsistencyCommand(
-            new FlysystemStorage($this->flysystem),
-            $this->manager,
-            $this->repository
-        );
     }
 }

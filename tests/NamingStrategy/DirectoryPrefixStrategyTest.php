@@ -12,7 +12,7 @@ class DirectoryPrefixStrategyTest extends AbstractStrategyTest
     public function getStrategy(): NamingStrategy
     {
         return new NamingStrategy\DirectoryPrefixStrategy(
-            new class() implements NamingStrategy {
+            new class () implements NamingStrategy {
                 public function getDirectoryName(\Arxy\FilesBundle\Model\File $file): ?string
                 {
                     return '1/2/3/';
@@ -43,7 +43,7 @@ class DirectoryPrefixStrategyTest extends AbstractStrategyTest
     public function testIfDecoratedStrategyIsNull(): void
     {
         $strategy = new NamingStrategy\DirectoryPrefixStrategy(
-            new class() implements NamingStrategy {
+            new class () implements NamingStrategy {
                 public function getDirectoryName(\Arxy\FilesBundle\Model\File $file): ?string
                 {
                     return null;
