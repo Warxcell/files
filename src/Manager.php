@@ -170,11 +170,7 @@ final class Manager implements ManagerInterface
 
         /** @psalm-suppress RedundantCondition */
         if (is_resource($stream)) {
-            try {
-                ErrorHandler::wrap(static fn (): bool => fclose($stream));
-            } catch (ErrorException $e) {
-                // nothing we can do
-            }
+            fclose($stream);
         }
 
         if ($this->eventDispatcher !== null) {

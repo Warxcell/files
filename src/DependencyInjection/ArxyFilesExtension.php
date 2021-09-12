@@ -12,6 +12,8 @@ use Arxy\FilesBundle\ManagerInterface;
 use Arxy\FilesBundle\Storage;
 use Arxy\FilesBundle\Twig\FilesExtension;
 use Arxy\FilesBundle\Twig\FilesRuntime;
+use Doctrine\DBAL\Events as DbalEvents;
+use Doctrine\ORM\Events as OrmEvents;
 use LogicException;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -136,9 +138,17 @@ class ArxyFilesExtension extends Extension
             case 'orm':
                 $definition = new Definition(DoctrineORMListener::class);
                 $definition->setArgument('$manager', new Reference($serviceId));
-                $definition->addTag('doctrine.event_listener', ['event' => 'postPersist', 'lazy' => true]);
-                $definition->addTag('doctrine.event_listener', ['event' => 'postRemove', 'lazy' => true]);
-                $definition->addTag('doctrine.event_listener', ['event' => 'onClear', 'lazy' => true]);
+                $definition->addTag('doctrine.event_listener', ['event' => OrmEvents::postPersist, 'lazy' => true]);
+                $definition->addTag('doctrine.event_listener', ['event' => OrmEvents::postRemove, 'lazy' => true]);
+                $definition->addTag('doctrine.event_listener', ['event' => OrmEvents::onClear, 'lazy' => true]);
+                $definition->addTag(
+                    'doctrine.event_listener',
+                    ['event' => DbalEvents::onTransactionCommit, 'lazy' => true]
+                );
+                $definition->addTag(
+                    'doctrine.event_listener',
+                    ['event' => DbalEvents::onTransactionRollBack, 'lazy' => true]
+                );
 
                 return $definition;
             default:

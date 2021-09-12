@@ -10,6 +10,8 @@ use Arxy\FilesBundle\Tests\Functional\Entity\News;
 use SplFileObject;
 use SplTempFileObject;
 
+use function md5;
+
 class ManagerTest extends AbstractFunctionalTest
 {
     protected ManagerInterface $embeddableManager;
@@ -44,6 +46,10 @@ class ManagerTest extends AbstractFunctionalTest
         $file = $this->manager->upload(new SplFileObject(__DIR__ . '/../files/image1.jpg'));
 
         $this->entityManager->persist($file);
+
+        self::assertFalse(
+            $this->flysystem->fileExists('9aa1c5fc7c9388166d7ce7fd46648dd1')
+        );
         $this->entityManager->flush();
 
         self::assertTrue(
@@ -191,16 +197,64 @@ class ManagerTest extends AbstractFunctionalTest
         self::assertFalse($this->flysystem->fileExists($pathname));
     }
 
+    public function testFileUploadedWithClear(): void
+    {
+        $file = $this->manager->upload(new SplFileObject(__DIR__ . '/../files/image1.jpg'));
+
+        $this->entityManager->beginTransaction();
+
+        $this->entityManager->persist($file);
+
+        self::assertFalse(
+            $this->flysystem->fileExists('9aa1c5fc7c9388166d7ce7fd46648dd1')
+        );
+        $this->entityManager->flush();
+
+        self::assertFalse(
+            $this->flysystem->fileExists('9aa1c5fc7c9388166d7ce7fd46648dd1')
+        );
+
+        $this->entityManager->clear();
+
+        $this->entityManager->commit();
+
+        self::assertTrue(
+            $this->flysystem->fileExists('9aa1c5fc7c9388166d7ce7fd46648dd1')
+        );
+    }
+
+    public function testFileNotUploadedWithRollBack(): void
+    {
+        $file = $this->manager->upload(new SplFileObject(__DIR__ . '/../files/image1.jpg'));
+
+        $this->entityManager->beginTransaction();
+
+        $this->entityManager->persist($file);
+
+        self::assertFalse(
+            $this->flysystem->fileExists('9aa1c5fc7c9388166d7ce7fd46648dd1')
+        );
+        $this->entityManager->flush();
+
+        self::assertFalse(
+            $this->flysystem->fileExists('9aa1c5fc7c9388166d7ce7fd46648dd1')
+        );
+
+        $this->entityManager->rollback();
+
+        self::assertFalse(
+            $this->flysystem->fileExists('9aa1c5fc7c9388166d7ce7fd46648dd1')
+        );
+    }
+
     /**
      * @depends testSimpleUpload
      */
     public function testFileNotDeletedWithRollback(): void
     {
-        self::markTestSkipped('Not implemented yet. Waiting DBAL 3.2.X Release');
-
         $file = $this->testSimpleUpload();
 
-        $filepath = '9aa1c5fc/7c938816/6d7ce7fd/46648dd1/9aa1c5fc7c9388166d7ce7fd46648dd1';
+        $filepath = '9aa1c5fc7c9388166d7ce7fd46648dd1';
         self::assertTrue($this->flysystem->fileExists($filepath));
 
         $this->entityManager->beginTransaction();
@@ -223,11 +277,9 @@ class ManagerTest extends AbstractFunctionalTest
      */
     public function testFileDeletedWithCommit(): void
     {
-        self::markTestSkipped('Not implemented yet. Waiting DBAL 3.2.X Release');
-
         $file = $this->testSimpleUpload();
 
-        $filepath = '9aa1c5fc/7c938816/6d7ce7fd/46648dd1/9aa1c5fc7c9388166d7ce7fd46648dd1';
+        $filepath = '9aa1c5fc7c9388166d7ce7fd46648dd1';
 
         self::assertTrue($this->flysystem->fileExists($filepath));
 
