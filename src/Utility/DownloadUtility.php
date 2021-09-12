@@ -55,13 +55,12 @@ class DownloadUtility
         $response->headers->set('Content-Length', (string)$file->getSize());
         $response->headers->set('Content-Disposition', $contentDisposition);
 
-        $stream = $this->manager->readStream($file);
         $response->setCallback(
-            static function () use ($stream): void {
+            static function () use ($file): void {
+                $stream = $this->manager->readStream($file);
+
                 $out = ErrorHandler::wrap(static fn () => fopen('php://output', 'wb'));
-
                 ErrorHandler::wrap(static fn (): int => stream_copy_to_stream($stream, $out));
-
                 ErrorHandler::wrap(static fn (): bool => fclose($out));
                 ErrorHandler::wrap(static fn (): bool => fclose($stream));
             }

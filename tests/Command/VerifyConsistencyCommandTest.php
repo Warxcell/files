@@ -11,7 +11,7 @@ use Arxy\FilesBundle\Repository;
 use Arxy\FilesBundle\Storage\FlysystemStorage;
 use Arxy\FilesBundle\Tests\File;
 use League\Flysystem\FilesystemOperator;
-use League\Flysystem\FilesystemReader;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Tester\CommandTester;
 
@@ -24,9 +24,12 @@ use const PHP_EOL;
 
 class VerifyConsistencyCommandTest extends TestCase
 {
+    /** @var ManagerInterface & MockObject */
     private ManagerInterface $manager;
+    /** @var Repository & MockObject */
     private Repository $repository;
-    private FilesystemReader $flysystem;
+    /** @var FilesystemOperator & MockObject */
+    private FilesystemOperator $flysystem;
     private VerifyConsistencyCommand $command;
 
     protected function setUp(): void

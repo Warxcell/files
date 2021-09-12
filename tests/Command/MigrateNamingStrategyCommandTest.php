@@ -9,13 +9,17 @@ use Arxy\FilesBundle\ManagerInterface;
 use Arxy\FilesBundle\MigratorInterface;
 use Arxy\FilesBundle\Repository;
 use Arxy\FilesBundle\Tests\File;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Tester\CommandTester;
 
 class MigrateNamingStrategyCommandTest extends TestCase
 {
+    /** @var ManagerInterface & MockObject */
     private ManagerInterface $manager;
+    /** @var Repository & MockObject */
     private Repository $repository;
+    /** @var MigratorInterface & MockObject */
     private MigratorInterface $migrator;
     private MigrateNamingStrategyCommand $command;
 
