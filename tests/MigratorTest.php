@@ -8,10 +8,12 @@ use Arxy\FilesBundle\Migrator;
 use Arxy\FilesBundle\NamingStrategy;
 use Arxy\FilesBundle\Storage\FlysystemStorage;
 use League\Flysystem\FilesystemOperator;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class MigratorTest extends TestCase
 {
+    /** @var FilesystemOperator & MockObject */
     private FilesystemOperator $filesystem;
     private NamingStrategy $oldNamingStrategy;
     private NamingStrategy $newNamingStrategy;

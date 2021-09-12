@@ -7,6 +7,7 @@ namespace Arxy\FilesBundle\Tests\Repository;
 use Arxy\FilesBundle\Repository\ORM;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\QueryBuilder;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class ORMTest extends TestCase

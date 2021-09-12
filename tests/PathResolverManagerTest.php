@@ -12,6 +12,8 @@ use PHPUnit\Framework\TestCase;
 use SplFileObject;
 use SplTempFileObject;
 
+use function fopen;
+
 class PathResolverManagerTest extends TestCase
 {
     /** @var ManagerInterface & MockObject */
@@ -59,10 +61,12 @@ class PathResolverManagerTest extends TestCase
     public function testReadStream(): void
     {
         $file = new File('filename', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg');
-        $this->decorated->expects(self::once())->method('readStream')->with($file)->willReturn('!!!');
+
+        $stream = fopen('php://memory', 'r');
+        $this->decorated->expects(self::once())->method('readStream')->with($file)->willReturn($stream);
 
         $actual = $this->decorator->readStream($file);
-        self::assertSame('!!!', $actual);
+        self::assertSame($stream, $actual);
     }
 
     public function testMove(): void

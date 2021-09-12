@@ -11,67 +11,74 @@ use TypeError;
 
 class DimensionTest extends TestCase
 {
-    public function constructorDataProvider()
+    public function constructorDataProvider(): iterable
     {
-        return [
-            [1, 1],
-            [5, 5],
-            [
-                0,
-                1,
-                InvalidArgumentException::class,
-                'Length of either side cannot be 0 or negative, current size is 0x1',
-            ],
-            [
-                1,
-                0,
-                InvalidArgumentException::class,
-                'Length of either side cannot be 0 or negative, current size is 1x0',
-            ],
-            [
-                0,
-                0,
-                InvalidArgumentException::class,
-                'Length of either side cannot be 0 or negative, current size is 0x0',
-            ],
-            [
-                -1,
-                1,
-                InvalidArgumentException::class,
-                'Length of either side cannot be 0 or negative, current size is -1x1',
-            ],
-            [
-                1,
-                -1,
-                InvalidArgumentException::class,
-                'Length of either side cannot be 0 or negative, current size is 1x-1',
-            ],
-            [
-                -1,
-                -1,
-                InvalidArgumentException::class,
-                'Length of either side cannot be 0 or negative, current size is -1x-1',
-            ],
-            [null, 1, TypeError::class],
-            [1, null, TypeError::class],
-        ];
+        yield [1, 1];
+        yield [5, 5];
     }
 
     /**
      * @dataProvider constructorDataProvider
      */
-    public function testConstructor(
+    public function testConstructor(int $width, int $height): void
+    {
+        $this->expectNotToPerformAssertions();
+        new Dimension($width, $height);
+    }
+
+    public function constructorExceptionsDataProvider(): iterable
+    {
+        yield [
+            0,
+            1,
+            InvalidArgumentException::class,
+            'Length of either side cannot be 0 or negative, current size is 0x1',
+        ];
+        yield [
+            1,
+            0,
+            InvalidArgumentException::class,
+            'Length of either side cannot be 0 or negative, current size is 1x0',
+        ];
+        yield [
+            0,
+            0,
+            InvalidArgumentException::class,
+            'Length of either side cannot be 0 or negative, current size is 0x0',
+        ];
+        yield [
+            -1,
+            1,
+            InvalidArgumentException::class,
+            'Length of either side cannot be 0 or negative, current size is -1x1',
+        ];
+        yield [
+            1,
+            -1,
+            InvalidArgumentException::class,
+            'Length of either side cannot be 0 or negative, current size is 1x-1',
+        ];
+        yield [
+            -1,
+            -1,
+            InvalidArgumentException::class,
+            'Length of either side cannot be 0 or negative, current size is -1x-1',
+        ];
+        yield [null, 1, TypeError::class];
+        yield [1, null, TypeError::class];
+    }
+
+    /**
+     * @dataProvider constructorExceptionsDataProvider
+     */
+    public function testConstructorExceptions(
         ?int $width,
         ?int $height,
-        ?string $expectException = null,
+        string $expectException,
         ?string $expectExceptionMessage = null
     ): void {
-        if ($expectException !== null) {
-            $this->expectException($expectException);
-            $this->expectExceptionMessage($expectExceptionMessage);
-        } else {
-            $this->expectNotToPerformAssertions();
-        }
+        $this->expectException($expectException);
+        $this->expectExceptionMessage($expectExceptionMessage);
 
         new Dimension($width, $height);
     }
