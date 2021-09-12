@@ -56,7 +56,7 @@ class DownloadUtility
         $response->headers->set('Content-Disposition', $contentDisposition);
 
         $response->setCallback(
-            static function () use ($file): void {
+            function () use ($file): void {
                 $stream = $this->manager->readStream($file);
 
                 $out = ErrorHandler::wrap(static fn () => fopen('php://output', 'wb'));
