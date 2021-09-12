@@ -38,7 +38,7 @@ class Kernel extends SymfonyBaseKernel
 
     private function getVarDir(): string
     {
-        return sys_get_temp_dir() . '/files-bundle-' . md5($this->config);
+        return __DIR__ . '/var/files-bundle-' . md5($this->config);
     }
 
     public function getCacheDir()
