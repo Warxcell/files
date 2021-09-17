@@ -1,0 +1,13 @@
+imports:
+    - {resource: ../config.yml}
+
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    Arxy\FilesBundle\Tests\Functional\Twig\PathResolver: ~
+    Arxy\FilesBundle\PathResolver: '@Arxy\FilesBundle\Tests\Functional\Twig\PathResolver'
+
+    Arxy\FilesBundle\Twig\PathResolverExtension: ~
+    Arxy\FilesBundle\Twig\PathResolverRuntime: ~
