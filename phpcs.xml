@@ -4,6 +4,8 @@
     <file>src</file>
     <file>tests</file>
 
+    <exclude-pattern>tests/Functional/var/*</exclude-pattern>
+
     <rule ref="PSR12">
         <type>error</type>
         <properties>

@@ -13,4 +13,3 @@ class PathResolver implements \Arxy\FilesBundle\PathResolver
         return $file->getHash();
     }
 }
-
