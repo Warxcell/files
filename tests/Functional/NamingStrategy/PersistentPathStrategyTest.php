@@ -24,7 +24,7 @@ class PersistentPathStrategyTest extends AbstractStrategyTest
     public function testEmbeddable(): void
     {
         /** @var ManagerInterface<EmbeddableFilePersistentPath> $manager */
-        $manager = self::$container->get('embeddable');
+        $manager = self::getContainer()->get('embeddable');
         $news = new News();
 
         $news->setEmbeddableFilePersistentPath(

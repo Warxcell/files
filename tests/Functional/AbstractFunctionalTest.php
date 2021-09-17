@@ -56,6 +56,7 @@ abstract class AbstractFunctionalTest extends KernelTestCase
         assert($kernel instanceof Kernel);
         $kernel->config(static::getConfig());
         $kernel->bundles(static::getBundles());
+        $kernel->setTestCase(static::class);
 
         return $kernel;
     }

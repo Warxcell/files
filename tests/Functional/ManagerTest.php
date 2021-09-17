@@ -18,7 +18,7 @@ class ManagerTest extends AbstractFunctionalTest
     {
         parent::setUp();
 
-        $this->embeddableManager = self::$container->get('embeddable_manager');
+        $this->embeddableManager = self::getContainer()->get('embeddable_manager');
     }
 
     protected function tearDown(): void

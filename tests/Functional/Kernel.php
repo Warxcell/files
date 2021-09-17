@@ -15,10 +15,16 @@ class Kernel extends SymfonyBaseKernel
 {
     private string $config;
     private array $additionalBundles;
+    private string $testCase;
 
     public function __construct()
     {
         parent::__construct('test', false);
+    }
+
+    public function setTestCase(string $testCase): void
+    {
+        $this->testCase = $testCase;
     }
 
     public function config(string $config): void
@@ -38,7 +44,7 @@ class Kernel extends SymfonyBaseKernel
 
     private function getVarDir(): string
     {
-        return __DIR__ . '/var/files-bundle-' . md5($this->config);
+        return __DIR__ . '/var/files-bundle-' . $this->testCase;
     }
 
     public function getCacheDir()

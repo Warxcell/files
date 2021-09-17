@@ -35,7 +35,7 @@ class FileFilterPathResolverTest extends AbstractFunctionalTest
 
     public function testFilter(): void
     {
-        $pathResolver = self::$container->get(FileFilterPathResolver::class);
+        $pathResolver = self::getContainer()->get(FileFilterPathResolver::class);
         assert($pathResolver instanceof FileFilterPathResolver);
 
         $path = $pathResolver->getPath(new FileFilter($this->file, 'thumbnail'));

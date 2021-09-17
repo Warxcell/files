@@ -17,7 +17,7 @@ abstract class AbstractStrategyTest extends AbstractFunctionalTest
     protected function setUp(): void
     {
         parent::setUp();
-        $this->namingStrategy = self::$container->get(NamingStrategy::class);
+        $this->namingStrategy = self::getContainer()->get(NamingStrategy::class);
     }
 
     final public function doesFileExists(File $file): bool

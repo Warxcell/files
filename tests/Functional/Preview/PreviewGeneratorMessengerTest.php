@@ -29,7 +29,7 @@ class PreviewGeneratorMessengerTest extends AbstractFunctionalTest
         $this->entityManager->flush();
 
         self::assertNotNull($file->getPreview());
-        //        $previewManager = self::$container->get('preview');
+        //        $previewManager = self::getContainer()->get('preview');
 
         //        $expectedFilename = __DIR__.'/../../files/image1_preview.jpg';
         //
