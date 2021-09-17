@@ -15,7 +15,6 @@ use Arxy\FilesBundle\Model\MutableFile;
 use Arxy\FilesBundle\Utility\NamingStrategyUtility;
 use DateTimeImmutable;
 use ErrorException;
-use Exception;
 use InvalidArgumentException;
 use League\MimeTypeDetection\FinfoMimeTypeDetector;
 use League\MimeTypeDetection\MimeTypeDetector;
@@ -170,11 +169,7 @@ final class Manager implements ManagerInterface
 
         /** @psalm-suppress RedundantCondition */
         if (is_resource($stream)) {
-            try {
-                ErrorHandler::wrap(static fn (): bool => fclose($stream));
-            } catch (ErrorException $e) {
-                // nothing we can do
-            }
+            fclose($stream);
         }
 
         if ($this->eventDispatcher !== null) {
@@ -193,15 +188,11 @@ final class Manager implements ManagerInterface
 
     public function remove(File $file): void
     {
-        try {
-            if ($this->eventDispatcher !== null) {
-                $this->eventDispatcher->dispatch(new PreRemove($this, $file));
-            }
-
-            $this->storage->remove($file, $this->getPathname($file));
-        } catch (Exception $exception) {
-            throw FileException::unableToRemove($file, $exception);
+        if ($this->eventDispatcher !== null) {
+            $this->eventDispatcher->dispatch(new PreRemove($this, $file));
         }
+
+        $this->storage->remove($file, $this->getPathname($file));
     }
 
     public function read(File $file): string
