@@ -45,4 +45,3 @@ class StorageFactoryTest extends TestCase
         StorageFactory::factory($object);
     }
 }
-
