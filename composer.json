@@ -13,8 +13,9 @@
         "gabrielelana/byte-units": "^0.5.0"
     },
     "require-dev": {
+        "doctrine/dbal": "3.2.x-dev",
         "symfony/validator": "*",
-        "doctrine/orm": "*",
+        "doctrine/orm": "3.0.x-dev",
         "symfony/form": "*",
         "symfony/http-foundation": "*",
         "twig/twig": "*",
@@ -28,7 +29,7 @@
         "symfony/dependency-injection": "^5.2",
         "infection/infection": "^0.21.4",
         "symfony/symfony": "^4.4 | ^5.2",
-        "doctrine/doctrine-bundle": "^2.3",
+        "doctrine/doctrine-bundle": "2.5.x-dev",
         "liip/imagine-bundle": "^2.6",
         "vimeo/psalm": "^4.7",
         "league/flysystem-bundle": "^2.0",

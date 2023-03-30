@@ -6,30 +6,26 @@ namespace Arxy\FilesBundle\EventListener;
 
 use Arxy\FilesBundle\ManagerInterface;
 use Arxy\FilesBundle\Model\File;
-use Closure;
 use Doctrine\Common\Util\ClassUtils;
+use Doctrine\DBAL\Event\TransactionCommitEventArgs;
+use Doctrine\DBAL\Event\TransactionRollBackEventArgs;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\LifecycleEventArgs;
+use Doctrine\ORM\Event\OnClearEventArgs;
 use ReflectionObject;
 
 final class DoctrineORMListener
 {
     private ManagerInterface $manager;
+    /** @var class-string<File> */
     private string $class;
-    private Closure $move;
-    private Closure $remove;
+    private array $pendingMove = [];
+    private array $pendingRemove = [];
 
     public function __construct(ManagerInterface $manager)
     {
         $this->class = $manager->getClass();
         $this->manager = $manager;
-
-        $this->move = static function (File $file) use ($manager): void {
-            $manager->moveFile($file);
-        };
-        $this->remove = static function (File $file) use ($manager): void {
-            $manager->remove($file);
-        };
     }
 
     public function postPersist(LifecycleEventArgs $eventArgs): void
@@ -37,9 +33,11 @@ final class DoctrineORMListener
         $entity = $eventArgs->getEntity();
         $entityManager = $eventArgs->getEntityManager();
         if ($this->supports($entity)) {
-            ($this->move)($entity);
+            $this->pendingMove[] = $entity;
         }
-        $this->handleEmbeddable($entityManager, $entity, $this->move);
+        foreach ($this->handleEmbeddable($entityManager, $entity) as $file) {
+            $this->pendingMove[] = $file;
+        }
     }
 
     public function postRemove(LifecycleEventArgs $eventArgs): void
@@ -48,14 +46,54 @@ final class DoctrineORMListener
         $entityManager = $eventArgs->getEntityManager();
 
         if ($this->supports($entity)) {
-            ($this->remove)($entity);
+            $this->pendingRemove[] = $entity;
         }
-        $this->handleEmbeddable($entityManager, $entity, $this->remove);
+        foreach ($this->handleEmbeddable($entityManager, $entity) as $file) {
+            $this->pendingRemove[] = $file;
+        }
     }
 
-    public function onClear(): void
+    public function onTransactionCommit(TransactionCommitEventArgs $eventArgs): void
     {
+        if ($eventArgs->getConnection()->isTransactionActive()) {
+            return;
+        }
+
+        $pendingMove = $this->pendingMove;
+        foreach ($pendingMove as $file) {
+            $this->manager->moveFile($file);
+        }
+
+        $pendingRemove = $this->pendingRemove;
+        foreach ($pendingRemove as $file) {
+            $this->manager->remove($file);
+        }
+
+        $this->clearPending();
+    }
+
+    public function onTransactionRollBack(TransactionRollBackEventArgs $eventArgs): void
+    {
+        if ($eventArgs->getConnection()->isTransactionActive()) {
+            return;
+        }
+
+        $this->clearPending();
+    }
+
+    private function clearPending(): void
+    {
+        $this->pendingMove = [];
+        $this->pendingRemove = [];
+    }
+
+    public function onClear(OnClearEventArgs $eventArgs): void
+    {
+        if ($eventArgs->getEntityManager()->getConnection()->isTransactionActive()) {
+            return;
+        }
         $this->manager->clear();
+        $this->clearPending();
     }
 
     private function supports(object $entity): bool
@@ -63,11 +101,8 @@ final class DoctrineORMListener
         return $entity instanceof $this->class;
     }
 
-    private function handleEmbeddable(
-        EntityManagerInterface $entityManager,
-        object $entity,
-        Closure $action
-    ): void {
+    private function handleEmbeddable(EntityManagerInterface $entityManager, object $entity): iterable
+    {
         $classMetadata = $entityManager->getClassMetadata(ClassUtils::getClass($entity));
 
         foreach ($classMetadata->embeddedClasses as $property => $embeddedClass) {
@@ -84,7 +119,7 @@ final class DoctrineORMListener
             if ($file === null) {
                 continue;
             }
-            $action($file);
+            yield $file;
         }
     }
 }

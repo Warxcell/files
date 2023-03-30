@@ -142,7 +142,7 @@ services:
 
     Arxy\FilesBundle\Twig\FilesExtension:
         tags:
-            - { name: twig.extension }
+            - {name: twig.extension}
 
     Arxy\FilesBundle\NamingStrategy\IdToPathStrategy: ~
     Arxy\FilesBundle\NamingStrategy\AppendExtensionStrategy:
@@ -153,9 +153,9 @@ services:
 
     Arxy\FilesBundle\Storage\FlysystemStorage: ~
 
-    Arxy\FilesBundle\Storage: 
+    Arxy\FilesBundle\Storage:
         alias: 'Arxy\FilesBundle\Storage\FlysystemStorage'
-        
+
     Arxy\FilesBundle\Manager:
         $class: 'App\Entity\File'
 
@@ -163,15 +163,15 @@ services:
         alias: Arxy\FilesBundle\Manager
 
     Arxy\FilesBundle\EventListener\DoctrineORMListener:
-        arguments: [ "@Arxy\\FilesBundle\\ManagerInterface" ] # This can be omit, if using autowiring.
+        arguments: ["@Arxy\\FilesBundle\\ManagerInterface"] # This can be omit, if using autowiring.
         tags:
-            - { name: doctrine.event_listener, event: 'postPersist' }
-            - { name: doctrine.event_listener, event: 'preRemove' }
+            - {name: doctrine.event_listener, event: 'postPersist'}
+            - {name: doctrine.event_listener, event: 'preRemove'}
 
     Arxy\FilesBundle\Form\Type\FileType:
-        arguments: [ "@Arxy\\FilesBundle\\ManagerInterface" ] # This can be omit, if using autowiring.
+        arguments: ["@Arxy\\FilesBundle\\ManagerInterface"] # This can be omit, if using autowiring.
         tags: # This can be omit, if using autowiring.
-            - { name: form.type }
+            - {name: form.type}
 ```
 
 or using pure PHP
@@ -623,7 +623,7 @@ bin/console arxy:files:migrate-naming-strategy
 
 ```yaml
     MicrosoftAzure\Storage\Blob\BlobRestProxy:
-        factory: [ 'MicrosoftAzure\Storage\Blob\BlobRestProxy', 'createBlobService' ]
+        factory: ['MicrosoftAzure\Storage\Blob\BlobRestProxy', 'createBlobService']
         arguments:
             $connectionString: 'DefaultEndpointsProtocol=https;AccountName=xxxxxxxx;EndpointSuffix=core.windows.net'
 
@@ -728,7 +728,7 @@ There is also DelegatingManager, which can be used as router to different other 
 
 ```yaml
     Arxy\FilesBundle\DelegatingManager:
-        $managers: [ '@manager_1', '@manager_2' ]
+        $managers: ['@manager_1', '@manager_2']
 ```
 
 Then you can do: `$manager->getManagerFor(File::class)->upload($file)`. Note: If you do
@@ -975,4 +975,4 @@ Currently, only image preview generator exists. You can add your own image previ
 
 # Known issues
 
-- If file entity is deleted within transaction and transaction is rolled back - file will be deleted. I'm waiting for DBAL 3.2.* release to be able to fix that.
+No known issues.
