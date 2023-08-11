@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Arxy\FilesBundle\Validator\Constraint;
 
+use Attribute;
 use Exception;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Exception\ConstraintDefinitionException;
@@ -16,29 +17,35 @@ use function is_string;
  * @Annotation
  * @Target({"PROPERTY", "METHOD", "ANNOTATION"})
  */
+#[Attribute(Attribute::TARGET_PROPERTY | Attribute::TARGET_METHOD)]
 class File extends Constraint
 {
     public ?int $maxSize = null;
-    public string $maxSizeMessage = 'The file is too large ({{ size }}). Allowed maximum size is {{ limit }}.';
+
     /** @var array<int, string> */
     public array $mimeTypes = [];
-    public string $mimeTypesMessage = 'The mime type of the file is invalid ({{ type }}). Allowed mime types are {{ types }}.';
 
     /**
-     * @param array<string, mixed> $options
-     * @param array<int, string> $groups
-     * @param mixed $payload
+     * @param array<string>|string $mimeTypes
+     * @param array<string>|null $groups
      */
-    public function __construct(array $options = null, array $groups = null, $payload = null)
-    {
-        if (isset($options['maxSize']) && is_string($options['maxSize'])) {
-            $options['maxSize'] = $this->normalizeBinaryFormat($options['maxSize']);
+    public function __construct(
+        int|string|null $maxSize,
+        public string $maxSizeMessage = 'The file is too large ({{ size }}). Allowed maximum size is {{ limit }}.',
+        array|string $mimeTypes = [],
+        public string $mimeTypesMessage = 'The mime type of the file is invalid ({{ type }}). Allowed mime types are {{ types }}.',
+        array $groups = null,
+    ) {
+        if (is_string($maxSize)) {
+            $maxSize = $this->normalizeBinaryFormat($maxSize);
         }
+        $this->maxSize = $maxSize;
 
-        if (isset($options['mimeTypes']) && !is_array($options['mimeTypes'])) {
-            $options['mimeTypes'] = [$options['mimeTypes']];
+        if (!is_array($mimeTypes)) {
+            $mimeTypes = [$mimeTypes];
         }
-        parent::__construct($options, $groups, $payload);
+        $this->mimeTypes = $mimeTypes;
+        parent::__construct(groups: $groups);
     }
 
     private function normalizeBinaryFormat(string $maxSize): int
