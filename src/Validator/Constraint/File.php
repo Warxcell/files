@@ -30,7 +30,7 @@ class File extends Constraint
      * @param array<string>|null $groups
      */
     public function __construct(
-        int|string|null $maxSize,
+        int|string|null $maxSize = null,
         public string $maxSizeMessage = 'The file is too large ({{ size }}). Allowed maximum size is {{ limit }}.',
         array|string $mimeTypes = [],
         public string $mimeTypesMessage = 'The mime type of the file is invalid ({{ type }}). Allowed mime types are {{ types }}.',
