@@ -26,9 +26,7 @@ class FileValidatorTest extends ConstraintValidatorTestCase
         $this->validator->validate(
             new stdClass(),
             new \Arxy\FilesBundle\Validator\Constraint\File(
-                [
-                    'maxSize' => 10000,
-                ]
+                maxSize: 10000,
             )
         );
     }
@@ -52,9 +50,7 @@ class FileValidatorTest extends ConstraintValidatorTestCase
         $this->validator->validate(
             null,
             new \Arxy\FilesBundle\Validator\Constraint\File(
-                [
-                    'maxSize' => 10000,
-                ]
+                maxSize: 10000,
             )
         );
         self::assertNoViolation();
@@ -67,9 +63,7 @@ class FileValidatorTest extends ConstraintValidatorTestCase
         $this->validator->validate(
             $file,
             new \Arxy\FilesBundle\Validator\Constraint\File(
-                [
-                    'maxSize' => 100,
-                ]
+                maxSize: 100,
             )
         );
 
@@ -88,9 +82,7 @@ class FileValidatorTest extends ConstraintValidatorTestCase
         $this->validator->validate(
             $file,
             new \Arxy\FilesBundle\Validator\Constraint\File(
-                [
-                    'maxSize' => 1000,
-                ]
+                maxSize: 1000,
             )
         );
         self::assertNoViolation();
@@ -103,9 +95,7 @@ class FileValidatorTest extends ConstraintValidatorTestCase
         $this->validator->validate(
             $file,
             new \Arxy\FilesBundle\Validator\Constraint\File(
-                [
-                    'maxSize' => 10000,
-                ]
+                maxSize: 10000,
             )
         );
         self::assertNoViolation();
@@ -118,9 +108,7 @@ class FileValidatorTest extends ConstraintValidatorTestCase
         $this->validator->validate(
             $file,
             new \Arxy\FilesBundle\Validator\Constraint\File(
-                [
-                    'mimeTypes' => ['image/*', 'application/pdf'],
-                ]
+                mimeTypes: ['image/*', 'application/pdf'],
             )
         );
 
@@ -139,9 +127,7 @@ class FileValidatorTest extends ConstraintValidatorTestCase
         $this->validator->validate(
             $file,
             new \Arxy\FilesBundle\Validator\Constraint\File(
-                [
-                    'mimeTypes' => ['image/*', 'application/pdf'],
-                ]
+                mimeTypes: ['image/*', 'application/pdf'],
             )
         );
 
@@ -149,9 +135,7 @@ class FileValidatorTest extends ConstraintValidatorTestCase
         $this->validator->validate(
             $file,
             new \Arxy\FilesBundle\Validator\Constraint\File(
-                [
-                    'mimeTypes' => ['image/*', 'application/pdf'],
-                ]
+                mimeTypes: ['image/*', 'application/pdf'],
             )
         );
 
@@ -165,10 +149,8 @@ class FileValidatorTest extends ConstraintValidatorTestCase
         $this->validator->validate(
             $file,
             new \Arxy\FilesBundle\Validator\Constraint\File(
-                [
-                    'maxSize' => 1000,
-                    'mimeTypes' => ['image/*', 'application/pdf'],
-                ]
+                maxSize: 1000,
+                mimeTypes: ['image/*', 'application/pdf'],
             )
         );
 

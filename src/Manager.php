@@ -161,7 +161,7 @@ final class Manager implements ManagerInterface
         $path = $this->getPathname($file);
 
         try {
-            $stream = ErrorHandler::wrap(static fn () => fopen($splFileInfo->getPathname(), 'r'));
+            $stream = ErrorHandler::wrap(static fn() => fopen($splFileInfo->getPathname(), 'r'));
         } catch (ErrorException $exception) {
             throw FileException::unableToMove($file, $exception);
         }
@@ -200,7 +200,7 @@ final class Manager implements ManagerInterface
         $pathname = $this->getPathname($file);
         if ($this->uploadFileMap->has($file)) {
             try {
-                return ErrorHandler::wrap(static fn (): string => file_get_contents($pathname));
+                return ErrorHandler::wrap(static fn(): string => file_get_contents($pathname));
             } catch (ErrorException $exception) {
                 throw FileException::unableToRead($file, $exception);
             }
@@ -214,7 +214,7 @@ final class Manager implements ManagerInterface
         $pathname = $this->getPathname($file);
         if ($this->uploadFileMap->has($file)) {
             try {
-                return ErrorHandler::wrap(static fn () => fopen($pathname, 'rb'));
+                return ErrorHandler::wrap(static fn() => fopen($pathname, 'rb'));
             } catch (ErrorException $exception) {
                 throw FileException::unableToRead($file, $exception);
             }
@@ -238,14 +238,14 @@ final class Manager implements ManagerInterface
         $pathname = $this->getPathname($file);
         if ($this->uploadFileMap->has($file)) {
             try {
-                ErrorHandler::wrap(static fn (): bool => copy($splFileInfo->getRealPath(), $pathname));
+                ErrorHandler::wrap(static fn(): bool => copy($splFileInfo->getRealPath(), $pathname));
             } catch (ErrorException $exception) {
                 throw FileException::unableToWrite($file, $exception);
             }
             clearstatcache(true, $pathname);
         } else {
             try {
-                $stream = ErrorHandler::wrap(static fn () => fopen($splFileInfo->getRealPath(), 'r'));
+                $stream = ErrorHandler::wrap(static fn() => fopen($splFileInfo->getRealPath(), 'r'));
             } catch (ErrorException $exception) {
                 throw FileException::unableToWrite($file, $exception);
             }
@@ -298,7 +298,7 @@ final class Manager implements ManagerInterface
             $remoteFile = $file->openFile();
         }
 
-        $tempFilename = ErrorHandler::wrap(fn (): string => tempnam($this->temporaryDirectory, 'file_manager'));
+        $tempFilename = ErrorHandler::wrap(fn(): string => tempnam($this->temporaryDirectory, 'file_manager'));
         $file = new SplFileObject($tempFilename, 'r+');
         while ($content = $remoteFile->fread(self::CHUNK_SIZE)) {
             $file->fwrite($content);
@@ -314,7 +314,7 @@ final class Manager implements ManagerInterface
      */
     private function hashFile(SplFileInfo $file): string
     {
-        return ErrorHandler::wrap(fn (): string => hash_file($this->hashingAlgorithm, $file->getRealPath()));
+        return ErrorHandler::wrap(fn(): string => hash_file($this->hashingAlgorithm, $file->getRealPath()));
     }
 
     /**
@@ -324,7 +324,7 @@ final class Manager implements ManagerInterface
     {
         $mimeType = $this->mimeTypeDetector->detectMimeTypeFromFile($file->getRealPath());
         if ($mimeType === null) {
-            throw new InvalidArgumentException('Failed to detect mimeType for ' . $file->getRealPath());
+            throw new InvalidArgumentException('Failed to detect mimeType for '.$file->getRealPath());
         }
 
         return $mimeType;
