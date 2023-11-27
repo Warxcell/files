@@ -6,15 +6,27 @@ namespace Arxy\FilesBundle\Model;
 
 use DateTimeImmutable;
 
+/**
+ * @template T of File
+ */
 abstract class DecoratedFile implements File
 {
+    /**
+     * @var T
+     */
     protected File $decorated;
 
+    /**
+     * @param T $decorated
+     */
     public function __construct(File $decorated)
     {
         $this->decorated = $decorated;
     }
 
+    /**
+     * @return T
+     */
     public function getDecorated(): File
     {
         return $this->decorated;
