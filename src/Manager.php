@@ -23,6 +23,8 @@ use SplFileInfo;
 use SplFileObject;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
+use Throwable;
+
 use function clearstatcache;
 use function copy;
 use function fclose;
@@ -96,7 +98,7 @@ final class Manager implements ManagerInterface
     {
         try {
             $handledSplFile = $this->handleSplFile($splFileInfo);
-        } catch (ErrorException $exception) {
+        } catch (Throwable $exception) {
             throw new UnableToUpload($splFileInfo, $exception);
         }
 
@@ -231,7 +233,7 @@ final class Manager implements ManagerInterface
 
         try {
             $splFileInfo = $this->handleSplFile($splFileInfo);
-        } catch (ErrorException $exception) {
+        } catch (Throwable $exception) {
             throw FileException::unableToWrite($file, $exception);
         }
 
@@ -281,7 +283,7 @@ final class Manager implements ManagerInterface
     }
 
     /**
-     * @throws ErrorException
+     * @throws Throwable
      */
     private function handleSplFile(SplFileInfo $file): SplFileInfo
     {
