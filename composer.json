@@ -62,5 +62,11 @@
         "psr-4": {
             "Arxy\\FilesBundle\\Tests\\": "tests/"
         }
+    },
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "infection/extension-installer": true
+        }
     }
 }

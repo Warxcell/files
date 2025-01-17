@@ -12,10 +12,12 @@ use function set_error_handler;
 class ErrorHandler
 {
     /**
-     * @return mixed
+     * @template T
+     * @param callable(): (T|false) $callable
+     * @return T
      * @throws ErrorException
      */
-    public static function wrap(callable $callable)
+    public static function wrap(callable $callable): mixed
     {
         set_error_handler(
             static function (int $errno, string $message, string $file, int $line): bool {
@@ -29,7 +31,12 @@ class ErrorHandler
             }
         );
         try {
-            return $callable();
+            $value = $callable();
+            if ($value === false) {
+                throw new ErrorException('Unknown error');
+            }
+
+            return $value;
         } finally {
             restore_error_handler();
         }
