@@ -15,7 +15,7 @@ use Liip\ImagineBundle\Imagine\Cache\CacheManager;
 class FileFilterPathResolver implements PathResolver
 {
     /**
-     * @param ManagerInterface<FileFilter, mixed> $fileManager
+     * @param ManagerInterface<File, mixed> $fileManager
      * @param CacheManager $cacheManager
      */
     public function __construct(

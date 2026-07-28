@@ -29,6 +29,7 @@ final class DelegatingManager implements ManagerInterface
 
     /**
      * @param ManagerInterface<File, mixed>[] $managers
+     * @param ManagerInterface<File, mixed>|null $manager
      * @throws InvalidArgumentException
      */
     public function __construct(array $managers, ?ManagerInterface $manager = null)
@@ -50,7 +51,7 @@ final class DelegatingManager implements ManagerInterface
     /**
      * @template T of File
      * @param class-string<T> $class
-     * @return ManagerInterface<T>
+     * @return ManagerInterface<T, mixed>
      * @throws LogicException if not manager is found for $class
      */
     public function getManagerFor(string $class): ManagerInterface

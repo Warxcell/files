@@ -37,7 +37,7 @@ class CachePathResolver implements PathResolver
     public function getPath(File $file): string
     {
         $key = $file->getHash();
-        /* @phpstan-ignore missingType.checkedException key is hash, does not violate key requirements */
+        /* @phpstan-ignore missingType.checkedException (key is hash, does not violate key requirements) */
         $item = $this->cache->getItem($key);
 
         if (!$item->isHit()) {
@@ -46,7 +46,7 @@ class CachePathResolver implements PathResolver
             $this->cache->save($item);
         }
 
-        /* @phpstan-ignore return.type */
+        /* @phpstan-ignore return.type (its ok) */
         return $item->get();
     }
 }

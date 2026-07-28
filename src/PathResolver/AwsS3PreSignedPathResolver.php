@@ -31,7 +31,7 @@ class AwsS3PreSignedPathResolver implements PathResolver
     #[\Override]
     public function getPath(File $file): string
     {
-        /* @phpstan-ignore missingType.checkedException */
+        /* @phpstan-ignore missingType.checkedException (command is there) */
         $cmd = $this->s3Client->getCommand(
             'GetObject',
             [

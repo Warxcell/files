@@ -10,15 +10,17 @@ use Arxy\FilesBundle\NamingStrategy;
 use function pathinfo;
 
 /**
- * @implements NamingStrategy<File>
+ * @template T of File
+ * @implements NamingStrategy<T>
  */
 final class AppendExtensionStrategy implements NamingStrategy
 {
-    private NamingStrategy $originalStrategy;
-
-    public function __construct(NamingStrategy $originalStrategy)
-    {
-        $this->originalStrategy = $originalStrategy;
+    /**
+     * @param NamingStrategy<T> $originalStrategy
+     */
+    public function __construct(
+        private readonly NamingStrategy $originalStrategy
+    ) {
     }
 
     #[\Override]

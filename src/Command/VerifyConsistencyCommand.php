@@ -39,6 +39,7 @@ class VerifyConsistencyCommand extends Command
      * @param ManagerInterface<File, mixed> $manager
      * @param Repository<File> $repository
      * @throws InvalidArgumentException
+     * @throws \LogicException
      */
     public function __construct(
         private readonly Storage $storage,
@@ -55,10 +56,6 @@ class VerifyConsistencyCommand extends Command
         $this->mimeTypeDetector = $mimeTypeDetector ?? new FinfoMimeTypeDetector();
     }
 
-    /**
-     * @throws ErrorException
-     * @throws RuntimeException
-     */
     #[\Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
@@ -83,7 +80,12 @@ class VerifyConsistencyCommand extends Command
                 continue;
             }
 
-            $stats = fstat($stream);
+            try {
+                $stats = ErrorHandler::wrap(static fn () => fstat($stream));
+            } catch (ErrorException $exception) {
+                $error(sprintf('Cannot stat file "%s": %s', $pathname, $exception->getMessage()));
+                continue;
+            }
 
             if ($file->getSize() !== $stats['size']) {
                 $error(
@@ -112,9 +114,19 @@ class VerifyConsistencyCommand extends Command
             }
 
             rewind($stream);
-            $mimeType = $this->mimeTypeDetector->detectMimeTypeFromBuffer(fread($stream, 1024));
+
+            try {
+                $mimeType = $this->mimeTypeDetector->detectMimeTypeFromBuffer(
+                    ErrorHandler::wrap(static fn () => fread($stream, 1024))
+                );
+            } catch (ErrorException $exception) {
+                $error(sprintf('Cannot detect mimeType for %s: %s', $file->getHash(), $exception->getMessage()));
+                continue;
+            }
+
             if ($mimeType === null) {
-                throw new RuntimeException(sprintf('Cannot detect mimeType for %s', $file->getHash()));
+                $error(sprintf('Cannot detect mimeType for %s', $file->getHash()));
+                continue;
             }
 
             if ($file->getMimeType() !== $mimeType) {
@@ -128,15 +140,17 @@ class VerifyConsistencyCommand extends Command
                 );
             }
 
-            ErrorHandler::wrap(static fn (): bool => fclose($stream));
+            fclose($stream);
         }
 
         if ($totalErrors === 0) {
             $io->success('No inconsistencies detected');
+
+            return 0;
         } else {
             $io->error(sprintf('%s errors detected', $totalErrors));
-        }
 
-        return 0;
+            return 1;
+        }
     }
 }

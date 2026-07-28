@@ -15,15 +15,16 @@ use function chunk_split;
  */
 final class SplitHashStrategy implements NamingStrategy
 {
+    /** @var int<1, max> */
     private int $splitLength;
 
     /**
-     * @throws \DivisionByZeroError
+     * @param int<1, max> $splitLength
      * @throws InvalidArgumentException
      */
     public function __construct(int $splitLength = 8)
     {
-        if (32 % $splitLength !== 0) {
+        if ($splitLength % 32 !== 0) {
             throw new InvalidArgumentException('$splitLength parameter must be modulus of 32');
         }
 
@@ -31,7 +32,7 @@ final class SplitHashStrategy implements NamingStrategy
     }
 
     #[\Override]
-    public function getDirectoryName(File $file): ?string
+    public function getDirectoryName(File $file): string
     {
         return chunk_split($file->getHash(), $this->splitLength, DIRECTORY_SEPARATOR);
     }

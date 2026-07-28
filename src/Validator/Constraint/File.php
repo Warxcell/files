@@ -22,7 +22,7 @@ class File extends Constraint
 {
     public ?int $maxSize = null;
 
-    /** @var array<int, string> */
+    /** @var array<string> */
     public array $mimeTypes = [];
 
     /**
@@ -34,7 +34,7 @@ class File extends Constraint
         public string $maxSizeMessage = 'The file is too large ({{ size }}). Allowed maximum size is {{ limit }}.',
         array|string $mimeTypes = [],
         public string $mimeTypesMessage = 'The mime type of the file is invalid ({{ type }}). Allowed mime types are {{ types }}.',
-        array $groups = null,
+        ?array $groups = null,
     ) {
         if (is_string($maxSize)) {
             $maxSize = $this->normalizeBinaryFormat($maxSize);

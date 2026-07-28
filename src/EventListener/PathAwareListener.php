@@ -14,7 +14,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 class PathAwareListener implements EventSubscriberInterface
 {
     /**
-     * @param NamingStrategy<File> $namingStrategy
+     * @param NamingStrategy<MutablePathAware> $namingStrategy
      */
     public function __construct(
         private readonly NamingStrategy $namingStrategy
@@ -29,6 +29,9 @@ class PathAwareListener implements EventSubscriberInterface
         ];
     }
 
+    /**
+     * @param PostUpload<\Arxy\FilesBundle\Model\File, mixed> $event
+     */
     public function onUpload(PostUpload $event): void
     {
         $entity = $event->getFile();

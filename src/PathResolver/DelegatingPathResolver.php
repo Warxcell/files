@@ -31,9 +31,7 @@ class DelegatingPathResolver implements PathResolver
     }
 
     /**
-     * @template T of File
-     * @param T $file
-     * @return PathResolver<T>
+     * @return PathResolver<File>
      * @throws LogicException if no Resolver is found for $file
      */
     private function getResolver(File $file): PathResolver

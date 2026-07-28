@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Arxy\FilesBundle\Preview;
 
-use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
-class GeneratePreviewMessageHandler implements MessageHandlerInterface
+#[AsMessageHandler]
+class GeneratePreviewMessageHandler
 {
     private PreviewGenerator $generator;
 
