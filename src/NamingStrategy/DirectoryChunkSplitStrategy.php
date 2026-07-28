@@ -10,28 +10,33 @@ use Arxy\FilesBundle\NamingStrategy;
 use function chunk_split;
 use function substr;
 
+/**
+ * @template T of File
+ * @implements NamingStrategy<T>
+ */
 final class DirectoryChunkSplitStrategy implements NamingStrategy
 {
-    private NamingStrategy $originalStrategy;
-    private int $offset;
-    private int $length;
-    private int $chunkSplit;
-
-    public function __construct(NamingStrategy $originalStrategy, int $offset = 0, int $length = 3, int $chunkSplit = 1)
-    {
-        $this->originalStrategy = $originalStrategy;
-        $this->offset = $offset;
-        $this->length = $length;
-        $this->chunkSplit = $chunkSplit;
+    /**
+     * @param NamingStrategy<T> $originalStrategy
+     * @param int<1, max> $chunkSplit
+     */
+    public function __construct(
+        private readonly NamingStrategy $originalStrategy,
+        private readonly int $offset = 0,
+        private readonly int $length = 3,
+        private readonly int $chunkSplit = 1
+    ) {
     }
 
-    public function getDirectoryName(File $file): ?string
+    #[\Override]
+    public function getDirectoryName(File $file): string
     {
         $filename = $this->originalStrategy->getFileName($file);
 
         return chunk_split(substr($filename, $this->offset, $this->length), $this->chunkSplit, DIRECTORY_SEPARATOR);
     }
 
+    #[\Override]
     public function getFileName(File $file): string
     {
         return $this->originalStrategy->getFileName($file);

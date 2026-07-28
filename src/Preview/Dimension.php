@@ -13,6 +13,9 @@ class Dimension implements DimensionInterface
     private int $width;
     private int $height;
 
+    /**
+     * @throws InvalidArgumentException
+     */
     public function __construct(int $width, int $height)
     {
         if ($width < 1 || $height < 1) {
@@ -24,11 +27,13 @@ class Dimension implements DimensionInterface
         $this->height = $height;
     }
 
+    #[\Override]
     public function getWidth(): int
     {
         return $this->width;
     }
 
+    #[\Override]
     public function getHeight(): int
     {
         return $this->height;

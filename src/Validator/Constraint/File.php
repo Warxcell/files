@@ -48,6 +48,9 @@ class File extends Constraint
         parent::__construct(groups: $groups);
     }
 
+    /**
+     * @throws ConstraintDefinitionException
+     */
     private function normalizeBinaryFormat(string $maxSize): int
     {
         $original = $maxSize;

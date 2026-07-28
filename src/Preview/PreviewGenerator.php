@@ -14,25 +14,20 @@ use function sprintf;
 
 class PreviewGenerator
 {
-    private ManagerInterface $manager;
-
-    /** @var PreviewGeneratorInterface[] */
-    private iterable $generators;
-
-    private DimensionInterface $dimension;
-
     /**
+     * @param ManagerInterface<File, mixed> $manager
      * @param PreviewGeneratorInterface[] $generators
      */
-    public function __construct(ManagerInterface $manager, iterable $generators, DimensionInterface $dimension)
-    {
-        $this->manager = $manager;
-        $this->generators = $generators;
-        $this->dimension = $dimension;
+    public function __construct(
+        private readonly ManagerInterface $manager,
+        private readonly iterable $generators,
+        private readonly DimensionInterface $dimension
+    ) {
     }
 
     /**
      * @throws NoPreviewGeneratorFound
+     * @throws \Arxy\FilesBundle\UnableToUpload
      */
     public function generate(File $file): File
     {
@@ -47,6 +42,9 @@ class PreviewGenerator
         return $preview;
     }
 
+    /**
+     * @throws NoPreviewGeneratorFound
+     */
     private function generatePreview(File $file): SplFileInfo
     {
         foreach ($this->generators as $generator) {

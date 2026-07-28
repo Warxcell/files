@@ -25,6 +25,10 @@ use function count;
 
 class ArxyFilesExtension extends Extension
 {
+    /**
+     * @throws \Symfony\Component\DependencyInjection\Exception\BadMethodCallException
+     */
+    #[\Override]
     public function load(array $configs, ContainerBuilder $container): void
     {
         $configuration = new Configuration();
@@ -130,6 +134,9 @@ class ArxyFilesExtension extends Extension
         return $definition;
     }
 
+    /**
+     * @throws LogicException
+     */
     private function createListenerDefinition(string $driver, string $serviceId): Definition
     {
         switch ($driver) {

@@ -21,6 +21,7 @@ class FileType extends AbstractType
         $this->fileManager = $fileManager;
     }
 
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $fileOptions = $options['input_options'];
@@ -34,6 +35,11 @@ class FileType extends AbstractType
         $builder->addEventSubscriber(new FileUploadListener($options['manager'], $options['multiple']));
     }
 
+    /**
+     * @throws \Symfony\Component\OptionsResolver\Exception\AccessException
+     * @throws \Symfony\Component\OptionsResolver\Exception\UndefinedOptionsException
+     */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefault(
@@ -47,6 +53,7 @@ class FileType extends AbstractType
         $resolver->setAllowedTypes('manager', ManagerInterface::class);
     }
 
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return 'arxy_file';

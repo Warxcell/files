@@ -12,6 +12,9 @@ use function get_class;
 
 class StorageFactory
 {
+    /**
+     * @throws LogicException
+     */
     public static function factory(object $service): Storage
     {
         switch (true) {

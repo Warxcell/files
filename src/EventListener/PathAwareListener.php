@@ -8,17 +8,20 @@ use Arxy\FilesBundle\Event\PostUpload;
 use Arxy\FilesBundle\Model\MutablePathAware;
 use Arxy\FilesBundle\NamingStrategy;
 use Arxy\FilesBundle\Utility\NamingStrategyUtility;
+use Arxy\FilesBundle\Validator\Constraint\File;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class PathAwareListener implements EventSubscriberInterface
 {
-    private NamingStrategy $namingStrategy;
-
-    public function __construct(NamingStrategy $namingStrategy)
-    {
-        $this->namingStrategy = $namingStrategy;
+    /**
+     * @param NamingStrategy<File> $namingStrategy
+     */
+    public function __construct(
+        private readonly NamingStrategy $namingStrategy
+    ) {
     }
 
+    #[\Override]
     public static function getSubscribedEvents(): array
     {
         return [

@@ -6,27 +6,26 @@ namespace Arxy\FilesBundle\Command;
 
 use Arxy\FilesBundle\MigratorInterface;
 use Arxy\FilesBundle\Repository;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
+#[AsCommand('arxy:files:migrate-naming-strategy')]
 class MigrateNamingStrategyCommand extends Command
 {
-    protected static $defaultName = 'arxy:files:migrate-naming-strategy';
-
-    private MigratorInterface $migrator;
-    private Repository $repository;
-
     public function __construct(
-        MigratorInterface $migrator,
-        Repository $repository
+        private readonly MigratorInterface $migrator,
+        private readonly Repository $repository
     ) {
         parent::__construct();
-        $this->migrator = $migrator;
-        $this->repository = $repository;
     }
 
+    /**
+     * @throws \Arxy\FilesBundle\FileException
+     */
+    #[\Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);

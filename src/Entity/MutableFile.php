@@ -16,31 +16,37 @@ abstract class MutableFile extends File implements \Arxy\FilesBundle\Model\Mutab
         $this->modifiedAt = new DateTimeImmutable();
     }
 
+    #[\Override]
     public function setOriginalFilename(string $originalFilename): void
     {
         $this->originalFilename = $originalFilename;
     }
 
+    #[\Override]
     public function setSize(int $size): void
     {
         $this->size = $size;
     }
 
+    #[\Override]
     public function setHash(string $hash): void
     {
         $this->hash = $hash;
     }
 
+    #[\Override]
     public function getModifiedAt(): DateTimeImmutable
     {
         return $this->modifiedAt;
     }
 
+    #[\Override]
     public function setModifiedAt(DateTimeImmutable $modifiedAt): void
     {
         $this->modifiedAt = $modifiedAt;
     }
 
+    #[\Override]
     public function setMimeType(string $mimeType): void
     {
         $this->mimeType = $mimeType;

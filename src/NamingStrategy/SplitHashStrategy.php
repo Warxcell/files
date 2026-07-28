@@ -10,10 +10,17 @@ use InvalidArgumentException;
 
 use function chunk_split;
 
+/**
+ * @implements NamingStrategy<File>
+ */
 final class SplitHashStrategy implements NamingStrategy
 {
     private int $splitLength;
 
+    /**
+     * @throws \DivisionByZeroError
+     * @throws InvalidArgumentException
+     */
     public function __construct(int $splitLength = 8)
     {
         if (32 % $splitLength !== 0) {
@@ -23,11 +30,13 @@ final class SplitHashStrategy implements NamingStrategy
         $this->splitLength = $splitLength;
     }
 
+    #[\Override]
     public function getDirectoryName(File $file): ?string
     {
         return chunk_split($file->getHash(), $this->splitLength, DIRECTORY_SEPARATOR);
     }
 
+    #[\Override]
     public function getFileName(File $file): string
     {
         return $file->getHash();

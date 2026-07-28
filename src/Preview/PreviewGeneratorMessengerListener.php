@@ -18,6 +18,7 @@ class PreviewGeneratorMessengerListener implements EventSubscriberInterface
         $this->bus = $bus;
     }
 
+    #[\Override]
     public static function getSubscribedEvents(): array
     {
         return [

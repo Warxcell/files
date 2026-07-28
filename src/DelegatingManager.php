@@ -11,19 +11,27 @@ use LogicException;
 use SplFileInfo;
 
 use function array_merge;
+use function count;
 use function get_class;
 use function reset;
 
+/**
+ * @implements ManagerInterface<File, mixed>
+ */
 final class DelegatingManager implements ManagerInterface
 {
-    /** @var array<class-string<File>, ManagerInterface> */
+    /** @var array<class-string<File>, ManagerInterface<File, mixed>> */
     private array $managers = [];
+    /**
+     * @var ManagerInterface<File, mixed>
+     */
     private ManagerInterface $manager;
 
     /**
-     * @param ManagerInterface[] $managers
+     * @param ManagerInterface<File, mixed>[] $managers
+     * @throws InvalidArgumentException
      */
-    public function __construct(array $managers, ManagerInterface $manager = null)
+    public function __construct(array $managers, ?ManagerInterface $manager = null)
     {
         if (count($managers) === 0) {
             throw new InvalidArgumentException('You should pass at least one manager!');
@@ -40,10 +48,10 @@ final class DelegatingManager implements ManagerInterface
     }
 
     /**
+     * @template T of File
      * @param class-string<T> $class
      * @return ManagerInterface<T>
      * @throws LogicException if not manager is found for $class
-     * @template T of File
      */
     public function getManagerFor(string $class): ManagerInterface
     {
@@ -54,46 +62,75 @@ final class DelegatingManager implements ManagerInterface
         return $this->managers[$class];
     }
 
-    public function upload(SplFileInfo $splFileInfo): File
+    #[\Override]
+    public function upload(SplFileInfo $splFileInfo, mixed $context = null): File
     {
-        return $this->manager->upload($splFileInfo);
+        return $this->manager->upload($splFileInfo, $context);
     }
 
+    #[\Override]
     public function getPathname(File $file): string
     {
         return $this->getManagerForFile($file)->getPathname($file);
     }
 
+    #[\Override]
     public function read(File $file): string
     {
-        return $this->getManagerForFile($file)->read($file);
+        try {
+            return $this->getManagerForFile($file)->read($file);
+        } catch (LogicException $exception) {
+            throw FileException::unableToRead($file, $exception);
+        }
     }
 
+    #[\Override]
     public function readStream(File $file)
     {
-        return $this->getManagerForFile($file)->readStream($file);
+        try {
+            return $this->getManagerForFile($file)->readStream($file);
+        } catch (LogicException $exception) {
+            throw FileException::unableToRead($file, $exception);
+        }
     }
 
+    #[\Override]
     public function write(MutableFile $file, SplFileInfo $splFileInfo): void
     {
-        $this->getManagerForFile($file)->write($file, $splFileInfo);
+        try {
+            $this->getManagerForFile($file)->write($file, $splFileInfo);
+        } catch (LogicException $exception) {
+            throw FileException::unableToWrite($file, $exception);
+        }
     }
 
+    #[\Override]
     public function moveFile(File $file): void
     {
-        $this->getManagerForFile($file)->moveFile($file);
+        try {
+            $this->getManagerForFile($file)->moveFile($file);
+        } catch (LogicException $exception) {
+            throw FileException::unableToMove($file, $exception);
+        }
     }
 
+    #[\Override]
     public function remove(File $file): void
     {
-        $this->getManagerForFile($file)->remove($file);
+        try {
+            $this->getManagerForFile($file)->remove($file);
+        } catch (LogicException $exception) {
+            throw FileException::unableToRemove($file, $exception);
+        }
     }
 
+    #[\Override]
     public function getClass(): string
     {
         return $this->manager->getClass();
     }
 
+    #[\Override]
     public function clear(): void
     {
         foreach (array_merge($this->managers, [$this->manager->getClass() => $this->manager]) as $manager) {

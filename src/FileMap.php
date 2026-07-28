@@ -16,17 +16,16 @@ use function sprintf;
  * Holds map of files to be uploaded.
  * @internal
  * @template T of File
- * @template S of SplFileInfo
  */
 final class FileMap
 {
-    /** @var array<int, S> */
+    /** @var array<int, SplFileInfo> */
     private array $map = [];
     /** @var array<int, T> */
     private array $pendingFiles = [];
 
     /**
-     * @param array<int, S> $files
+     * @param array<int, SplFileInfo> $files
      * @param array<int, T> $splFiles
      */
     public function __construct(array $files = [], array $splFiles = [])
@@ -51,7 +50,6 @@ final class FileMap
 
     /**
      * @param T $file
-     * @param S $fileInfo
      */
     public function put(File $file, SplFileInfo $fileInfo): void
     {
@@ -62,28 +60,10 @@ final class FileMap
 
     /**
      * @param T $file
-     * @return S
      */
-    public function get(File $file): SplFileInfo
+    public function get(File $file): ?SplFileInfo
     {
-        if (!$this->has($file)) {
-            throw new OutOfBoundsException(
-                sprintf(
-                    'File %s not found in map',
-                    FileUtility::toString($file)
-                )
-            );
-        }
-
-        return $this->map[$this->getObjectId($file)];
-    }
-
-    /**
-     * @param T $file
-     */
-    public function has(File $file): bool
-    {
-        return isset($this->map[$this->getObjectId($file)]);
+        return $this->map[$this->getObjectId($file)] ?? null;
     }
 
     /**

@@ -23,26 +23,31 @@ abstract class AbstractFile implements File
         $this->createdAt = new DateTimeImmutable();
     }
 
+    #[\Override]
     public function getOriginalFilename(): string
     {
         return $this->originalFilename;
     }
 
+    #[\Override]
     public function getSize(): int
     {
         return $this->size;
     }
 
+    #[\Override]
     public function getHash(): string
     {
         return $this->hash;
     }
 
+    #[\Override]
     public function getCreatedAt(): DateTimeImmutable
     {
         return $this->createdAt;
     }
 
+    #[\Override]
     public function getMimeType(): string
     {
         return $this->mimeType;

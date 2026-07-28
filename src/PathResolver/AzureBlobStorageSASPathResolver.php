@@ -12,27 +12,31 @@ use MicrosoftAzure\Storage\Common\Internal\Resources;
 
 use function sprintf;
 
+/**
+ * @template T of File
+ * @implements PathResolver<T>
+ */
 class AzureBlobStorageSASPathResolver implements PathResolver
 {
-    private AzureBlobStoragePathResolver $pathResolver;
-    private BlobSharedAccessSignatureHelper $signatureHelper;
-    private AzureBlobStorageSASParametersFactory $parametersFactory;
-
+    /**
+     * @param AzureBlobStoragePathResolver<T> $pathResolver
+     */
     public function __construct(
-        AzureBlobStoragePathResolver $pathResolver,
-        BlobSharedAccessSignatureHelper $signatureHelper,
-        AzureBlobStorageSASParametersFactory $factory
+        private readonly AzureBlobStoragePathResolver $pathResolver,
+        private readonly BlobSharedAccessSignatureHelper $signatureHelper,
+        private readonly AzureBlobStorageSASParametersFactory $parametersFactory
     ) {
-        $this->pathResolver = $pathResolver;
-        $this->signatureHelper = $signatureHelper;
-        $this->parametersFactory = $factory;
     }
 
+    #[\Override]
     public function getPath(File $file): string
     {
         return $this->pathResolver->getPath($file) . '?' . $this->generateSas($file);
     }
 
+    /**
+     * @param T $file
+     */
     private function generateSas(File $file): string
     {
         $parameters = $this->parametersFactory->create($file);

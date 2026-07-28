@@ -9,6 +9,9 @@ use Arxy\FilesBundle\NamingStrategy;
 
 use function pathinfo;
 
+/**
+ * @implements NamingStrategy<File>
+ */
 final class AppendExtensionStrategy implements NamingStrategy
 {
     private NamingStrategy $originalStrategy;
@@ -18,11 +21,13 @@ final class AppendExtensionStrategy implements NamingStrategy
         $this->originalStrategy = $originalStrategy;
     }
 
+    #[\Override]
     public function getDirectoryName(File $file): ?string
     {
         return $this->originalStrategy->getDirectoryName($file);
     }
 
+    #[\Override]
     public function getFileName(File $file): string
     {
         $extension = pathinfo($file->getOriginalFilename(), PATHINFO_EXTENSION);

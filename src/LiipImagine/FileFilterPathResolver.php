@@ -14,15 +14,17 @@ use Liip\ImagineBundle\Imagine\Cache\CacheManager;
  */
 class FileFilterPathResolver implements PathResolver
 {
-    private ManagerInterface $fileManager;
-    private CacheManager $cacheManager;
-
-    public function __construct(ManagerInterface $fileManager, CacheManager $cacheManager)
-    {
-        $this->fileManager = $fileManager;
-        $this->cacheManager = $cacheManager;
+    /**
+     * @param ManagerInterface<FileFilter, mixed> $fileManager
+     * @param CacheManager $cacheManager
+     */
+    public function __construct(
+        private readonly ManagerInterface $fileManager,
+        private readonly CacheManager $cacheManager
+    ) {
     }
 
+    #[\Override]
     public function getPath(File $file): string
     {
         return $this->cacheManager->getBrowserPath(

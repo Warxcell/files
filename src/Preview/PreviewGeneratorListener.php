@@ -6,6 +6,7 @@ namespace Arxy\FilesBundle\Preview;
 
 use Arxy\FilesBundle\Event\PostUpdate;
 use Arxy\FilesBundle\Event\PostUpload;
+use Arxy\FilesBundle\Validator\Constraint\File;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class PreviewGeneratorListener implements EventSubscriberInterface
@@ -17,6 +18,7 @@ class PreviewGeneratorListener implements EventSubscriberInterface
         $this->previewGenerator = $previewGenerator;
     }
 
+    #[\Override]
     public static function getSubscribedEvents(): array
     {
         return [
@@ -43,11 +45,14 @@ class PreviewGeneratorListener implements EventSubscriberInterface
         }
     }
 
+    /**
+     * @param PreviewableFile<File> $file
+     */
     private function generatePreview(PreviewableFile $file): void
     {
         try {
             $file->setPreview($this->previewGenerator->generate($file));
-        } catch (NoPreviewGeneratorFound $exception) {
+        } catch (NoPreviewGeneratorFound) {
         }
     }
 }

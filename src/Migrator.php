@@ -23,6 +23,7 @@ class Migrator implements MigratorInterface
         $this->new = $newNamingStrategy;
     }
 
+    #[\Override]
     public function migrate(File $file): bool
     {
         $oldName = NamingStrategyUtility::getPathnameFromStrategy($this->old, $file);

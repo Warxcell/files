@@ -20,7 +20,7 @@ class GeneratePreviewMessageHandler implements MessageHandlerInterface
         $file = $message->getFile();
         try {
             $file->setPreview($this->generator->generate($file));
-        } catch (NoPreviewGeneratorFound $exception) {
+        } catch (NoPreviewGeneratorFound) {
         }
     }
 }

@@ -13,16 +13,21 @@ use function fclose;
 use function fopen;
 use function stream_copy_to_stream;
 
+/**
+ * @template T of File
+ */
 class FileDownloader
 {
-    private ManagerInterface $manager;
-
-    public function __construct(ManagerInterface $manager)
-    {
-        $this->manager = $manager;
+    /**
+     * @param ManagerInterface<T, mixed> $manager
+     */
+    public function __construct(
+        private readonly ManagerInterface $manager
+    ) {
     }
 
     /**
+     * @param T $file
      * @throws \ErrorException
      */
     public function downloadAsSplFile(File $file): SplFileInfo

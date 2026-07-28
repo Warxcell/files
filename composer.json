@@ -8,7 +8,7 @@
         }
     ],
     "require": {
-        "php": "^8.0",
+        "php": "^8.1",
         "league/mime-type-detection": "^1.7",
         "gabrielelana/byte-units": "^0.5.0"
     },
@@ -24,13 +24,14 @@
         "aws/aws-sdk-php": "*",
         "league/flysystem-memory": "^2.0",
         "phpunit/phpunit": "^9.5",
+        "phpstan/phpstan": "^2.2",
         "symfony/http-kernel": "*",
-        "symfony/dependency-injection": "^5.2",
-        "infection/infection": "^0.21.4",
-        "symfony/symfony": "^4.4 | ^5.2",
+        "symfony/dependency-injection": "*",
+        "infection/infection": "0.34.0",
+        "symfony/symfony": "*",
         "doctrine/doctrine-bundle": "^2.3",
         "liip/imagine-bundle": "^2.6",
-        "vimeo/psalm": "^4.7",
+        "vimeo/psalm": "6.16.1",
         "league/flysystem-bundle": "^2.0",
         "symfony/uid": "*",
         "imagine/imagine": "^1.2",
@@ -62,6 +63,9 @@
         "psr-4": {
             "Arxy\\FilesBundle\\Tests\\": "tests/"
         }
+    },
+    "scripts": {
+        "phpstan": "phpstan analyse"
     },
     "config": {
         "allow-plugins": {

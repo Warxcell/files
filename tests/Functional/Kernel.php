@@ -47,12 +47,12 @@ class Kernel extends SymfonyBaseKernel
         return __DIR__ . '/var/files-bundle-' . md5($this->testCase);
     }
 
-    public function getCacheDir()
+    public function getCacheDir(): string
     {
         return $this->getVarDir() . '/cache';
     }
 
-    public function getLogDir()
+    public function getLogDir(): string
     {
         return $this->getVarDir() . '/log';
     }

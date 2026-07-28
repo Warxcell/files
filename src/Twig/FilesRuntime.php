@@ -10,13 +10,14 @@ use Twig\Extension\RuntimeExtensionInterface;
 
 class FilesRuntime implements RuntimeExtensionInterface
 {
-    private ManagerInterface $manager;
-
-    public function __construct(ManagerInterface $manager)
-    {
-        $this->manager = $manager;
+    public function __construct(
+        private readonly ManagerInterface $manager
+    ) {
     }
 
+    /**
+     * @throws \Arxy\FilesBundle\FileException
+     */
     public function readContent(File $file): string
     {
         return $this->manager->read($file);

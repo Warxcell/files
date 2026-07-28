@@ -50,6 +50,7 @@
 composer.lock
 
 .phpunit.result.cache
+.phpstan/
 .php_cs.cache
 .phpunit.cache
 infection

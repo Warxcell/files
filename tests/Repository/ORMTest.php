@@ -6,6 +6,7 @@ namespace Arxy\FilesBundle\Tests\Repository;
 
 use Arxy\FilesBundle\Repository\ORM;
 use Doctrine\ORM\AbstractQuery;
+use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -27,7 +28,7 @@ class ORMTest extends TestCase
     {
         $mock = $this->getMockForTrait(ORM::class);
 
-        $queryMock = $this->createMock(AbstractQuery::class);
+        $queryMock = $this->createMock(Query::class);
         $queryMock->expects($this->once())->method('toIterable');
 
         $qbMock = $this->createMock(QueryBuilder::class);

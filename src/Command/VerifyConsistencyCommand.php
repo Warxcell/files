@@ -9,11 +9,13 @@ use Arxy\FilesBundle\FileException;
 use Arxy\FilesBundle\ManagerInterface;
 use Arxy\FilesBundle\Repository;
 use Arxy\FilesBundle\Storage;
+use Arxy\FilesBundle\Entity\File;
 use ErrorException;
 use InvalidArgumentException;
 use League\MimeTypeDetection\FinfoMimeTypeDetector;
 use League\MimeTypeDetection\MimeTypeDetector;
 use RuntimeException;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -27,37 +29,37 @@ use function in_array;
 use function rewind;
 use function sprintf;
 
+#[AsCommand('arxy:files:verify-consistency')]
 class VerifyConsistencyCommand extends Command
 {
-    protected static $defaultName = 'arxy:files:verify-consistency';
-
-    private Storage $storage;
-    private ManagerInterface $manager;
-    private Repository $repository;
     private MimeTypeDetector $mimeTypeDetector;
-    private string $hashingAlgorithm;
 
+    /**
+     * @param Storage<File> $storage
+     * @param ManagerInterface<File, mixed> $manager
+     * @param Repository<File> $repository
+     * @throws InvalidArgumentException
+     */
     public function __construct(
-        Storage $storage,
-        ManagerInterface $manager,
-        Repository $repository,
-        MimeTypeDetector $mimeTypeDetector = null,
-        string $hashingAlgorithm = 'md5'
+        private readonly Storage $storage,
+        private readonly ManagerInterface $manager,
+        private readonly Repository $repository,
+        ?MimeTypeDetector $mimeTypeDetector = null,
+        private readonly string $hashingAlgorithm = 'md5'
     ) {
         if (!in_array($hashingAlgorithm, hash_algos(), true)) {
             throw new InvalidArgumentException(sprintf('The algorithm "%s" is not supported.', $hashingAlgorithm));
         }
         parent::__construct();
-        $this->storage = $storage;
-        $this->manager = $manager;
-        $this->repository = $repository;
+
         $this->mimeTypeDetector = $mimeTypeDetector ?? new FinfoMimeTypeDetector();
-        $this->hashingAlgorithm = $hashingAlgorithm;
     }
 
     /**
      * @throws ErrorException
+     * @throws RuntimeException
      */
+    #[\Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
@@ -69,13 +71,14 @@ class VerifyConsistencyCommand extends Command
             $totalErrors++;
             $io->error($message);
         };
+
         $files = $this->repository->findAllForBatchProcessing();
         foreach ($progressBar->iterate($files) as $file) {
             $pathname = $this->manager->getPathname($file);
 
             try {
                 $stream = $this->storage->readStream($file, $pathname);
-            } catch (FileException $exception) {
+            } catch (FileException) {
                 $error(sprintf('File %s missing!', $pathname));
                 continue;
             }

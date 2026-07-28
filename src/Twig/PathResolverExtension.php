@@ -9,6 +9,7 @@ use Twig\TwigFunction;
 
 class PathResolverExtension extends AbstractExtension
 {
+    #[\Override]
     public function getFunctions(): array
     {
         return [

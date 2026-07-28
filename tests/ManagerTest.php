@@ -415,15 +415,10 @@ class ManagerTest extends TestCase
     {
         $file = new File('filename', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg');
 
-        try {
-            $this->manager->moveFile($file);
-        } catch (Throwable $exception) {
-            $this->assertInstanceOf(OutOfBoundsException::class, $exception);
-            $this->assertEquals(
-                'File ' . (string)spl_object_id($file) . ' not found in map',
-                $exception->getMessage()
-            );
-        }
+        self::expectException(FileException::class);
+        self::expectExceptionMessage('Unable to move file');
+
+        $this->manager->moveFile($file);
     }
 
     public function testWrongFileMoveStringable(): void
@@ -431,12 +426,10 @@ class ManagerTest extends TestCase
         $file = new StringableFile('filename', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg');
         $file->setId(25);
 
-        try {
-            $this->manager->moveFile($file);
-        } catch (Throwable $exception) {
-            $this->assertInstanceOf(OutOfBoundsException::class, $exception);
-            $this->assertEquals('File 25 not found in map', $exception->getMessage());
-        }
+        self::expectException(FileException::class);
+        self::expectExceptionMessage('Unable to move file');
+
+        $this->manager->moveFile($file);
     }
 
     public function testSimpleMoveFile(): void
@@ -639,14 +632,9 @@ class ManagerTest extends TestCase
         $file->setId(1);
         $this->manager->clear();
 
-        try {
-            $this->manager->moveFile($file);
-        } catch (Throwable $exception) {
-            $this->assertInstanceOf(OutOfBoundsException::class, $exception);
-            $this->assertEquals(
-                'File ' . (string)spl_object_id($file) . ' not found in map',
-                $exception->getMessage()
-            );
-        }
+        self::expectException(FileException::class);
+        self::expectExceptionMessage('Unable to move file');
+
+        $this->manager->moveFile($file);
     }
 }

@@ -10,15 +10,18 @@ use SplFileInfo;
 
 /**
  * @template T of File
+ * @template C
  */
 interface ManagerInterface
 {
     /**
      * Converts SplFileInfo instance to file object.
+     * @param SplFileInfo $splFileInfo
+     * @param C $context
      * @return T
      * @throws UnableToUpload
      */
-    public function upload(SplFileInfo $splFileInfo): File;
+    public function upload(SplFileInfo $splFileInfo, mixed $context = null): File;
 
     /**
      * Get underlying path of file
@@ -41,8 +44,8 @@ interface ManagerInterface
     public function readStream(File $file);
 
     /**
-     * @template W of T & MutableFile
-     * @param W $file
+     * @param T & MutableFile $file
+     * @param SplFileInfo $splFileInfo
      * @throws FileException
      */
     public function write(MutableFile $file, SplFileInfo $splFileInfo): void;

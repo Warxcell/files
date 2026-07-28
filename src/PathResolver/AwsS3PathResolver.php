@@ -9,19 +9,24 @@ use Arxy\FilesBundle\Model\File;
 use Arxy\FilesBundle\PathResolver;
 use Aws\S3\S3ClientInterface;
 
+/**
+ * @template T of File
+ * @implements PathResolver<T>
+ */
 class AwsS3PathResolver implements PathResolver
 {
-    private S3ClientInterface $s3Client;
-    private string $bucket;
-    private ManagerInterface $manager;
+    /**
+     * @param ManagerInterface<T, mixed> $manager
+     */
+    public function __construct(
+        private readonly S3ClientInterface $s3Client,
+        private readonly string $bucket,
+        private readonly ManagerInterface $manager
+    ) {
 
-    public function __construct(S3ClientInterface $s3Client, string $bucket, ManagerInterface $manager)
-    {
-        $this->s3Client = $s3Client;
-        $this->bucket = $bucket;
-        $this->manager = $manager;
     }
 
+    #[\Override]
     public function getPath(File $file): string
     {
         return $this->s3Client->getObjectUrl($this->bucket, $this->manager->getPathname($file));

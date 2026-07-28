@@ -10,13 +10,14 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 abstract class AbstractFileEvent extends Event
 {
-    private ManagerInterface $manager;
-    private File $file;
-
-    public function __construct(ManagerInterface $manager, File $file)
-    {
-        $this->manager = $manager;
-        $this->file = $file;
+    /**
+     * @param ManagerInterface<File, mixed> $manager
+     * @param File $file
+     */
+    public function __construct(
+        private readonly ManagerInterface $manager,
+        private readonly File $file
+    ) {
     }
 
     public function getManager(): ManagerInterface

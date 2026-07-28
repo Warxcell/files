@@ -12,7 +12,7 @@ class UnableToUpload extends RuntimeException
 {
     private SplFileInfo $relatedFile;
 
-    public function __construct(SplFileInfo $file, Throwable $previous = null)
+    public function __construct(SplFileInfo $file, ?Throwable $previous = null)
     {
         parent::__construct('Unable to upload file', 0, $previous);
         $this->relatedFile = $file;
