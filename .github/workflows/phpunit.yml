@@ -8,8 +8,7 @@ jobs:
         strategy:
             matrix:
                 include:
-                    -   php: '7.4'
-                    -   php: '8.0'
+                    -   php: '8.5'
         env:
             extensions: bcmath gd xdebug
             XDEBUG_MODE: coverage
