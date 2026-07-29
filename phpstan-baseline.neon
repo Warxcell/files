@@ -1,0 +1,439 @@
+parameters:
+	ignoreErrors:
+		-
+			rawMessage: 'Argument of an invalid type mixed supplied for foreach, only iterables are supported.'
+			identifier: foreach.nonIterable
+			count: 1
+			path: src/DependencyInjection/ArxyFilesExtension.php
+
+		-
+			rawMessage: Binary operation "." between 'arxy_files.listener.' and mixed results in an error.
+			identifier: binaryOp.invalid
+			count: 1
+			path: src/DependencyInjection/ArxyFilesExtension.php
+
+		-
+			rawMessage: Cannot access offset 'class' on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/DependencyInjection/ArxyFilesExtension.php
+
+		-
+			rawMessage: Cannot access offset 'driver' on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/DependencyInjection/ArxyFilesExtension.php
+
+		-
+			rawMessage: Cannot access offset 'mime_type_detector' on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/DependencyInjection/ArxyFilesExtension.php
+
+		-
+			rawMessage: Cannot access offset 'model_factory' on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/DependencyInjection/ArxyFilesExtension.php
+
+		-
+			rawMessage: Cannot access offset 'naming_strategy' on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/DependencyInjection/ArxyFilesExtension.php
+
+		-
+			rawMessage: Cannot access offset 'repository' on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/DependencyInjection/ArxyFilesExtension.php
+
+		-
+			rawMessage: Cannot access offset 'service_id' on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: src/DependencyInjection/ArxyFilesExtension.php
+
+		-
+			rawMessage: Cannot access offset 'storage' on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/DependencyInjection/ArxyFilesExtension.php
+
+		-
+			rawMessage: 'Method Arxy\FilesBundle\DependencyInjection\ArxyFilesExtension::load() throws checked exception LogicException but it''s missing from the PHPDoc @throws tag.'
+			identifier: missingType.checkedException
+			count: 1
+			path: src/DependencyInjection/ArxyFilesExtension.php
+
+		-
+			rawMessage: 'Method Arxy\FilesBundle\DependencyInjection\ArxyFilesExtension::load() throws checked exception Symfony\Component\DependencyInjection\Exception\InvalidArgumentException but it''s missing from the PHPDoc @throws tag.'
+			identifier: missingType.checkedException
+			count: 2
+			path: src/DependencyInjection/ArxyFilesExtension.php
+
+		-
+			rawMessage: Offset 'form' might not exist on array.
+			identifier: offsetAccess.notFound
+			count: 1
+			path: src/DependencyInjection/ArxyFilesExtension.php
+
+		-
+			rawMessage: Offset 'managers' might not exist on non-empty-array.
+			identifier: offsetAccess.notFound
+			count: 3
+			path: src/DependencyInjection/ArxyFilesExtension.php
+
+		-
+			rawMessage: Offset 'twig' might not exist on non-empty-array.
+			identifier: offsetAccess.notFound
+			count: 1
+			path: src/DependencyInjection/ArxyFilesExtension.php
+
+		-
+			rawMessage: 'PHPDoc tag @throws type Symfony\Component\DependencyInjection\Exception\BadMethodCallException of method Arxy\FilesBundle\DependencyInjection\ArxyFilesExtension::load() should be covariant with PHPDoc @throws type InvalidArgumentException of method Symfony\Component\DependencyInjection\Extension\ExtensionInterface::load().'
+			identifier: throws.notCovariant
+			count: 2
+			path: src/DependencyInjection/ArxyFilesExtension.php
+
+		-
+			rawMessage: 'Parameter #1 $array of function array_key_first expects array, mixed given.'
+			identifier: argument.type
+			count: 1
+			path: src/DependencyInjection/ArxyFilesExtension.php
+
+		-
+			rawMessage: 'Parameter #1 $class of method Arxy\FilesBundle\DependencyInjection\ArxyFilesExtension::createManagerDefinition() expects string, mixed given.'
+			identifier: argument.type
+			count: 1
+			path: src/DependencyInjection/ArxyFilesExtension.php
+
+		-
+			rawMessage: 'Parameter #1 $driver of method Arxy\FilesBundle\DependencyInjection\ArxyFilesExtension::createListenerDefinition() expects string, mixed given.'
+			identifier: argument.type
+			count: 1
+			path: src/DependencyInjection/ArxyFilesExtension.php
+
+		-
+			rawMessage: 'Parameter #1 $id of class Symfony\Component\DependencyInjection\Reference constructor expects string, mixed given.'
+			identifier: argument.type
+			count: 1
+			path: src/DependencyInjection/ArxyFilesExtension.php
+
+		-
+			rawMessage: 'Parameter #1 $id of method Symfony\Component\DependencyInjection\ContainerBuilder::registerAliasForArgument() expects string, mixed given.'
+			identifier: argument.type
+			count: 1
+			path: src/DependencyInjection/ArxyFilesExtension.php
+
+		-
+			rawMessage: 'Parameter #1 $id of method Symfony\Component\DependencyInjection\ContainerBuilder::setDefinition() expects string, mixed given.'
+			identifier: argument.type
+			count: 1
+			path: src/DependencyInjection/ArxyFilesExtension.php
+
+		-
+			rawMessage: 'Parameter #1 $value of function count expects array|Countable, mixed given.'
+			identifier: argument.type
+			count: 1
+			path: src/DependencyInjection/ArxyFilesExtension.php
+
+		-
+			rawMessage: 'Parameter #2 $id of method Symfony\Component\DependencyInjection\ContainerBuilder::setAlias() expects string|Symfony\Component\DependencyInjection\Alias, mixed given.'
+			identifier: argument.type
+			count: 1
+			path: src/DependencyInjection/ArxyFilesExtension.php
+
+		-
+			rawMessage: 'Parameter #2 $serviceId of method Arxy\FilesBundle\DependencyInjection\ArxyFilesExtension::createListenerDefinition() expects string, mixed given.'
+			identifier: argument.type
+			count: 1
+			path: src/DependencyInjection/ArxyFilesExtension.php
+
+		-
+			rawMessage: 'Parameter #2 $storage of method Arxy\FilesBundle\DependencyInjection\ArxyFilesExtension::createManagerDefinition() expects string, mixed given.'
+			identifier: argument.type
+			count: 1
+			path: src/DependencyInjection/ArxyFilesExtension.php
+
+		-
+			rawMessage: 'Parameter #3 $namingStrategy of method Arxy\FilesBundle\DependencyInjection\ArxyFilesExtension::createManagerDefinition() expects string, mixed given.'
+			identifier: argument.type
+			count: 1
+			path: src/DependencyInjection/ArxyFilesExtension.php
+
+		-
+			rawMessage: 'Parameter #4 $repository of method Arxy\FilesBundle\DependencyInjection\ArxyFilesExtension::createManagerDefinition() expects string|null, mixed given.'
+			identifier: argument.type
+			count: 1
+			path: src/DependencyInjection/ArxyFilesExtension.php
+
+		-
+			rawMessage: 'Parameter #5 $mimeTypeDetector of method Arxy\FilesBundle\DependencyInjection\ArxyFilesExtension::createManagerDefinition() expects string|null, mixed given.'
+			identifier: argument.type
+			count: 1
+			path: src/DependencyInjection/ArxyFilesExtension.php
+
+		-
+			rawMessage: 'Parameter #6 $modelFactory of method Arxy\FilesBundle\DependencyInjection\ArxyFilesExtension::createManagerDefinition() expects string|null, mixed given.'
+			identifier: argument.type
+			count: 1
+			path: src/DependencyInjection/ArxyFilesExtension.php
+
+		-
+			rawMessage: 'Cannot call method arrayNode() on mixed.'
+			identifier: method.nonObject
+			count: 3
+			path: src/DependencyInjection/Configuration.php
+
+		-
+			rawMessage: 'Cannot call method arrayPrototype() on mixed.'
+			identifier: method.nonObject
+			count: 1
+			path: src/DependencyInjection/Configuration.php
+
+		-
+			rawMessage: 'Cannot call method beforeNormalization() on mixed.'
+			identifier: method.nonObject
+			count: 2
+			path: src/DependencyInjection/Configuration.php
+
+		-
+			rawMessage: 'Cannot call method booleanNode() on Symfony\Component\Config\Definition\Builder\NodeParentInterface|null.'
+			identifier: method.nonObject
+			count: 1
+			path: src/DependencyInjection/Configuration.php
+
+		-
+			rawMessage: 'Cannot call method cannotBeEmpty() on mixed.'
+			identifier: method.nonObject
+			count: 2
+			path: src/DependencyInjection/Configuration.php
+
+		-
+			rawMessage: 'Cannot call method children() on mixed.'
+			identifier: method.nonObject
+			count: 3
+			path: src/DependencyInjection/Configuration.php
+
+		-
+			rawMessage: 'Cannot call method defaultNull() on mixed.'
+			identifier: method.nonObject
+			count: 3
+			path: src/DependencyInjection/Configuration.php
+
+		-
+			rawMessage: 'Cannot call method defaultTrue() on mixed.'
+			identifier: method.nonObject
+			count: 1
+			path: src/DependencyInjection/Configuration.php
+
+		-
+			rawMessage: 'Cannot call method defaultValue() on mixed.'
+			identifier: method.nonObject
+			count: 1
+			path: src/DependencyInjection/Configuration.php
+
+		-
+			rawMessage: 'Cannot call method end() on mixed.'
+			identifier: method.nonObject
+			count: 18
+			path: src/DependencyInjection/Configuration.php
+
+		-
+			rawMessage: 'Cannot call method enumNode() on mixed.'
+			identifier: method.nonObject
+			count: 1
+			path: src/DependencyInjection/Configuration.php
+
+		-
+			rawMessage: 'Cannot call method ifString() on mixed.'
+			identifier: method.nonObject
+			count: 2
+			path: src/DependencyInjection/Configuration.php
+
+		-
+			rawMessage: 'Cannot call method isRequired() on mixed.'
+			identifier: method.nonObject
+			count: 6
+			path: src/DependencyInjection/Configuration.php
+
+		-
+			rawMessage: 'Cannot call method performNoDeepMerging() on mixed.'
+			identifier: method.nonObject
+			count: 1
+			path: src/DependencyInjection/Configuration.php
+
+		-
+			rawMessage: 'Cannot call method scalarNode() on mixed.'
+			identifier: method.nonObject
+			count: 6
+			path: src/DependencyInjection/Configuration.php
+
+		-
+			rawMessage: 'Cannot call method then() on mixed.'
+			identifier: method.nonObject
+			count: 2
+			path: src/DependencyInjection/Configuration.php
+
+		-
+			rawMessage: 'Cannot call method useAttributeAsKey() on mixed.'
+			identifier: method.nonObject
+			count: 1
+			path: src/DependencyInjection/Configuration.php
+
+		-
+			rawMessage: 'Cannot call method values() on mixed.'
+			identifier: method.nonObject
+			count: 1
+			path: src/DependencyInjection/Configuration.php
+
+		-
+			rawMessage: Anonymous function should return string|null but returns mixed.
+			identifier: return.type
+			count: 1
+			path: src/Form/Type/FileType.php
+
+		-
+			rawMessage: Cannot access offset 'label' on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Form/Type/FileType.php
+
+		-
+			rawMessage: Cannot access offset 'mapped' on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Form/Type/FileType.php
+
+		-
+			rawMessage: Cannot access offset 'multiple' on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Form/Type/FileType.php
+
+		-
+			rawMessage: Cannot access offset 'required' on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Form/Type/FileType.php
+
+		-
+			rawMessage: 'Cannot call method getClass() on mixed.'
+			identifier: method.nonObject
+			count: 1
+			path: src/Form/Type/FileType.php
+
+		-
+			rawMessage: 'Method Arxy\FilesBundle\Form\Type\FileType::__construct() has parameter $fileManager with generic interface Arxy\FilesBundle\ManagerInterface but does not specify its types: T, C'
+			identifier: missingType.generics
+			count: 1
+			path: src/Form/Type/FileType.php
+
+		-
+			rawMessage: 'Offset ''input_options'' might not exist on array<non-decimal-int-string, mixed>.'
+			identifier: offsetAccess.notFound
+			count: 1
+			path: src/Form/Type/FileType.php
+
+		-
+			rawMessage: 'Offset ''manager'' might not exist on array<non-decimal-int-string, mixed>.'
+			identifier: offsetAccess.notFound
+			count: 1
+			path: src/Form/Type/FileType.php
+
+		-
+			rawMessage: 'Offset ''multiple'' might not exist on array<non-decimal-int-string, mixed>.'
+			identifier: offsetAccess.notFound
+			count: 2
+			path: src/Form/Type/FileType.php
+
+		-
+			rawMessage: 'Offset ''required'' might not exist on array<non-decimal-int-string, mixed>.'
+			identifier: offsetAccess.notFound
+			count: 1
+			path: src/Form/Type/FileType.php
+
+		-
+			rawMessage: 'Parameter #1 $fileManager of class Arxy\FilesBundle\Form\EventListener\FileUploadListener constructor expects Arxy\FilesBundle\ManagerInterface<Arxy\FilesBundle\Model\File, mixed>, mixed given.'
+			identifier: argument.type
+			count: 1
+			path: src/Form/Type/FileType.php
+
+		-
+			rawMessage: 'Parameter #2 $multiple of class Arxy\FilesBundle\Form\EventListener\FileUploadListener constructor expects bool, mixed given.'
+			identifier: argument.type
+			count: 1
+			path: src/Form/Type/FileType.php
+
+		-
+			rawMessage: 'Parameter #3 $options of method Symfony\Component\Form\FormBuilderInterface::add() expects array<non-decimal-int-string, mixed>, mixed given.'
+			identifier: argument.type
+			count: 1
+			path: src/Form/Type/FileType.php
+
+		-
+			rawMessage: 'Property Arxy\FilesBundle\Form\Type\FileType::$fileManager with generic interface Arxy\FilesBundle\ManagerInterface does not specify its types: T, C'
+			identifier: missingType.generics
+			count: 1
+			path: src/Form/Type/FileType.php
+
+		-
+			rawMessage: 'Method Arxy\FilesBundle\Preview\GeneratePreviewMessage::__construct() has parameter $file with generic interface Arxy\FilesBundle\Preview\PreviewableFile but does not specify its types: T'
+			identifier: missingType.generics
+			count: 1
+			path: src/Preview/GeneratePreviewMessage.php
+
+		-
+			rawMessage: 'Method Arxy\FilesBundle\Preview\GeneratePreviewMessage::getFile() return type with generic interface Arxy\FilesBundle\Preview\PreviewableFile does not specify its types: T'
+			identifier: missingType.generics
+			count: 1
+			path: src/Preview/GeneratePreviewMessage.php
+
+		-
+			rawMessage: 'Property Arxy\FilesBundle\Preview\GeneratePreviewMessage::$file with generic interface Arxy\FilesBundle\Preview\PreviewableFile does not specify its types: T'
+			identifier: missingType.generics
+			count: 1
+			path: src/Preview/GeneratePreviewMessage.php
+
+		-
+			rawMessage: 'Method Arxy\FilesBundle\Preview\GeneratePreviewMessageHandler::__invoke() throws checked exception Arxy\FilesBundle\UnableToUpload but it''s missing from the PHPDoc @throws tag.'
+			identifier: missingType.checkedException
+			count: 1
+			path: src/Preview/GeneratePreviewMessageHandler.php
+
+		-
+			rawMessage: 'Method Arxy\FilesBundle\Preview\PreviewGeneratorListener::generatePreview() throws checked exception Arxy\FilesBundle\UnableToUpload but it''s missing from the PHPDoc @throws tag.'
+			identifier: missingType.checkedException
+			count: 1
+			path: src/Preview/PreviewGeneratorListener.php
+
+		-
+			rawMessage: Trait Arxy\FilesBundle\Repository\ORM is used zero times and is not analysed.
+			identifier: trait.unused
+			count: 1
+			path: src/Repository/ORM.php
+
+		-
+			rawMessage: 'Cannot call method format() on mixed.'
+			identifier: method.nonObject
+			count: 1
+			path: src/Twig/FilesExtension.php
+
+		-
+			rawMessage: 'Method Arxy\FilesBundle\Twig\FilesRuntime::__construct() has parameter $manager with generic interface Arxy\FilesBundle\ManagerInterface but does not specify its types: T, C'
+			identifier: missingType.generics
+			count: 1
+			path: src/Twig/FilesRuntime.php
+
+		-
+			rawMessage: 'Cannot call method format() on mixed.'
+			identifier: method.nonObject
+			count: 1
+			path: src/Validator/Constraint/FileValidator.php
+
+		-
+			rawMessage: 'Method Arxy\FilesBundle\Validator\Constraint\FileValidator::humanizeBytes() should return string but returns mixed.'
+			identifier: return.type
+			count: 1
+			path: src/Validator/Constraint/FileValidator.php
