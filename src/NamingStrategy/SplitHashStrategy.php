@@ -24,7 +24,7 @@ final class SplitHashStrategy implements NamingStrategy
      */
     public function __construct(int $splitLength = 8)
     {
-        if ($splitLength % 32 !== 0) {
+        if (32 % $splitLength !== 0) {
             throw new InvalidArgumentException('$splitLength parameter must be modulus of 32');
         }
 
