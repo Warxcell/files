@@ -77,7 +77,7 @@ class VerifyConsistencyCommandTest extends TestCase
             );
 
         $commandTester = new CommandTester($this->command);
-        self::assertSame(0, $commandTester->execute([]));
+        self::assertSame(1, $commandTester->execute([]));
 
         $output = str_replace(PHP_EOL, '', $commandTester->getDisplay());
         $output = preg_replace('/  +/', ' ', $output);

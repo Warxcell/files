@@ -7,30 +7,24 @@ namespace Arxy\FilesBundle\Tests\Functional\Entity;
 use Arxy\FilesBundle\Entity\EmbeddableFile;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity()
- */
+#[ORM\Entity]
 class News
 {
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=File::class, cascade={"ALL"})
-     */
+    #[ORM\ManyToOne(targetEntity: File::class, cascade: ['all'])]
     private ?File $file = null;
 
-    /** @ORM\Embedded(class=EmbeddableFile::class) */
+    #[ORM\Embedded(class: EmbeddableFile::class)]
     private ?EmbeddableFile $embeddableFile = null;
 
-    /** @ORM\Embedded(class=EmbeddableFile::class) */
+    #[ORM\Embedded(class: EmbeddableFile::class)]
     private ?EmbeddableFile $embeddableFile1 = null;
 
-    /** @ORM\Embedded(class=EmbeddableFilePersistentPath::class) */
+    #[ORM\Embedded(class: EmbeddableFilePersistentPath::class)]
     private ?EmbeddableFilePersistentPath $embeddableFilePersistentPath = null;
 
     public function getId(): ?int

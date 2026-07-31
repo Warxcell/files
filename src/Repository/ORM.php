@@ -28,6 +28,5 @@ trait ORM
         return $query->toIterable();
     }
 
-    /** @return QueryBuilder */
-    abstract public function createQueryBuilder($alias, $indexBy = null);
+    abstract public function createQueryBuilder(string $alias, string|null $indexBy = null): QueryBuilder;
 }

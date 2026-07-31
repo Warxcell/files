@@ -16,7 +16,7 @@ doctrine:
         auto_mapping: true
         mappings:
             ArxyFilesBundleTestsFunctionalEntity:
-                type: annotation
+                type: attribute
                 dir: '%kernel.project_dir%/Entity'
                 is_bundle: false
                 prefix: Arxy\FilesBundle\Tests\Functional\Entity

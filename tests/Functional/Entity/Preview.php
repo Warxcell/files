@@ -8,21 +8,15 @@ use Arxy\FilesBundle\Entity\File as BaseFile;
 use Arxy\FilesBundle\Model\MutablePathAware;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity()
- */
+#[ORM\Entity]
 class Preview extends BaseFile implements MutablePathAware
 {
-    /**
-     * @ORM\Id()
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue()
-     */
+    #[ORM\Id]
+    #[ORM\Column(type: 'integer')]
+    #[ORM\GeneratedValue]
     private ?int $id = null;
 
-    /**
-     * @ORM\Column(type="string")
-     */
+    #[ORM\Column(type: 'string')]
     private string $pathname;
 
     public function getId(): ?int
