@@ -6,6 +6,7 @@ namespace Arxy\FilesBundle\Preview;
 
 use Arxy\FilesBundle\Event\PostUpdate;
 use Arxy\FilesBundle\Event\PostUpload;
+use Arxy\FilesBundle\UnableToUpload;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Arxy\FilesBundle\Model\File;
 
@@ -29,6 +30,7 @@ class PreviewGeneratorListener implements EventSubscriberInterface
 
     /**
      * @param PostUpload<File, mixed> $event
+     * @throws UnableToUpload
      */
     public function postUpload(PostUpload $event): void
     {
@@ -41,6 +43,7 @@ class PreviewGeneratorListener implements EventSubscriberInterface
 
     /**
      * @param PostUpdate<File, mixed> $event
+     * @throws UnableToUpload
      */
     public function postUpdate(PostUpdate $event): void
     {
@@ -53,6 +56,7 @@ class PreviewGeneratorListener implements EventSubscriberInterface
 
     /**
      * @param PreviewableFile<File> $file
+     * @throws UnableToUpload
      */
     private function generatePreview(PreviewableFile $file): void
     {

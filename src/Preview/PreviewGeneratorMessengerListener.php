@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Arxy\FilesBundle\Preview;
 
+use Arxy\FilesBundle\Model\File;
 use Arxy\FilesBundle\Event\PostUpdate;
 use Arxy\FilesBundle\Event\PostUpload;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -27,6 +28,9 @@ class PreviewGeneratorMessengerListener implements EventSubscriberInterface
         ];
     }
 
+    /**
+     * @param PostUpload<File, mixed> $event
+     */
     public function postUpload(PostUpload $event): void
     {
         $file = $event->getFile();
@@ -36,6 +40,9 @@ class PreviewGeneratorMessengerListener implements EventSubscriberInterface
         }
     }
 
+    /**
+     * @param PostUpdate<File, mixed> $event
+     */
     public function postUpdate(PostUpdate $event): void
     {
         $file = $event->getFile();

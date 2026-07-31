@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Arxy\FilesBundle\Preview;
 
+use Arxy\FilesBundle\UnableToUpload;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
@@ -16,6 +17,9 @@ class GeneratePreviewMessageHandler
         $this->generator = $generator;
     }
 
+    /**
+     * @throws UnableToUpload
+     */
     public function __invoke(GeneratePreviewMessage $message): void
     {
         $file = $message->getFile();

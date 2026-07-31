@@ -379,36 +379,6 @@ parameters:
 			path: src/Form/Type/FileType.php
 
 		-
-			rawMessage: 'Method Arxy\FilesBundle\Preview\GeneratePreviewMessage::__construct() has parameter $file with generic interface Arxy\FilesBundle\Preview\PreviewableFile but does not specify its types: T'
-			identifier: missingType.generics
-			count: 1
-			path: src/Preview/GeneratePreviewMessage.php
-
-		-
-			rawMessage: 'Method Arxy\FilesBundle\Preview\GeneratePreviewMessage::getFile() return type with generic interface Arxy\FilesBundle\Preview\PreviewableFile does not specify its types: T'
-			identifier: missingType.generics
-			count: 1
-			path: src/Preview/GeneratePreviewMessage.php
-
-		-
-			rawMessage: 'Property Arxy\FilesBundle\Preview\GeneratePreviewMessage::$file with generic interface Arxy\FilesBundle\Preview\PreviewableFile does not specify its types: T'
-			identifier: missingType.generics
-			count: 1
-			path: src/Preview/GeneratePreviewMessage.php
-
-		-
-			rawMessage: 'Method Arxy\FilesBundle\Preview\GeneratePreviewMessageHandler::__invoke() throws checked exception Arxy\FilesBundle\UnableToUpload but it''s missing from the PHPDoc @throws tag.'
-			identifier: missingType.checkedException
-			count: 1
-			path: src/Preview/GeneratePreviewMessageHandler.php
-
-		-
-			rawMessage: 'Method Arxy\FilesBundle\Preview\PreviewGeneratorListener::generatePreview() throws checked exception Arxy\FilesBundle\UnableToUpload but it''s missing from the PHPDoc @throws tag.'
-			identifier: missingType.checkedException
-			count: 1
-			path: src/Preview/PreviewGeneratorListener.php
-
-		-
 			rawMessage: Trait Arxy\FilesBundle\Repository\ORM is used zero times and is not analysed.
 			identifier: trait.unused
 			count: 1
