@@ -72,7 +72,7 @@ class Kernel extends SymfonyBaseKernel
 
     public function registerContainerConfiguration(LoaderInterface $loader): void
     {
-        $loader->load(__DIR__ . '/config_base.yml');
+        $loader->load(__DIR__ . '/config_base.php');
         $loader->load($this->config);
     }
 }

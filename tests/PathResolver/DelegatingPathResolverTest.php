@@ -9,6 +9,7 @@ use Arxy\FilesBundle\PathResolver\DelegatingPathResolver;
 use Arxy\FilesBundle\Tests\File;
 use Arxy\FilesBundle\Tests\File2;
 use Arxy\FilesBundle\Tests\File3;
+use Arxy\FilesBundle\UnableToResolvePath;
 use LogicException;
 use PHPUnit\Framework\TestCase;
 
@@ -45,7 +46,7 @@ class DelegatingPathResolverTest extends TestCase
 
     public function testNotManagedFile(): void
     {
-        $this->expectException(LogicException::class);
+        $this->expectException(UnableToResolvePath::class);
         $this->expectExceptionMessage('No resolver for ' . File3::class);
         $this->pathResolver->getPath(new File3('original_filename.jpg', 125, '1234567', 'image/jpeg'));
     }

@@ -33,6 +33,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 use SplFileInfo;
 use SplFileObject;
 use SplTempFileObject;
+use Symfony\Component\Clock\DatePoint;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Throwable;
 
@@ -245,12 +246,12 @@ class ManagerTest extends TestCase
         self::assertEquals('image1.jpg', $file->getOriginalFilename());
         self::assertEquals('image/jpeg', $file->getMimeType());
 
-        $expectedDateTime = new DateTimeImmutable();
-        self::assertTrue(
+        $expectedDateTime = new DatePoint();
+        self::assertEquals(
+            '0',
             $expectedDateTime
                 ->diff($file->getCreatedAt())
                 ->format('%s')
-            < 5
         );
     }
 

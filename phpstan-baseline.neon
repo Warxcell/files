@@ -67,9 +67,9 @@ parameters:
 			path: src/DependencyInjection/ArxyFilesExtension.php
 
 		-
-			rawMessage: 'Method Arxy\FilesBundle\DependencyInjection\ArxyFilesExtension::load() throws checked exception Symfony\Component\DependencyInjection\Exception\InvalidArgumentException but it''s missing from the PHPDoc @throws tag.'
+			rawMessage: 'Method Arxy\FilesBundle\DependencyInjection\ArxyFilesExtension::load() throws checked exception Symfony\Component\DependencyInjection\Exception\BadMethodCallException but it''s missing from the PHPDoc @throws tag.'
 			identifier: missingType.checkedException
-			count: 2
+			count: 5
 			path: src/DependencyInjection/ArxyFilesExtension.php
 
 		-
@@ -91,12 +91,6 @@ parameters:
 			path: src/DependencyInjection/ArxyFilesExtension.php
 
 		-
-			rawMessage: 'PHPDoc tag @throws type Symfony\Component\DependencyInjection\Exception\BadMethodCallException of method Arxy\FilesBundle\DependencyInjection\ArxyFilesExtension::load() should be covariant with PHPDoc @throws type InvalidArgumentException of method Symfony\Component\DependencyInjection\Extension\ExtensionInterface::load().'
-			identifier: throws.notCovariant
-			count: 2
-			path: src/DependencyInjection/ArxyFilesExtension.php
-
-		-
 			rawMessage: 'Parameter #1 $array of function array_key_first expects array, mixed given.'
 			identifier: argument.type
 			count: 1
@@ -110,12 +104,6 @@ parameters:
 
 		-
 			rawMessage: 'Parameter #1 $driver of method Arxy\FilesBundle\DependencyInjection\ArxyFilesExtension::createListenerDefinition() expects string, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: src/DependencyInjection/ArxyFilesExtension.php
-
-		-
-			rawMessage: 'Parameter #1 $id of class Symfony\Component\DependencyInjection\Reference constructor expects string, mixed given.'
 			identifier: argument.type
 			count: 1
 			path: src/DependencyInjection/ArxyFilesExtension.php
@@ -389,12 +377,6 @@ parameters:
 			identifier: method.nonObject
 			count: 1
 			path: src/Twig/FilesExtension.php
-
-		-
-			rawMessage: 'Method Arxy\FilesBundle\Twig\FilesRuntime::__construct() has parameter $manager with generic interface Arxy\FilesBundle\ManagerInterface but does not specify its types: T, C'
-			identifier: missingType.generics
-			count: 1
-			path: src/Twig/FilesRuntime.php
 
 		-
 			rawMessage: 'Cannot call method format() on mixed.'

@@ -15,7 +15,7 @@ class PathResolverTest extends AbstractFunctionalTest
 {
     protected static function getConfig(): string
     {
-        return __DIR__ . '/path_resolver_config.yml';
+        return __DIR__ . '/path_resolver_config.php';
     }
 
     protected static function getBundles(): array

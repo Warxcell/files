@@ -15,16 +15,12 @@ use function count;
 use function get_class;
 use function reset;
 
-/**
- * @implements ManagerInterface<File, mixed>
- */
+/** @implements ManagerInterface<File, mixed> */
 final class DelegatingManager implements ManagerInterface
 {
     /** @var array<class-string<File>, ManagerInterface<File, mixed>> */
     private array $managers = [];
-    /**
-     * @var ManagerInterface<File, mixed>
-     */
+    /** @var ManagerInterface<File, mixed> */
     private ManagerInterface $manager;
 
     /**
@@ -49,9 +45,8 @@ final class DelegatingManager implements ManagerInterface
     }
 
     /**
-     * @template T of File
-     * @param class-string<T> $class
-     * @return ManagerInterface<T, mixed>
+     * @param class-string<File> $class
+     * @return ManagerInterface<File, mixed>
      * @throws LogicException if not manager is found for $class
      */
     public function getManagerFor(string $class): ManagerInterface
@@ -69,6 +64,9 @@ final class DelegatingManager implements ManagerInterface
         return $this->manager->upload($splFileInfo, $context);
     }
 
+    /**
+     * @throws LogicException if not manager is found for $file
+     */
     #[\Override]
     public function getPathname(File $file): string
     {
@@ -140,10 +138,8 @@ final class DelegatingManager implements ManagerInterface
     }
 
     /**
-     * @param T $file
-     * @return ManagerInterface<T>
+     * @return ManagerInterface<File, mixed>
      * @throws LogicException if not manager is found for $file
-     * @template T of File
      */
     private function getManagerForFile(File $file): ManagerInterface
     {

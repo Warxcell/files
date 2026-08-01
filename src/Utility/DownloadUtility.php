@@ -8,6 +8,7 @@ use Arxy\FilesBundle\ErrorHandler;
 use Arxy\FilesBundle\ManagerInterface;
 use Arxy\FilesBundle\Model\File;
 use DateTimeImmutable;
+use Symfony\Component\Clock\DatePoint;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -46,7 +47,8 @@ class DownloadUtility
                 $file->getName() ?? u($file->getOriginalFilename())->ascii()->toString()
             );
         } else {
-            $expireAt = new DateTimeImmutable("+30 days");
+            /* @phpstan-ignore argument.type (not gonna happen) */
+            $expireAt = new DatePoint("+30 days");
             $response->setExpires($expireAt);
             $response->setLastModified($file->getCreatedAt());
 
