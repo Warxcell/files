@@ -240,6 +240,7 @@ class ManagerTest extends TestCase
     public function testSimpleUpload(): void
     {
         Clock::set(new MockClock());
+        $expectedDateTime = new DatePoint();
 
         self::assertEquals(File::class, $this->manager->getClass());
         $file = $this->manager->upload(new SplFileObject(__DIR__ . '/files/image1.jpg'));
@@ -250,7 +251,7 @@ class ManagerTest extends TestCase
         self::assertEquals('image1.jpg', $file->getOriginalFilename());
         self::assertEquals('image/jpeg', $file->getMimeType());
 
-        $expectedDateTime = new DatePoint();
+
         self::assertEquals(
             '0',
             $expectedDateTime
