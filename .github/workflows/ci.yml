@@ -1,0 +1,97 @@
+name: CI
+
+on: pull_request
+
+env:
+    PHP_VERSION: "8.5"
+
+jobs:
+    phpcs:
+        name: PHP CodeSniffer
+        runs-on: ubuntu-latest
+        steps:
+            -   uses: actions/checkout@v6
+
+            -   name: "Install PHP"
+                uses: shivammathur/setup-php@v2
+                with:
+                    coverage: "none"
+                    php-version: "${{ env.PHP_VERSION }}"
+                    tools: "cs2pr"
+
+            -   name: "Cache vendor"
+                uses: actions/cache@v4
+                with:
+                    path: vendor
+                    key: vendor-${{ runner.os }}-php-${{ env.PHP_VERSION }}-${{ hashFiles('composer.lock') }}
+                    restore-keys: |
+                        vendor-${{ runner.os }}-php-${{ env.PHP_VERSION }}-
+
+            -   name: "Install dependencies with Composer"
+                uses: ramsey/composer-install@v1
+
+            # https://github.com/doctrine/.github/issues/3
+            -   name: "Run PHP_CodeSniffer"
+                run: "vendor/bin/phpcs -q --no-colors --report=checkstyle | cs2pr"
+
+    phpstan:
+        name: PHPStan
+        runs-on: ubuntu-latest
+        steps:
+            -   uses: actions/checkout@v6
+
+            -   name: "Install PHP"
+                uses: shivammathur/setup-php@v2
+                with:
+                    coverage: "none"
+                    php-version: "${{ env.PHP_VERSION }}"
+
+            -   name: "Cache vendor"
+                uses: actions/cache@v4
+                with:
+                    path: vendor
+                    key: vendor-${{ runner.os }}-php-${{ env.PHP_VERSION }}-${{ hashFiles('composer.lock') }}
+                    restore-keys: |
+                        vendor-${{ runner.os }}-php-${{ env.PHP_VERSION }}-
+
+            -   name: "Install dependencies with Composer"
+                uses: ramsey/composer-install@v1
+
+            -   name: "Run PHPStan"
+                run: "vendor/bin/phpstan analyse --no-progress"
+
+    phpunit:
+        name: PHPUnit
+        runs-on: ubuntu-latest
+        env:
+            extensions: bcmath gd xdebug
+            XDEBUG_MODE: coverage
+        steps:
+            -   uses: actions/checkout@v6
+
+            -   name: "Install PHP"
+                uses: shivammathur/setup-php@v2
+                with:
+                    coverage: "xdebug"
+                    extensions: "${{ env.extensions }}"
+                    php-version: "${{ env.PHP_VERSION }}"
+
+            -   name: "Cache vendor"
+                uses: actions/cache@v4
+                with:
+                    path: vendor
+                    key: vendor-${{ runner.os }}-php-${{ env.PHP_VERSION }}-${{ hashFiles('composer.lock') }}
+                    restore-keys: |
+                        vendor-${{ runner.os }}-php-${{ env.PHP_VERSION }}-
+
+            -   name: "Install dependencies with Composer"
+                uses: ramsey/composer-install@v1
+
+            -   name: "Run PHPUnit"
+                run: "vendor/bin/phpunit"
+
+            -   name: "Coverage Report"
+                uses: actions/upload-artifact@v6
+                with:
+                    name: coverage
+                    path: coverage
