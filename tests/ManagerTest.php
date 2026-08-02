@@ -33,7 +33,9 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 use SplFileInfo;
 use SplFileObject;
 use SplTempFileObject;
+use Symfony\Component\Clock\Clock;
 use Symfony\Component\Clock\DatePoint;
+use Symfony\Component\Clock\MockClock;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Throwable;
 
@@ -48,6 +50,8 @@ class ManagerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+
+        Clock::set(new MockClock());
 
         $this->filesystem = new Filesystem(new InMemoryFilesystemAdapter());
 

@@ -28,6 +28,7 @@ class File extends Constraint
     /**
      * @param array<string>|string $mimeTypes
      * @param array<string>|null $groups
+     * @throws ConstraintDefinitionException
      */
     public function __construct(
         int|string|null $maxSize = null,

@@ -109,6 +109,12 @@ parameters:
 			path: src/DependencyInjection/ArxyFilesExtension.php
 
 		-
+			rawMessage: 'Parameter #1 $id of class Symfony\Component\DependencyInjection\Reference constructor expects string, mixed given.'
+			identifier: argument.type
+			count: 1
+			path: src/DependencyInjection/ArxyFilesExtension.php
+
+		-
 			rawMessage: 'Parameter #1 $id of method Symfony\Component\DependencyInjection\ContainerBuilder::registerAliasForArgument() expects string, mixed given.'
 			identifier: argument.type
 			count: 1
@@ -169,111 +175,21 @@ parameters:
 			path: src/DependencyInjection/ArxyFilesExtension.php
 
 		-
-			rawMessage: 'Cannot call method arrayNode() on mixed.'
-			identifier: method.nonObject
-			count: 3
-			path: src/DependencyInjection/Configuration.php
-
-		-
-			rawMessage: 'Cannot call method arrayPrototype() on mixed.'
-			identifier: method.nonObject
+			rawMessage: 'Call to function assert() with true will always evaluate to true.'
+			identifier: function.alreadyNarrowedType
 			count: 1
 			path: src/DependencyInjection/Configuration.php
 
 		-
-			rawMessage: 'Cannot call method beforeNormalization() on mixed.'
-			identifier: method.nonObject
+			rawMessage: Instanceof between Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition<Symfony\Component\Config\Definition\Builder\TreeBuilder<string>> and Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition will always evaluate to true.
+			identifier: instanceof.alwaysTrue
+			count: 1
+			path: src/DependencyInjection/Configuration.php
+
+		-
+			rawMessage: 'Method Arxy\FilesBundle\DependencyInjection\Configuration::getConfigTreeBuilder() throws checked exception RuntimeException but it''s missing from the PHPDoc @throws tag.'
+			identifier: missingType.checkedException
 			count: 2
-			path: src/DependencyInjection/Configuration.php
-
-		-
-			rawMessage: 'Cannot call method booleanNode() on Symfony\Component\Config\Definition\Builder\NodeParentInterface|null.'
-			identifier: method.nonObject
-			count: 1
-			path: src/DependencyInjection/Configuration.php
-
-		-
-			rawMessage: 'Cannot call method cannotBeEmpty() on mixed.'
-			identifier: method.nonObject
-			count: 2
-			path: src/DependencyInjection/Configuration.php
-
-		-
-			rawMessage: 'Cannot call method children() on mixed.'
-			identifier: method.nonObject
-			count: 3
-			path: src/DependencyInjection/Configuration.php
-
-		-
-			rawMessage: 'Cannot call method defaultNull() on mixed.'
-			identifier: method.nonObject
-			count: 3
-			path: src/DependencyInjection/Configuration.php
-
-		-
-			rawMessage: 'Cannot call method defaultTrue() on mixed.'
-			identifier: method.nonObject
-			count: 1
-			path: src/DependencyInjection/Configuration.php
-
-		-
-			rawMessage: 'Cannot call method defaultValue() on mixed.'
-			identifier: method.nonObject
-			count: 1
-			path: src/DependencyInjection/Configuration.php
-
-		-
-			rawMessage: 'Cannot call method end() on mixed.'
-			identifier: method.nonObject
-			count: 18
-			path: src/DependencyInjection/Configuration.php
-
-		-
-			rawMessage: 'Cannot call method enumNode() on mixed.'
-			identifier: method.nonObject
-			count: 1
-			path: src/DependencyInjection/Configuration.php
-
-		-
-			rawMessage: 'Cannot call method ifString() on mixed.'
-			identifier: method.nonObject
-			count: 2
-			path: src/DependencyInjection/Configuration.php
-
-		-
-			rawMessage: 'Cannot call method isRequired() on mixed.'
-			identifier: method.nonObject
-			count: 6
-			path: src/DependencyInjection/Configuration.php
-
-		-
-			rawMessage: 'Cannot call method performNoDeepMerging() on mixed.'
-			identifier: method.nonObject
-			count: 1
-			path: src/DependencyInjection/Configuration.php
-
-		-
-			rawMessage: 'Cannot call method scalarNode() on mixed.'
-			identifier: method.nonObject
-			count: 6
-			path: src/DependencyInjection/Configuration.php
-
-		-
-			rawMessage: 'Cannot call method then() on mixed.'
-			identifier: method.nonObject
-			count: 2
-			path: src/DependencyInjection/Configuration.php
-
-		-
-			rawMessage: 'Cannot call method useAttributeAsKey() on mixed.'
-			identifier: method.nonObject
-			count: 1
-			path: src/DependencyInjection/Configuration.php
-
-		-
-			rawMessage: 'Cannot call method values() on mixed.'
-			identifier: method.nonObject
-			count: 1
 			path: src/DependencyInjection/Configuration.php
 
 		-

@@ -47,7 +47,7 @@ class DownloadUtility
                 $file->getName() ?? u($file->getOriginalFilename())->ascii()->toString()
             );
         } else {
-            /* @phpstan-ignore argument.type (not gonna happen) */
+            /* @phpstan-ignore missingType.checkedException (not gonna happen) */
             $expireAt = new DatePoint("+30 days");
             $response->setExpires($expireAt);
             $response->setLastModified($file->getCreatedAt());

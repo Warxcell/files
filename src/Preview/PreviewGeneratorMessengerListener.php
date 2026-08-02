@@ -8,6 +8,7 @@ use Arxy\FilesBundle\Model\File;
 use Arxy\FilesBundle\Event\PostUpdate;
 use Arxy\FilesBundle\Event\PostUpload;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 class PreviewGeneratorMessengerListener implements EventSubscriberInterface
@@ -30,6 +31,7 @@ class PreviewGeneratorMessengerListener implements EventSubscriberInterface
 
     /**
      * @param PostUpload<File, mixed> $event
+     * @throws ExceptionInterface
      */
     public function postUpload(PostUpload $event): void
     {
@@ -42,6 +44,7 @@ class PreviewGeneratorMessengerListener implements EventSubscriberInterface
 
     /**
      * @param PostUpdate<File, mixed> $event
+     * @throws ExceptionInterface
      */
     public function postUpdate(PostUpdate $event): void
     {

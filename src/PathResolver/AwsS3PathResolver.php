@@ -23,7 +23,6 @@ class AwsS3PathResolver implements PathResolver
         private readonly string $bucket,
         private readonly ManagerInterface $manager
     ) {
-
     }
 
     #[\Override]

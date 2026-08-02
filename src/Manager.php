@@ -123,7 +123,7 @@ final class Manager implements ManagerInterface
         if ($fileEntity === null) {
             try {
                 $mimeType = $this->getMimeTypeByFile($handledSplFile);
-            } catch (InvalidArgumentException|ErrorException $exception) {
+            } catch (InvalidArgumentException | ErrorException $exception) {
                 throw new UnableToUpload($handledSplFile, $exception);
             }
             $fileEntity = $this->modelFactory->create(

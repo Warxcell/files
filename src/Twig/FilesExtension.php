@@ -36,6 +36,7 @@ class FilesExtension
     #[AsTwigFilter('format_bytes')]
     public function formatBytes(int $bytes, int $precision = 2): string
     {
+        /* @phpstan-ignore return.type (its ok) */
         return bytes($bytes)->format($precision, ' ');
     }
 }
