@@ -21,6 +21,7 @@ abstract class AbstractFile implements File
         $this->size = $size;
         $this->hash = $hash;
         $this->mimeType = $mimeType;
+        /* @phpstan-ignore missingType.checkedException (do you see string somewhere?) */
         $this->createdAt = new DatePoint();
     }
 
