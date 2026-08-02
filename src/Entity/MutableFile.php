@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Arxy\FilesBundle\Entity;
 
 use DateTimeImmutable;
+use Symfony\Component\Clock\DatePoint;
 
 abstract class MutableFile extends File implements \Arxy\FilesBundle\Model\MutableFile
 {
@@ -13,7 +14,7 @@ abstract class MutableFile extends File implements \Arxy\FilesBundle\Model\Mutab
     public function __construct(string $originalFilename, int $size, string $hash, string $mimeType)
     {
         parent::__construct($originalFilename, $size, $hash, $mimeType);
-        $this->modifiedAt = new DateTimeImmutable();
+        $this->modifiedAt = new DatePoint();
     }
 
     #[\Override]

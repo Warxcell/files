@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Arxy\FilesBundle\Model;
 
 use DateTimeImmutable;
+use Symfony\Component\Clock\DatePoint;
 
 abstract class AbstractFile implements File
 {
@@ -20,7 +21,7 @@ abstract class AbstractFile implements File
         $this->size = $size;
         $this->hash = $hash;
         $this->mimeType = $mimeType;
-        $this->createdAt = new DateTimeImmutable();
+        $this->createdAt = new DatePoint();
     }
 
     #[\Override]

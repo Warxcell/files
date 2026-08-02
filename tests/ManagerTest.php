@@ -253,7 +253,7 @@ class ManagerTest extends TestCase
 
 
         self::assertEquals(
-            '10',
+            '0',
             $expectedDateTime
                 ->diff($file->getCreatedAt())
                 ->format('%s')
