@@ -51,8 +51,6 @@ class ManagerTest extends TestCase
     {
         parent::setUp();
 
-        Clock::set(new MockClock());
-
         $this->filesystem = new Filesystem(new InMemoryFilesystemAdapter());
 
         $this->manager = new Manager(
@@ -79,7 +77,7 @@ class ManagerTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The algorithm "not_existing" is not supported.');
 
-        $manager = new Manager(
+        new Manager(
             File::class,
             $this->createMock(Storage::class),
             $this->createMock(NamingStrategy::class),
@@ -241,6 +239,8 @@ class ManagerTest extends TestCase
 
     public function testSimpleUpload(): void
     {
+        Clock::set(new MockClock());
+
         self::assertEquals(File::class, $this->manager->getClass());
         $file = $this->manager->upload(new SplFileObject(__DIR__ . '/files/image1.jpg'));
 

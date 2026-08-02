@@ -42,6 +42,7 @@ class DownloadUtilityTest extends TestCase
     public function createResponseProvider(): iterable
     {
         Clock::set(new MockClock());
+
         $file = new File('image1.jpg', 1234, '12345', 'image/jpeg');
         $expiresAt = new DatePoint('+30 days');
         yield [
