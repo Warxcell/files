@@ -8,7 +8,6 @@ use Arxy\FilesBundle\Repository\ORM;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class ORMTest extends TestCase
@@ -26,18 +25,34 @@ class ORMTest extends TestCase
 
     public function testFindAllForBatchProcessing(): void
     {
-        $mock = $this->getMockForTrait(ORM::class);
-
         $queryMock = $this->createMock(Query::class);
         $queryMock->expects($this->once())->method('toIterable');
 
         $qbMock = $this->createMock(QueryBuilder::class);
         $qbMock->expects($this->once())->method('getQuery')->willReturn($queryMock);
 
-        $mock->expects($this->once())
-            ->method('createQueryBuilder')
-            ->willReturn($qbMock);
+        $repository = new class ($qbMock) {
+            use ORM;
 
-        $mock->findAllForBatchProcessing();
+            public function __construct(
+                private readonly QueryBuilder $queryBuilder
+            ) {
+            }
+
+            public function findOneBy(array $criteria, ?array $orderBy = null): mixed
+            {
+                return null;
+            }
+
+            public function createQueryBuilder(string $alias, ?string $indexBy = null): QueryBuilder
+            {
+                TestCase::assertSame('file', $alias);
+                TestCase::assertNull($indexBy);
+
+                return $this->queryBuilder;
+            }
+        };
+
+        $repository->findAllForBatchProcessing();
     }
 }
