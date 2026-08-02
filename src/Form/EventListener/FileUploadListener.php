@@ -13,15 +13,16 @@ use Symfony\Component\Form\FormEvents;
 
 class FileUploadListener implements EventSubscriberInterface
 {
-    private ManagerInterface $fileManager;
-    private bool $multiple;
-
-    public function __construct(ManagerInterface $fileManager, bool $multiple)
-    {
-        $this->fileManager = $fileManager;
-        $this->multiple = $multiple;
+    /**
+     * @param ManagerInterface<File, mixed> $fileManager
+     */
+    public function __construct(
+        private readonly ManagerInterface $fileManager,
+        private readonly bool $multiple
+    ) {
     }
 
+    #[\Override]
     public static function getSubscribedEvents(): array
     {
         return [
@@ -29,6 +30,11 @@ class FileUploadListener implements EventSubscriberInterface
         ];
     }
 
+    /**
+     * @throws \Arxy\FilesBundle\UnableToUpload
+     * @throws \Symfony\Component\Form\Exception\OutOfBoundsException
+     * @throws \Symfony\Component\Form\Exception\RuntimeException
+     */
     public function submit(FormEvent $event): void
     {
         /** @var SplFileInfo|SplFileInfo[]|null $uploadedFile */
@@ -42,6 +48,7 @@ class FileUploadListener implements EventSubscriberInterface
     /**
      * @param SplFileInfo|SplFileInfo[] $data
      * @return File|File[]
+     * @throws \Arxy\FilesBundle\UnableToUpload
      */
     private function transform($data)
     {

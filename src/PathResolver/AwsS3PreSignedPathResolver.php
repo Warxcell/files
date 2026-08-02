@@ -11,27 +11,27 @@ use Aws\S3\S3ClientInterface;
 use DateInterval;
 use DateTimeImmutable;
 
+/**
+ * @template T of File
+ * @implements PathResolver<T>
+ */
 class AwsS3PreSignedPathResolver implements PathResolver
 {
-    private S3ClientInterface $s3Client;
-    private string $bucket;
-    private ManagerInterface $manager;
-    private DateInterval $expiry;
-
+    /**
+     * @param ManagerInterface<T, mixed> $manager
+     */
     public function __construct(
-        S3ClientInterface $s3Client,
-        string $bucket,
-        ManagerInterface $manager,
-        DateInterval $expiry
+        private readonly S3ClientInterface $s3Client,
+        private readonly string $bucket,
+        private readonly ManagerInterface $manager,
+        private readonly DateInterval $expiry
     ) {
-        $this->s3Client = $s3Client;
-        $this->bucket = $bucket;
-        $this->manager = $manager;
-        $this->expiry = $expiry;
     }
 
+    #[\Override]
     public function getPath(File $file): string
     {
+        /* @phpstan-ignore missingType.checkedException (command is there) */
         $cmd = $this->s3Client->getCommand(
             'GetObject',
             [

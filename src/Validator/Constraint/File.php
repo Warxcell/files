@@ -22,19 +22,20 @@ class File extends Constraint
 {
     public ?int $maxSize = null;
 
-    /** @var array<int, string> */
+    /** @var array<string> */
     public array $mimeTypes = [];
 
     /**
      * @param array<string>|string $mimeTypes
      * @param array<string>|null $groups
+     * @throws ConstraintDefinitionException
      */
     public function __construct(
         int|string|null $maxSize = null,
         public string $maxSizeMessage = 'The file is too large ({{ size }}). Allowed maximum size is {{ limit }}.',
         array|string $mimeTypes = [],
         public string $mimeTypesMessage = 'The mime type of the file is invalid ({{ type }}). Allowed mime types are {{ types }}.',
-        array $groups = null,
+        ?array $groups = null,
     ) {
         if (is_string($maxSize)) {
             $maxSize = $this->normalizeBinaryFormat($maxSize);
@@ -48,6 +49,9 @@ class File extends Constraint
         parent::__construct(groups: $groups);
     }
 
+    /**
+     * @throws ConstraintDefinitionException
+     */
     private function normalizeBinaryFormat(string $maxSize): int
     {
         $original = $maxSize;

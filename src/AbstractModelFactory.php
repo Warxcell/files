@@ -9,7 +9,7 @@ use SplFileInfo;
 
 /**
  * @template T of File
- * @implements ModelFactory<T>
+ * @implements ModelFactory<T, mixed>
  */
 class AbstractModelFactory implements ModelFactory
 {
@@ -26,12 +26,14 @@ class AbstractModelFactory implements ModelFactory
         $this->class = $class;
     }
 
+    #[\Override]
     public function create(
         SplFileInfo $file,
         string $originalFilename,
         int $size,
         string $hash,
-        string $mimeType
+        string $mimeType,
+        mixed $context = null
     ): File {
         return new $this->class($originalFilename, $size, $hash, $mimeType);
     }

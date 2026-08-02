@@ -17,28 +17,30 @@ use function stripos;
 
 class ImagePreviewGenerator implements PreviewGeneratorInterface
 {
-    private ManagerInterface $manager;
-    private ImagineInterface $imagine;
-    private ?string $format;
-    private ?Transformation $transformation;
-
+    /**
+     * @param ManagerInterface<File, mixed> $manager
+     */
     public function __construct(
-        ManagerInterface $manager,
-        ImagineInterface $imagine,
-        string $format = null,
-        Transformation $transformation = null
+        private readonly ManagerInterface $manager,
+        private readonly ImagineInterface $imagine,
+        private readonly ?string $format = null,
+        private readonly ?Transformation $transformation = null
     ) {
-        $this->manager = $manager;
-        $this->imagine = $imagine;
-        $this->format = $format;
-        $this->transformation = $transformation;
     }
 
+    #[\Override]
     public function supports(File $file): bool
     {
         return stripos($file->getMimeType(), 'image/') !== false;
     }
 
+    /**
+     * @throws \Arxy\FilesBundle\FileException
+     * @throws \Imagine\Exception\InvalidArgumentException
+     * @throws \Imagine\Exception\RuntimeException
+     * @throws \RuntimeException
+     */
+    #[\Override]
     public function generate(File $file, DimensionInterface $dimension): SplFileInfo
     {
         $image = $this->imagine->read($this->manager->readStream($file));

@@ -11,6 +11,7 @@ use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\ConsoleOutput;
+use Symfony\Component\HttpKernel\KernelInterface;
 
 abstract class AbstractFunctionalTest extends KernelTestCase
 {
@@ -45,12 +46,12 @@ abstract class AbstractFunctionalTest extends KernelTestCase
         unset($this->flysystem);
     }
 
-    protected static function getKernelClass()
+    protected static function getKernelClass(): string
     {
         return Kernel::class;
     }
 
-    protected static function createKernel(array $options = [])
+    protected static function createKernel(array $options = []): KernelInterface
     {
         $kernel = parent::createKernel($options);
         assert($kernel instanceof Kernel);

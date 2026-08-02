@@ -10,22 +10,22 @@ use Arxy\FilesBundle\Model\MutableFile;
 use DateTimeImmutable;
 use DateTimeInterface;
 
+/**
+ * @template T of File
+ * @extends DecoratedFile<T>
+ */
 class DownloadableFile extends DecoratedFile
 {
-    private ?string $name;
-    private bool $forceDownload;
-    private ?DateTimeInterface $expireAt;
-
+    /**
+     * @param T $file
+     */
     public function __construct(
         File $file,
-        string $name = null,
-        bool $forceDownload = false,
-        DateTimeInterface $expireAt = null
+        private readonly ?string $name = null,
+        private readonly bool $forceDownload = false,
+        private readonly ?DateTimeInterface $expireAt = null
     ) {
         parent::__construct($file);
-        $this->name = $name;
-        $this->forceDownload = $forceDownload;
-        $this->expireAt = $expireAt;
     }
 
     public function getModifiedAt(): DateTimeImmutable

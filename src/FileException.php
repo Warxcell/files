@@ -12,7 +12,7 @@ class FileException extends RuntimeException
 {
     private File $relatedFile;
 
-    public function __construct(File $file, string $message, Throwable $previous = null)
+    public function __construct(File $file, string $message, ?Throwable $previous = null)
     {
         parent::__construct($message, 0, $previous);
         $this->relatedFile = $file;

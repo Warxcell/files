@@ -9,10 +9,12 @@ use SplFileInfo;
 
 /**
  * @template T of File
+ * @template C
  */
 interface ModelFactory
 {
     /**
+     * @param C $context
      * @return T
      */
     public function create(
@@ -20,6 +22,7 @@ interface ModelFactory
         string $originalFilename,
         int $size,
         string $hash,
-        string $mimeType
+        string $mimeType,
+        mixed $context = null
     ): File;
 }

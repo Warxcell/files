@@ -7,16 +7,12 @@ namespace Arxy\FilesBundle\Tests\Functional\Entity;
 use Arxy\FilesBundle\Entity\File as BaseFile;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity()
- */
+#[ORM\Entity]
 class File extends BaseFile
 {
-    /**
-     * @ORM\Id()
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue()
-     */
+    #[ORM\Id]
+    #[ORM\Column(type: 'integer')]
+    #[ORM\GeneratedValue]
     private ?int $id = null;
 
     public function getId(): ?int

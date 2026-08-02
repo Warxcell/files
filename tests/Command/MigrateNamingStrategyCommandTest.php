@@ -52,7 +52,7 @@ class MigrateNamingStrategyCommandTest extends TestCase
             ->will($this->onConsecutiveCalls(true, false));
 
         $commandTester = new CommandTester($this->command);
-        self::assertSame(0, $commandTester->execute([]));
+        self::assertSame(1, $commandTester->execute([]));
 
         $output = $commandTester->getDisplay();
 

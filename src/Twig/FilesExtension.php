@@ -4,21 +4,39 @@ declare(strict_types=1);
 
 namespace Arxy\FilesBundle\Twig;
 
-use Twig\Extension\AbstractExtension;
-use Twig\TwigFilter;
+use Arxy\FilesBundle\ManagerInterface;
+use Arxy\FilesBundle\Model\File;
+use Twig\Attribute\AsTwigFilter;
 
 use function ByteUnits\bytes;
 
-class FilesExtension extends AbstractExtension
+/**
+ * @template T of File
+ */
+class FilesExtension
 {
-    public function getFilters(): array
+    /**
+     * @param ManagerInterface<T, mixed> $manager
+     */
+    public function __construct(
+        private readonly ManagerInterface $manager
+    ) {
+    }
+
+    /**
+     * @param T $file
+     * @throws \Arxy\FilesBundle\FileException
+     */
+    #[AsTwigFilter('file_content')]
+    public function readContent(File $file): string
     {
-        return [
-            new TwigFilter(
-                'format_bytes',
-                static fn (int $bytes, int $precision = 2): string => bytes($bytes)->format($precision, ' ')
-            ),
-            new TwigFilter('file_content', [FilesRuntime::class, 'readContent']),
-        ];
+        return $this->manager->read($file);
+    }
+
+    #[AsTwigFilter('format_bytes')]
+    public function formatBytes(int $bytes, int $precision = 2): string
+    {
+        /* @phpstan-ignore return.type (its ok) */
+        return bytes($bytes)->format($precision, ' ');
     }
 }

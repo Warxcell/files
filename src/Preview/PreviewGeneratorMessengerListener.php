@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Arxy\FilesBundle\Preview;
 
+use Arxy\FilesBundle\Model\File;
 use Arxy\FilesBundle\Event\PostUpdate;
 use Arxy\FilesBundle\Event\PostUpload;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 class PreviewGeneratorMessengerListener implements EventSubscriberInterface
@@ -18,6 +20,7 @@ class PreviewGeneratorMessengerListener implements EventSubscriberInterface
         $this->bus = $bus;
     }
 
+    #[\Override]
     public static function getSubscribedEvents(): array
     {
         return [
@@ -26,6 +29,10 @@ class PreviewGeneratorMessengerListener implements EventSubscriberInterface
         ];
     }
 
+    /**
+     * @param PostUpload<File, mixed> $event
+     * @throws ExceptionInterface
+     */
     public function postUpload(PostUpload $event): void
     {
         $file = $event->getFile();
@@ -35,6 +42,10 @@ class PreviewGeneratorMessengerListener implements EventSubscriberInterface
         }
     }
 
+    /**
+     * @param PostUpdate<File, mixed> $event
+     * @throws ExceptionInterface
+     */
     public function postUpdate(PostUpdate $event): void
     {
         $file = $event->getFile();

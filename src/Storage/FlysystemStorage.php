@@ -11,15 +11,18 @@ use Arxy\FilesBundle\Storage;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
 
+/**
+ * @implements Storage<File>
+ * @implements MigrateableStorage<File>
+ */
 class FlysystemStorage implements Storage, MigrateableStorage
 {
-    private FilesystemOperator $flysystem;
-
-    public function __construct(FilesystemOperator $flysystem)
-    {
-        $this->flysystem = $flysystem;
+    public function __construct(
+        private readonly FilesystemOperator $flysystem
+    ) {
     }
 
+    #[\Override]
     public function read(File $file, string $pathname): string
     {
         try {
@@ -29,6 +32,7 @@ class FlysystemStorage implements Storage, MigrateableStorage
         }
     }
 
+    #[\Override]
     public function readStream(File $file, string $pathname)
     {
         try {
@@ -38,6 +42,7 @@ class FlysystemStorage implements Storage, MigrateableStorage
         }
     }
 
+    #[\Override]
     public function write(File $file, string $pathname, $stream): void
     {
         try {
@@ -47,6 +52,7 @@ class FlysystemStorage implements Storage, MigrateableStorage
         }
     }
 
+    #[\Override]
     public function remove(File $file, string $pathname): void
     {
         try {
@@ -56,6 +62,7 @@ class FlysystemStorage implements Storage, MigrateableStorage
         }
     }
 
+    #[\Override]
     public function migrate(File $file, string $oldPathname, string $newPathname): bool
     {
         try {

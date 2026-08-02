@@ -4,53 +4,59 @@ declare(strict_types=1);
 
 namespace Arxy\FilesBundle\EventListener;
 
+use Arxy\FilesBundle\FileException;
 use Arxy\FilesBundle\ManagerInterface;
 use Arxy\FilesBundle\Model\File;
-use Closure;
-use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Event\LifecycleEventArgs;
+use Doctrine\ORM\Event\PostPersistEventArgs;
+use Doctrine\ORM\Event\PostRemoveEventArgs;
+use ReflectionException;
 use ReflectionObject;
 
 final class DoctrineORMListener
 {
-    private ManagerInterface $manager;
     private string $class;
-    private Closure $move;
-    private Closure $remove;
 
-    public function __construct(ManagerInterface $manager)
-    {
+    /**
+     * @param ManagerInterface<File, mixed> $manager
+     */
+    public function __construct(
+        private readonly ManagerInterface $manager
+    ) {
         $this->class = $manager->getClass();
-        $this->manager = $manager;
-
-        $this->move = static function (File $file) use ($manager): void {
-            $manager->moveFile($file);
-        };
-        $this->remove = static function (File $file) use ($manager): void {
-            $manager->remove($file);
-        };
     }
 
-    public function postPersist(LifecycleEventArgs $eventArgs): void
+    /**
+     * @throws ReflectionException
+     * @throws FileException
+     */
+    public function postPersist(PostPersistEventArgs $eventArgs): void
     {
-        $entity = $eventArgs->getEntity();
-        $entityManager = $eventArgs->getEntityManager();
+        $entity = $eventArgs->getObject();
+        $entityManager = $eventArgs->getObjectManager();
         if ($this->supports($entity)) {
-            ($this->move)($entity);
+            $this->manager->moveFile($entity);
         }
-        $this->handleEmbeddable($entityManager, $entity, $this->move);
+        foreach ($this->handleEmbeddable($entityManager, $entity) as $file) {
+            $this->manager->moveFile($file);
+        }
     }
 
-    public function postRemove(LifecycleEventArgs $eventArgs): void
+    /**
+     * @throws ReflectionException
+     * @throws FileException
+     */
+    public function postRemove(PostRemoveEventArgs $eventArgs): void
     {
-        $entity = $eventArgs->getEntity();
-        $entityManager = $eventArgs->getEntityManager();
+        $entity = $eventArgs->getObject();
+        $entityManager = $eventArgs->getObjectManager();
 
         if ($this->supports($entity)) {
-            ($this->remove)($entity);
+            $this->manager->remove($entity);
         }
-        $this->handleEmbeddable($entityManager, $entity, $this->remove);
+        foreach ($this->handleEmbeddable($entityManager, $entity) as $file) {
+            $this->manager->remove($file);
+        }
     }
 
     public function onClear(): void
@@ -58,20 +64,26 @@ final class DoctrineORMListener
         $this->manager->clear();
     }
 
+    /**
+     * @phpstan-assert-if-true File $entity
+     */
     private function supports(object $entity): bool
     {
         return $entity instanceof $this->class;
     }
 
+    /**
+     * @return iterable<File>
+     * @throws ReflectionException
+     */
     private function handleEmbeddable(
         EntityManagerInterface $entityManager,
         object $entity,
-        Closure $action
-    ): void {
-        $classMetadata = $entityManager->getClassMetadata(ClassUtils::getClass($entity));
+    ): iterable {
+        $classMetadata = $entityManager->getClassMetadata($entity::class);
 
         foreach ($classMetadata->embeddedClasses as $property => $embeddedClass) {
-            if (!is_a($embeddedClass['class'], $this->class, true)) {
+            if (!is_a($embeddedClass->class, $this->class, true)) {
                 continue;
             }
 
@@ -84,7 +96,7 @@ final class DoctrineORMListener
             if ($file === null) {
                 continue;
             }
-            $action($file);
+            yield $file;
         }
     }
 }

@@ -15,6 +15,9 @@ use Arxy\FilesBundle\Utility\DownloadUtility;
 use DateTimeImmutable;
 use League\Flysystem\FilesystemOperator;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Clock\Clock;
+use Symfony\Component\Clock\DatePoint;
+use Symfony\Component\Clock\MockClock;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class DownloadUtilityTest extends TestCase
@@ -38,13 +41,15 @@ class DownloadUtilityTest extends TestCase
 
     public function createResponseProvider(): iterable
     {
+        Clock::set(new MockClock());
+
         $file = new File('image1.jpg', 1234, '12345', 'image/jpeg');
-        $expiresAt = new DateTimeImmutable('+30 days');
+        $expiresAt = new DatePoint('+30 days');
         yield [
             $file,
             'attachment; filename=image1.jpg',
             'image/jpeg',
-            $expiresAt->format('D, d M Y H:i'),
+            $expiresAt->format('D, d M Y H:i:s') . ' GMT',
             $file->getCreatedAt()->format('D, d M Y H:i:s') . ' GMT',
             1234,
         ];

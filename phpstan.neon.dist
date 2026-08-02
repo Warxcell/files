@@ -1,0 +1,42 @@
+includes:
+    - vendor/phpstan/phpstan/conf/bleedingEdge.neon
+    - phpstan-baseline.neon
+
+parameters:
+    level: max
+    tmpDir: .phpstan/cache
+    paths:
+        - src
+    checkFunctionNameCase: true
+    checkInternalClassCaseSensitivity: true
+    checkMissingCallableSignature: true
+    checkBenevolentUnionTypes: true
+    checkExplicitMixedMissingReturn: true
+    checkTooWideParameterOutInProtectedAndPublicMethods: true
+    checkTooWideReturnTypesInProtectedAndPublicMethods: true
+    checkTooWideThrowTypesInProtectedAndPublicMethods: true
+    checkUninitializedProperties: true
+    checkDynamicProperties: true
+    inferPrivatePropertyTypeFromConstructor: true
+    checkStrictPrintfPlaceholderTypes: true
+    reportMaybesInMethodSignatures: true
+    reportMaybesInPropertyPhpDocTypes: true
+    reportStaticMethodSignatures: true
+    reportWrongPhpDocTypeInVarTag: true
+    reportAnyTypeWideningInVarTag: true
+    reportNonIntStringArrayKey: true
+    reportUnsafeArrayStringKeyCasting: prevent
+    reportPossiblyNonexistentGeneralArrayOffset: true
+    reportPossiblyNonexistentConstantArrayOffset: true
+    checkMissingOverrideMethodAttribute: true
+    checkMissingOverridePropertyAttribute: true
+    polluteScopeWithLoopInitialAssignments: false
+    polluteScopeWithAlwaysIterableForeach: false
+    polluteScopeWithBlock: false
+    rememberPossiblyImpureFunctionValues: false
+    reportIgnoresWithoutComments: true
+    exceptions:
+        check:
+            missingCheckedExceptionInThrows: true
+            tooWideImplicitThrowType: true
+            throwTypeCovariance: true

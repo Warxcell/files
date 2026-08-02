@@ -33,6 +33,9 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 use SplFileInfo;
 use SplFileObject;
 use SplTempFileObject;
+use Symfony\Component\Clock\Clock;
+use Symfony\Component\Clock\DatePoint;
+use Symfony\Component\Clock\MockClock;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Throwable;
 
@@ -74,7 +77,7 @@ class ManagerTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The algorithm "not_existing" is not supported.');
 
-        $manager = new Manager(
+        new Manager(
             File::class,
             $this->createMock(Storage::class),
             $this->createMock(NamingStrategy::class),
@@ -236,6 +239,9 @@ class ManagerTest extends TestCase
 
     public function testSimpleUpload(): void
     {
+        Clock::set(new MockClock());
+        $expectedDateTime = new DatePoint();
+
         self::assertEquals(File::class, $this->manager->getClass());
         $file = $this->manager->upload(new SplFileObject(__DIR__ . '/files/image1.jpg'));
 
@@ -245,12 +251,12 @@ class ManagerTest extends TestCase
         self::assertEquals('image1.jpg', $file->getOriginalFilename());
         self::assertEquals('image/jpeg', $file->getMimeType());
 
-        $expectedDateTime = new DateTimeImmutable();
-        self::assertTrue(
+
+        self::assertEquals(
+            '0',
             $expectedDateTime
                 ->diff($file->getCreatedAt())
                 ->format('%s')
-            < 5
         );
     }
 
@@ -415,15 +421,10 @@ class ManagerTest extends TestCase
     {
         $file = new File('filename', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg');
 
-        try {
-            $this->manager->moveFile($file);
-        } catch (Throwable $exception) {
-            $this->assertInstanceOf(OutOfBoundsException::class, $exception);
-            $this->assertEquals(
-                'File ' . (string)spl_object_id($file) . ' not found in map',
-                $exception->getMessage()
-            );
-        }
+        self::expectException(FileException::class);
+        self::expectExceptionMessage('Unable to move file');
+
+        $this->manager->moveFile($file);
     }
 
     public function testWrongFileMoveStringable(): void
@@ -431,12 +432,10 @@ class ManagerTest extends TestCase
         $file = new StringableFile('filename', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg');
         $file->setId(25);
 
-        try {
-            $this->manager->moveFile($file);
-        } catch (Throwable $exception) {
-            $this->assertInstanceOf(OutOfBoundsException::class, $exception);
-            $this->assertEquals('File 25 not found in map', $exception->getMessage());
-        }
+        self::expectException(FileException::class);
+        self::expectExceptionMessage('Unable to move file');
+
+        $this->manager->moveFile($file);
     }
 
     public function testSimpleMoveFile(): void
@@ -639,14 +638,9 @@ class ManagerTest extends TestCase
         $file->setId(1);
         $this->manager->clear();
 
-        try {
-            $this->manager->moveFile($file);
-        } catch (Throwable $exception) {
-            $this->assertInstanceOf(OutOfBoundsException::class, $exception);
-            $this->assertEquals(
-                'File ' . (string)spl_object_id($file) . ' not found in map',
-                $exception->getMessage()
-            );
-        }
+        self::expectException(FileException::class);
+        self::expectExceptionMessage('Unable to move file');
+
+        $this->manager->moveFile($file);
     }
 }

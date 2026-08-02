@@ -8,6 +8,7 @@ use Arxy\FilesBundle\ErrorHandler;
 use Arxy\FilesBundle\ManagerInterface;
 use Arxy\FilesBundle\Model\File;
 use DateTimeImmutable;
+use Symfony\Component\Clock\DatePoint;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -18,13 +19,17 @@ use function Symfony\Component\String\u;
 
 class DownloadUtility
 {
-    private ManagerInterface $manager;
-
-    public function __construct(ManagerInterface $manager)
-    {
-        $this->manager = $manager;
+    /**
+     * @param ManagerInterface<File, mixed> $manager
+     */
+    public function __construct(
+        private readonly ManagerInterface $manager
+    ) {
     }
 
+    /**
+     * @throws \InvalidArgumentException
+     */
     public function createResponse(File $file): StreamedResponse
     {
         $response = new StreamedResponse();
@@ -42,7 +47,8 @@ class DownloadUtility
                 $file->getName() ?? u($file->getOriginalFilename())->ascii()->toString()
             );
         } else {
-            $expireAt = new DateTimeImmutable("+30 days");
+            /* @phpstan-ignore missingType.checkedException (not gonna happen) */
+            $expireAt = new DatePoint("+30 days");
             $response->setExpires($expireAt);
             $response->setLastModified($file->getCreatedAt());
 
@@ -60,9 +66,9 @@ class DownloadUtility
                 $stream = $this->manager->readStream($file);
 
                 $out = ErrorHandler::wrap(static fn () => fopen('php://output', 'wb'));
-                ErrorHandler::wrap(static fn (): int => stream_copy_to_stream($stream, $out));
-                ErrorHandler::wrap(static fn (): bool => fclose($out));
-                ErrorHandler::wrap(static fn (): bool => fclose($stream));
+                ErrorHandler::wrap(static fn () => stream_copy_to_stream($stream, $out));
+                ErrorHandler::wrap(static fn () => fclose($out));
+                ErrorHandler::wrap(static fn () => fclose($stream));
             }
         );
 

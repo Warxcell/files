@@ -31,7 +31,7 @@ class ManagerTest extends AbstractFunctionalTest
 
     protected static function getConfig(): string
     {
-        return __DIR__ . '/config.yml';
+        return __DIR__ . '/config.php';
     }
 
     protected static function getBundles(): array

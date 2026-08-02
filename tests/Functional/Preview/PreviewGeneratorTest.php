@@ -12,7 +12,7 @@ class PreviewGeneratorTest extends AbstractFunctionalTest
 {
     protected static function getConfig(): string
     {
-        return __DIR__ . '/config_no_messenger.yml';
+        return __DIR__ . '/config_no_messenger.php';
     }
 
     protected static function getBundles(): array

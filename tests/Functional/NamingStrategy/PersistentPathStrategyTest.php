@@ -13,7 +13,7 @@ class PersistentPathStrategyTest extends AbstractStrategyTest
 {
     protected static function getConfig(): string
     {
-        return __DIR__ . '/PersistPathStrategy/config.yml';
+        return __DIR__ . '/PersistPathStrategy/config.php';
     }
 
     protected static function getBundles(): array

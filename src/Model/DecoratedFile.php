@@ -32,26 +32,31 @@ abstract class DecoratedFile implements File
         return $this->decorated;
     }
 
+    #[\Override]
     public function getOriginalFilename(): string
     {
         return $this->decorated->getOriginalFilename();
     }
 
+    #[\Override]
     public function getSize(): int
     {
         return $this->decorated->getSize();
     }
 
+    #[\Override]
     public function getHash(): string
     {
         return $this->decorated->getHash();
     }
 
+    #[\Override]
     public function getCreatedAt(): DateTimeImmutable
     {
         return $this->decorated->getCreatedAt();
     }
 
+    #[\Override]
     public function getMimeType(): string
     {
         return $this->decorated->getMimeType();

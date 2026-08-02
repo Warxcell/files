@@ -14,7 +14,11 @@ use function strstr;
 
 class FileValidator extends ConstraintValidator
 {
-    public function validate($value, Constraint $constraint): void
+    /**
+     * @throws UnexpectedTypeException
+     */
+    #[\Override]
+    public function validate(mixed $value, Constraint $constraint): void
     {
         if (!$constraint instanceof File) {
             throw new UnexpectedTypeException($constraint, File::class);

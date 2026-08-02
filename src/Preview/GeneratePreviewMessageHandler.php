@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Arxy\FilesBundle\Preview;
 
-use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
+use Arxy\FilesBundle\UnableToUpload;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
-class GeneratePreviewMessageHandler implements MessageHandlerInterface
+#[AsMessageHandler]
+class GeneratePreviewMessageHandler
 {
     private PreviewGenerator $generator;
 
@@ -15,12 +17,15 @@ class GeneratePreviewMessageHandler implements MessageHandlerInterface
         $this->generator = $generator;
     }
 
+    /**
+     * @throws UnableToUpload
+     */
     public function __invoke(GeneratePreviewMessage $message): void
     {
         $file = $message->getFile();
         try {
             $file->setPreview($this->generator->generate($file));
-        } catch (NoPreviewGeneratorFound $exception) {
+        } catch (NoPreviewGeneratorFound) {
         }
     }
 }

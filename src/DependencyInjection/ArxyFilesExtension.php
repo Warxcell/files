@@ -11,7 +11,6 @@ use Arxy\FilesBundle\Manager;
 use Arxy\FilesBundle\ManagerInterface;
 use Arxy\FilesBundle\Storage;
 use Arxy\FilesBundle\Twig\FilesExtension;
-use Arxy\FilesBundle\Twig\FilesRuntime;
 use LogicException;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -25,6 +24,7 @@ use function count;
 
 class ArxyFilesExtension extends Extension
 {
+    #[\Override]
     public function load(array $configs, ContainerBuilder $container): void
     {
         $configuration = new Configuration();
@@ -42,11 +42,6 @@ class ArxyFilesExtension extends Extension
             $filesExtension->setAutowired(true);
             $filesExtension->setAutoconfigured(true);
             $container->setDefinition(FilesExtension::class, $filesExtension);
-
-            $filesExtension = new Definition(FilesRuntime::class);
-            $filesExtension->setAutowired(true);
-            $filesExtension->setAutoconfigured(true);
-            $container->setDefinition(FilesRuntime::class, $filesExtension);
         }
 
         $totalManagers = count($config['managers']);
@@ -130,6 +125,9 @@ class ArxyFilesExtension extends Extension
         return $definition;
     }
 
+    /**
+     * @throws LogicException
+     */
     private function createListenerDefinition(string $driver, string $serviceId): Definition
     {
         switch ($driver) {

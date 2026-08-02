@@ -9,27 +9,19 @@ use Arxy\FilesBundle\Model\MutablePathAware;
 use Arxy\FilesBundle\Preview\PreviewableFile;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity()
- * @implements PreviewableFile<Preview>
- */
+/** @implements PreviewableFile<Preview> */
+#[ORM\Entity]
 class FileWithPreview extends BaseFile implements PreviewableFile, MutablePathAware
 {
-    /**
-     * @ORM\Id()
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue()
-     */
+    #[ORM\Id]
+    #[ORM\Column(type: 'integer')]
+    #[ORM\GeneratedValue]
     private ?int $id = null;
 
-    /**
-     * @ORM\OneToOne(targetEntity=Preview::class, cascade={"PERSIST"})
-     */
+    #[ORM\OneToOne(targetEntity: Preview::class, cascade: ['persist'])]
     private ?Preview $preview = null;
 
-    /**
-     * @ORM\Column(type="string")
-     */
+    #[ORM\Column(type: 'string')]
     private string $pathname;
 
     public function getId(): ?int

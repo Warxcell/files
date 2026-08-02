@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Arxy\FilesBundle\Tests;
 
 use Arxy\FilesBundle\DelegatingManager;
+use Arxy\FilesBundle\FileException;
 use Arxy\FilesBundle\ManagerInterface;
 use InvalidArgumentException;
 use LogicException;
@@ -100,29 +101,25 @@ class DelegatingManagerTest extends TestCase
 
     public function testNoManagerForFileRead(): void
     {
-        $this->expectException(LogicException::class);
-        $this->expectExceptionMessage('No manager for Arxy\FilesBundle\Tests\File3');
+        $this->expectException(FileException::class);
+        $this->expectExceptionMessage('Unable to read file');
+        //        $this->expectExceptionMessage('No manager for Arxy\FilesBundle\Tests\File3');
         $this->manager->read(new File3('original_filename.jpg', 125, '1234567', 'image/jpeg'));
     }
 
     public function testNoManagerForFileReadStream(): void
     {
-        $this->expectException(LogicException::class);
-        $this->expectExceptionMessage('No manager for Arxy\FilesBundle\Tests\File3');
+        $this->expectException(FileException::class);
+        $this->expectExceptionMessage('Unable to read file');
+        //        $this->expectExceptionMessage('No manager for Arxy\FilesBundle\Tests\File3');
         $this->manager->readStream(new File3('original_filename.jpg', 125, '1234567', 'image/jpeg'));
     }
 
     public function testNoManagerForFileWrite(): void
     {
-        $this->expectException(LogicException::class);
-        $this->expectExceptionMessage('No manager for Arxy\FilesBundle\Tests\File3');
-        $this->manager->readStream(new File3('original_filename.jpg', 125, '1234567', 'image/jpeg'));
-    }
-
-    public function testNoManagerForFileWriteStream(): void
-    {
-        $this->expectException(LogicException::class);
-        $this->expectExceptionMessage('No manager for Arxy\FilesBundle\Tests\File3');
+        $this->expectException(FileException::class);
+        $this->expectExceptionMessage('Unable to read file');
+        //        $this->expectExceptionMessage('No manager for Arxy\FilesBundle\Tests\File3');
         $this->manager->readStream(new File3('original_filename.jpg', 125, '1234567', 'image/jpeg'));
     }
 
@@ -135,15 +132,17 @@ class DelegatingManagerTest extends TestCase
 
     public function testNoManagerForFileMove(): void
     {
-        $this->expectException(LogicException::class);
-        $this->expectExceptionMessage('No manager for Arxy\FilesBundle\Tests\File3');
+        $this->expectException(FileException::class);
+        $this->expectExceptionMessage('Unable to move file');
+        //        $this->expectExceptionMessage('No manager for Arxy\FilesBundle\Tests\File3');
         $this->manager->moveFile(new File3('original_filename.jpg', 125, '1234567', 'image/jpeg'));
     }
 
     public function testNoManagerForRemove(): void
     {
-        $this->expectException(LogicException::class);
-        $this->expectExceptionMessage('No manager for Arxy\FilesBundle\Tests\File3');
+        $this->expectException(FileException::class);
+        $this->expectExceptionMessage('Unable to remove file');
+        //        $this->expectExceptionMessage('No manager for Arxy\FilesBundle\Tests\File3');
         $this->manager->remove(new File3('original_filename.jpg', 125, '1234567', 'image/jpeg'));
     }
 

@@ -16,6 +16,7 @@ use function dirname;
  */
 final class PersistentPathStrategy implements NamingStrategy
 {
+    #[\Override]
     public function getDirectoryName(File $file): ?string
     {
         $pathname = $file->getPathname();
@@ -28,6 +29,7 @@ final class PersistentPathStrategy implements NamingStrategy
         return $directory . DIRECTORY_SEPARATOR;
     }
 
+    #[\Override]
     public function getFileName(File $file): string
     {
         $pathname = $file->getPathname();
