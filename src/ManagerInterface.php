@@ -12,28 +12,15 @@ use SplFileInfo;
  * @template T of File
  * @template C
  * @extends UploaderInterface<T, C>
+ * @extends ReaderInterface<T>
  */
-interface ManagerInterface extends UploaderInterface
+interface ManagerInterface extends UploaderInterface, ReaderInterface
 {
     /**
      * Get underlying path of file
      * @param T $file
      */
     public function getPathname(File $file): string;
-
-    /**
-     * Reads the content of file object.
-     * @param T $file
-     * @throws FileException
-     */
-    public function read(File $file): string;
-
-    /**
-     * @param T $file
-     * @return resource
-     * @throws FileException
-     */
-    public function readStream(File $file);
 
     /**
      * @param T & MutableFile $file
