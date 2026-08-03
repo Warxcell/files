@@ -81,7 +81,7 @@ parameters:
 		-
 			rawMessage: Offset 'managers' might not exist on non-empty-array.
 			identifier: offsetAccess.notFound
-			count: 3
+			count: 4
 			path: src/DependencyInjection/ArxyFilesExtension.php
 
 		-
@@ -93,7 +93,7 @@ parameters:
 		-
 			rawMessage: 'Parameter #1 $array of function array_key_first expects array, mixed given.'
 			identifier: argument.type
-			count: 1
+			count: 2
 			path: src/DependencyInjection/ArxyFilesExtension.php
 
 		-
@@ -117,7 +117,7 @@ parameters:
 		-
 			rawMessage: 'Parameter #1 $id of method Symfony\Component\DependencyInjection\ContainerBuilder::registerAliasForArgument() expects string, mixed given.'
 			identifier: argument.type
-			count: 1
+			count: 2
 			path: src/DependencyInjection/ArxyFilesExtension.php
 
 		-
@@ -135,7 +135,7 @@ parameters:
 		-
 			rawMessage: 'Parameter #2 $id of method Symfony\Component\DependencyInjection\ContainerBuilder::setAlias() expects string|Symfony\Component\DependencyInjection\Alias, mixed given.'
 			identifier: argument.type
-			count: 1
+			count: 2
 			path: src/DependencyInjection/ArxyFilesExtension.php
 
 		-
@@ -259,7 +259,7 @@ parameters:
 			path: src/Form/Type/FileType.php
 
 		-
-			rawMessage: 'Parameter #1 $fileManager of class Arxy\FilesBundle\Form\EventListener\FileUploadListener constructor expects Arxy\FilesBundle\ManagerInterface<Arxy\FilesBundle\Model\File, mixed>, mixed given.'
+			rawMessage: 'Parameter #1 $fileManager of class Arxy\FilesBundle\Form\EventListener\FileUploadListener constructor expects Arxy\FilesBundle\UploaderInterface<Arxy\FilesBundle\Model\File, mixed>, mixed given.'
 			identifier: argument.type
 			count: 1
 			path: src/Form/Type/FileType.php

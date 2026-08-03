@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Arxy\FilesBundle\Preview;
 
-use Arxy\FilesBundle\ManagerInterface;
 use Arxy\FilesBundle\Model\File;
 use Arxy\FilesBundle\Model\MutableFile;
+use Arxy\FilesBundle\UploaderInterface;
 use SplFileInfo;
 
 use function pathinfo;
@@ -15,11 +15,11 @@ use function sprintf;
 class PreviewGenerator
 {
     /**
-     * @param ManagerInterface<File, mixed> $manager
+     * @param UploaderInterface<File, mixed> $manager
      * @param PreviewGeneratorInterface[] $generators
      */
     public function __construct(
-        private readonly ManagerInterface $manager,
+        private readonly UploaderInterface $manager,
         private readonly iterable $generators,
         private readonly DimensionInterface $dimension
     ) {

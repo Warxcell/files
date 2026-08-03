@@ -11,18 +11,10 @@ use SplFileInfo;
 /**
  * @template T of File
  * @template C
+ * @extends UploaderInterface<T, C>
  */
-interface ManagerInterface
+interface ManagerInterface extends UploaderInterface
 {
-    /**
-     * Converts SplFileInfo instance to file object.
-     * @param SplFileInfo $splFileInfo
-     * @param C $context
-     * @return T
-     * @throws UnableToUpload
-     */
-    public function upload(SplFileInfo $splFileInfo, mixed $context = null): File;
-
     /**
      * Get underlying path of file
      * @param T $file
