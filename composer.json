@@ -15,7 +15,7 @@
     },
     "require-dev": {
         "symfony/validator": "*",
-        "doctrine/orm": ">=3",
+        "doctrine/orm": ">=3,<3.6",
         "symfony/form": "*",
         "symfony/http-foundation": "*",
         "twig/twig": "*",
@@ -31,7 +31,7 @@
         "symfony/twig-bundle": ">=v7.3",
         "infection/infection": "0.34.0",
         "symfony/framework-bundle": ">=v7.3",
-        "doctrine/doctrine-bundle": "^2.3",
+        "doctrine/doctrine-bundle": ">=3",
         "liip/imagine-bundle": "^2.6",
         "vimeo/psalm": "6.16.1",
         "league/flysystem-bundle": ">=3.0",
