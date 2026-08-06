@@ -580,6 +580,39 @@ then run it.
 bin/console arxy:files:migrate-naming-strategy
 ```
 
+## Garbage collecting unreferenced files
+
+Over time, file entities can remain in the database after nothing references them anymore (for example after an
+owning entity was deleted without cascading the relation). The garbage collect command finds those orphaned file
+entities by inspecting Doctrine association mappings and removing entities that are not referenced from any owning side.
+
+When using `arxy_files` configuration, the command is registered automatically for all configured manager classes.
+No additional service configuration is required.
+
+List unreferenced files (dry run):
+
+```shell script
+bin/console arxy:files:garbage-collect
+```
+
+Limit to a specific file entity class:
+
+```shell script
+bin/console arxy:files:garbage-collect 'App\Entity\File'
+```
+
+Remove unreferenced files from the database:
+
+```shell script
+bin/console arxy:files:garbage-collect --force
+bin/console arxy:files:garbage-collect 'App\Entity\File' --force
+```
+
+Without `--force`, the command only prints a table of candidates (entity class, hash, original filename). With
+`--force`, matching entities are removed via Doctrine.
+
+Requires Doctrine ORM 3.
+
 ## PathResolver: used to generate browser URL to access the file. Few built-in resolvers exists:
 
 ### AssetsPathResolver:

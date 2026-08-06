@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /*
  * Copyright (C) 2016-2026 Taylor & Hart Limited
  * All Rights Reserved.
