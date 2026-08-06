@@ -7,9 +7,6 @@ namespace Arxy\FilesBundle\Repository;
 use Arxy\FilesBundle\Model\File;
 use Doctrine\ORM\QueryBuilder;
 
-/**
- * @method QueryBuilder createQueryBuilder(string $alias, string|null $indexBy = null)
- */
 trait ORM
 {
     public function findByHashAndSize(string $hash, int $size): ?File
@@ -30,4 +27,6 @@ trait ORM
 
         return $query->toIterable();
     }
+
+    abstract public function createQueryBuilder(string $alias, string|null $indexBy = null): QueryBuilder;
 }

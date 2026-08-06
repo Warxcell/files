@@ -69,7 +69,7 @@ parameters:
 		-
 			rawMessage: 'Method Arxy\FilesBundle\DependencyInjection\ArxyFilesExtension::load() throws checked exception Symfony\Component\DependencyInjection\Exception\BadMethodCallException but it''s missing from the PHPDoc @throws tag.'
 			identifier: missingType.checkedException
-			count: 5
+			count: 7
 			path: src/DependencyInjection/ArxyFilesExtension.php
 
 		-

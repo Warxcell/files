@@ -7,6 +7,8 @@ namespace Arxy\FilesBundle\DependencyInjection;
 use Arxy\FilesBundle\DelegatingManager;
 use Arxy\FilesBundle\EventListener\DoctrineORMListener;
 use Arxy\FilesBundle\Form\Type\FileType;
+use Arxy\FilesBundle\GarbageCollector\Command\GarbageCollectCommand;
+use Arxy\FilesBundle\GarbageCollector\EntityReferenceQueryFactory;
 use Arxy\FilesBundle\Manager;
 use Arxy\FilesBundle\ManagerInterface;
 use Arxy\FilesBundle\Storage;
@@ -21,6 +23,7 @@ use Symfony\Component\DependencyInjection\Reference;
 
 use function array_key_first;
 use function count;
+use function in_array;
 
 class ArxyFilesExtension extends Extension
 {
@@ -50,10 +53,14 @@ class ArxyFilesExtension extends Extension
         }
 
         $references = [];
+        $fileClasses = [];
 
         foreach ($config['managers'] as $serviceId => $managerConfig) {
+            $class = $managerConfig['class'];
+            $fileClasses[] = $class;
+
             $definition = $this->createManagerDefinition(
-                $managerConfig['class'],
+                $class,
                 $managerConfig['storage']['service_id'],
                 $managerConfig['naming_strategy']['service_id'],
                 $managerConfig['repository'],
@@ -86,6 +93,19 @@ class ArxyFilesExtension extends Extension
         } else {
             /** @psalm-suppress PossiblyNullArgument */
             $container->setAlias(ManagerInterface::class, array_key_first($config['managers']));
+        }
+
+        if ($fileClasses !== []) {
+            $entityReferenceQueryFactory = new Definition(EntityReferenceQueryFactory::class);
+            $entityReferenceQueryFactory->setAutowired(true);
+            $entityReferenceQueryFactory->setAutoconfigured(true);
+            $container->setDefinition(EntityReferenceQueryFactory::class, $entityReferenceQueryFactory);
+
+            $garbageCollectCommand = new Definition(GarbageCollectCommand::class);
+            $garbageCollectCommand->setArgument('$fileClasses', $fileClasses);
+            $garbageCollectCommand->setAutowired(true);
+            $garbageCollectCommand->setAutoconfigured(true);
+            $container->setDefinition(GarbageCollectCommand::class, $garbageCollectCommand);
         }
     }
 
