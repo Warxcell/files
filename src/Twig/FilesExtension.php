@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Arxy\FilesBundle\Twig;
 
-use Arxy\FilesBundle\ManagerInterface;
 use Arxy\FilesBundle\Model\File;
+use Arxy\FilesBundle\ReaderInterface;
 use Twig\Attribute\AsTwigFilter;
 
 use function ByteUnits\bytes;
@@ -16,10 +16,10 @@ use function ByteUnits\bytes;
 class FilesExtension
 {
     /**
-     * @param ManagerInterface<T, mixed> $manager
+     * @param ReaderInterface<T> $manager
      */
     public function __construct(
-        private readonly ManagerInterface $manager
+        private readonly ReaderInterface $manager
     ) {
     }
 
