@@ -251,7 +251,6 @@ class ManagerTest extends TestCase
         self::assertEquals('image1.jpg', $file->getOriginalFilename());
         self::assertEquals('image/jpeg', $file->getMimeType());
 
-
         self::assertEquals(
             '0',
             $expectedDateTime
@@ -279,6 +278,28 @@ class ManagerTest extends TestCase
         self::assertTrue($this->filesystem->fileExists('1'));
         self::assertEquals('9aa1c5fc7c9388166d7ce7fd46648dd1', md5($this->filesystem->read('1')));
         self::assertEquals(24053, strlen($this->filesystem->read('1')));
+    }
+
+    public function testSimpleUploadFromUrl2(): void
+    {
+        $url = 'https://picsum.photos/id/0/200';
+
+        self::assertEquals(File::class, $this->manager->getClass());
+        /** @var File $file */
+        $file = $this->manager->upload(new SplFileObject($url));
+        $file->setId(1);
+
+        self::assertEquals('b065fd48bbd3b1d1baa27a1d5ddbfd87', $file->getHash());
+        self::assertEquals(7725, $file->getSize());
+        self::assertEquals('200', $file->getOriginalFilename());
+        self::assertEquals('image/jpeg', $file->getMimeType());
+
+        $this->manager->moveFile($file);
+
+        $storedFile = $this->filesystem->read('1');
+        self::assertTrue($this->filesystem->fileExists('1'));
+        self::assertEquals('b065fd48bbd3b1d1baa27a1d5ddbfd87', md5($storedFile));
+        self::assertEquals(7725, strlen($storedFile));
     }
 
     public function testUploadedFileUpload(): void

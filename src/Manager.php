@@ -123,7 +123,7 @@ final class Manager implements ManagerInterface
         if ($fileEntity === null) {
             try {
                 $mimeType = $this->getMimeTypeByFile($handledSplFile);
-            } catch (InvalidArgumentException | ErrorException $exception) {
+            } catch (InvalidArgumentException|ErrorException $exception) {
                 throw new UnableToUpload($handledSplFile, $exception);
             }
             $fileEntity = $this->modelFactory->create(
@@ -311,7 +311,9 @@ final class Manager implements ManagerInterface
 
         if ($file instanceof SplFileObject) {
             $remoteFile = $file;
-            $remoteFile->rewind();
+            if (ErrorHandler::wrap(static fn (): false|int => $remoteFile->ftell()) !== 0) {
+                $remoteFile->rewind();
+            }
         } else {
             $remoteFile = $file->openFile();
         }
