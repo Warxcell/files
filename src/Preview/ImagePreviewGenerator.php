@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Arxy\FilesBundle\Preview;
 
-use Arxy\FilesBundle\ManagerInterface;
 use Arxy\FilesBundle\Model\File;
+use Arxy\FilesBundle\ReaderInterface;
 use Imagine\Filter\Transformation;
 use Imagine\Image\Box;
 use Imagine\Image\ImagineInterface;
@@ -18,10 +18,10 @@ use function stripos;
 class ImagePreviewGenerator implements PreviewGeneratorInterface
 {
     /**
-     * @param ManagerInterface<File, mixed> $manager
+     * @param ReaderInterface<File> $manager
      */
     public function __construct(
-        private readonly ManagerInterface $manager,
+        private readonly ReaderInterface $manager,
         private readonly ImagineInterface $imagine,
         private readonly ?string $format = null,
         private readonly ?Transformation $transformation = null

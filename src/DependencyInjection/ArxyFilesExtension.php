@@ -11,8 +11,10 @@ use Arxy\FilesBundle\GarbageCollector\Command\GarbageCollectCommand;
 use Arxy\FilesBundle\GarbageCollector\EntityReferenceQueryFactory;
 use Arxy\FilesBundle\Manager;
 use Arxy\FilesBundle\ManagerInterface;
+use Arxy\FilesBundle\ReaderInterface;
 use Arxy\FilesBundle\Storage;
 use Arxy\FilesBundle\Twig\FilesExtension;
+use Arxy\FilesBundle\UploaderInterface;
 use LogicException;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -76,6 +78,8 @@ class ArxyFilesExtension extends Extension
             );
 
             $container->registerAliasForArgument($serviceId, ManagerInterface::class);
+            $container->registerAliasForArgument($serviceId, ReaderInterface::class);
+            $container->registerAliasForArgument($serviceId, UploaderInterface::class);
             $references[] = new Reference($serviceId);
         }
 
@@ -90,9 +94,15 @@ class ArxyFilesExtension extends Extension
                 )
             );
             $container->setAlias(ManagerInterface::class, 'arxy_files.delegating_manager');
+            $container->setAlias(ReaderInterface::class, 'arxy_files.delegating_manager');
+            $container->setAlias(UploaderInterface::class, 'arxy_files.delegating_manager');
         } else {
             /** @psalm-suppress PossiblyNullArgument */
             $container->setAlias(ManagerInterface::class, array_key_first($config['managers']));
+            /** @psalm-suppress PossiblyNullArgument */
+            $container->setAlias(ReaderInterface::class, array_key_first($config['managers']));
+            /** @psalm-suppress PossiblyNullArgument */
+            $container->setAlias(UploaderInterface::class, array_key_first($config['managers']));
         }
 
         if ($fileClasses !== []) {

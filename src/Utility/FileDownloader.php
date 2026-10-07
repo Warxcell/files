@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Arxy\FilesBundle\Utility;
 
 use Arxy\FilesBundle\ErrorHandler;
-use Arxy\FilesBundle\ManagerInterface;
 use Arxy\FilesBundle\Model\File;
+use Arxy\FilesBundle\ReaderInterface;
 use SplFileInfo;
 
 use function fclose;
@@ -19,10 +19,10 @@ use function stream_copy_to_stream;
 class FileDownloader
 {
     /**
-     * @param ManagerInterface<T, mixed> $manager
+     * @param ReaderInterface<T> $manager
      */
     public function __construct(
-        private readonly ManagerInterface $manager
+        private readonly ReaderInterface $manager
     ) {
     }
 
