@@ -4,14 +4,11 @@ declare(strict_types=1);
 
 namespace Arxy\FilesBundle\PathResolver;
 
-use Arxy\FilesBundle\ManagerInterface;
 use Arxy\FilesBundle\Model\File;
 use Arxy\FilesBundle\PathResolver;
 use Aws\CloudFront\UrlSigner;
 use DateInterval;
 use DateTimeImmutable;
-
-use function rtrim;
 
 /**
  * @template T of File
@@ -20,12 +17,11 @@ use function rtrim;
 class AwsCloudFrontPreSignedPathResolver implements PathResolver
 {
     /**
-     * @param ManagerInterface<T, mixed> $manager
+     * @param PathResolver<T> $pathResolver
      */
     public function __construct(
+        private readonly PathResolver $pathResolver,
         private readonly UrlSigner $urlSigner,
-        private readonly string $url,
-        private readonly ManagerInterface $manager,
         private readonly DateInterval $expiry,
     ) {
     }
@@ -33,7 +29,7 @@ class AwsCloudFrontPreSignedPathResolver implements PathResolver
     #[\Override]
     public function getPath(File $file): string
     {
-        $url = rtrim($this->url, '/') . '/' . $this->manager->getPathname($file);
+        $url = $this->pathResolver->getPath($file);
 
         $now = new DateTimeImmutable();
 

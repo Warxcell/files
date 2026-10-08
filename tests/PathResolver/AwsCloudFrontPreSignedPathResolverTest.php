@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Arxy\FilesBundle\Tests\PathResolver;
 
-use Arxy\FilesBundle\ManagerInterface;
 use Arxy\FilesBundle\PathResolver;
 use Arxy\FilesBundle\Tests\File;
 use Aws\CloudFront\UrlSigner;
@@ -19,14 +18,15 @@ use const OPENSSL_KEYTYPE_RSA;
 
 class AwsCloudFrontPreSignedPathResolverTest extends TestCase
 {
-    private ManagerInterface&MockObject $manager;
+    /** @var PathResolver & MockObject */
+    private PathResolver $decoratedPathResolver;
     private UrlSigner $urlSigner;
     private PathResolver\AwsCloudFrontPreSignedPathResolver $pathResolver;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->manager = $this->createMock(ManagerInterface::class);
+        $this->decoratedPathResolver = $this->createMock(PathResolver::class);
 
         $privateKeyResource = openssl_pkey_new([
             'private_key_bits' => 2048,
@@ -38,9 +38,8 @@ class AwsCloudFrontPreSignedPathResolverTest extends TestCase
         $this->urlSigner = new UrlSigner('key-pair-id', $privateKey);
 
         $this->pathResolver = new PathResolver\AwsCloudFrontPreSignedPathResolver(
+            $this->decoratedPathResolver,
             $this->urlSigner,
-            'https://d111111abcdef8.cloudfront.net',
-            $this->manager,
             new DateInterval('P1D')
         );
     }
@@ -48,29 +47,13 @@ class AwsCloudFrontPreSignedPathResolverTest extends TestCase
     public function testGetPath(): void
     {
         $file = new File('original_filename.jpg', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg');
-        $this->manager->expects($this->once())->method('getPathname')->with($file)->willReturn('pathname');
+        $this->decoratedPathResolver
+            ->expects($this->once())
+            ->method('getPath')
+            ->with($file)
+            ->willReturn('https://d111111abcdef8.cloudfront.net/pathname');
 
         $path = $this->pathResolver->getPath($file);
-
-        self::assertStringStartsWith('https://d111111abcdef8.cloudfront.net/pathname?', $path);
-        self::assertStringContainsString('Expires=', $path);
-        self::assertStringContainsString('Signature=', $path);
-        self::assertStringContainsString('Key-Pair-Id=key-pair-id', $path);
-    }
-
-    public function testGetPathWithTrailingSlash(): void
-    {
-        $pathResolver = new PathResolver\AwsCloudFrontPreSignedPathResolver(
-            $this->urlSigner,
-            'https://d111111abcdef8.cloudfront.net/',
-            $this->manager,
-            new DateInterval('P1D')
-        );
-
-        $file = new File('original_filename.jpg', 125, '098f6bcd4621d373cade4e832627b4f6', 'image/jpeg');
-        $this->manager->expects($this->once())->method('getPathname')->with($file)->willReturn('pathname');
-
-        $path = $pathResolver->getPath($file);
 
         self::assertStringStartsWith('https://d111111abcdef8.cloudfront.net/pathname?', $path);
         self::assertStringContainsString('Expires=', $path);
