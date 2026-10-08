@@ -14,15 +14,15 @@ use DateTimeImmutable;
  * @template T of File
  * @implements PathResolver<T>
  */
-class AwsCloudFrontPreSignedPathResolver implements PathResolver
+final readonly class AwsCloudFrontPreSignedPathResolver implements PathResolver
 {
     /**
      * @param PathResolver<T> $pathResolver
      */
     public function __construct(
-        private readonly PathResolver $pathResolver,
-        private readonly UrlSigner $urlSigner,
-        private readonly DateInterval $expiry,
+        private PathResolver $pathResolver,
+        private UrlSigner $urlSigner,
+        private DateInterval $expiry,
     ) {
     }
 
