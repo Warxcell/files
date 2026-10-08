@@ -40,7 +40,8 @@
         "symfony/messenger": "*",
         "league/flysystem": ">=3.0",
         "squizlabs/php_codesniffer": "*",
-        "slevomat/coding-standard": "^7.0"
+        "slevomat/coding-standard": "^7.0",
+        "ext-openssl": "*"
     },
     "suggest": {
         "league/flysystem": "Use FlySystem Storage to store contents of file",
